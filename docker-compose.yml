@@ -1,0 +1,139 @@
+services:
+  zookeeper-scolarite:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper-scolarite
+    hostname: zookeeper-scolarite
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_SERVERS: zookeeper-scolarite:2888:3888
+      KAFKA_OPTS: "-Dzookeeper.4lw.commands.whitelist=ruok"
+    volumes:
+      - "./volumes/zookeeper-scolarite/data:/var/lib/zookeeper/data"
+      - "./volumes/zookeeper-scolarite/transactions:/var/lib/zookeeper/log"
+
+  kafka-broker-scolarite-1:
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka-broker-scolarite-1
+    container_name: kafka-broker-scolarite-1
+    depends_on:
+      - zookeeper-scolarite
+    ports:
+      - "19092:19092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-scolarite:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-scolarite-1:9092,LISTENER_LOCAL://localhost:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_COMPRESSION_TYPE: producer
+
+  kafka-broker-scolarite-2:
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka-broker-scolarite-2
+    container_name: kafka-broker-scolarite-2
+    depends_on:
+      - zookeeper-scolarite
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-scolarite:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-scolarite-2:9092,LISTENER_LOCAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_COMPRESSION_TYPE: producer
+
+  kafka-broker-scolarite-3:
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka-broker-3
+    container_name: kafka-broker-scolarite-3
+    depends_on:
+      - zookeeper-scolarite
+    ports:
+      - "39092:39092"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-scolarite:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker-scolarite-3:9092,LISTENER_LOCAL://localhost:39092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,LISTENER_LOCAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_COMPRESSION_TYPE: producer
+
+
+  schema-registry-scolarite:
+    image: confluentinc/cp-schema-registry:7.5.0
+    hostname: schema-registry-scolarite
+    container_name: schema-registry-scolarite
+    depends_on:
+      - kafka-broker-scolarite-1
+      - kafka-broker-scolarite-2
+      - kafka-broker-scolarite-3
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry-scolarite
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper-scolarite:2181'
+      SCHEMA_REGISTRY_LISTENERS: http://schema-registry-scolarite:8081
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka-broker-scolarite-2:9092
+      SCHEMA_REGISTRY_DEBUG: 'true'
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.5.0
+    hostname: control-center-scolarite
+    container_name: control-center-scolarite
+    depends_on:
+      - zookeeper-scolarite
+      - kafka-broker-scolarite-1
+      - kafka-broker-scolarite-2
+      - kafka-broker-scolarite-3
+      - schema-registry-scolarite
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka-broker-scolarite-2:9092'
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper-scolarite:2181'
+      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry-scolarite:8081"
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021
+#
+#  keycloak-scolarite:
+#    image: quay.io/keycloak/keycloak:24.0
+#    container_name: keycloak
+#    command: start-dev
+#    environment:
+#      KC_DB: postgres
+#      KC_DB_URL_HOST: host.docker.internal
+#      KC_DB_URL_DATABASE: keycloak-1
+#      KC_DB_USERNAME: postgres
+#      KC_DB_PASSWORD: passer
+#
+#      KEYCLOAK_ADMIN: bniass
+#      KEYCLOAK_ADMIN_PASSWORD: passer
+#    ports:
+#      - "8180:8080"
+
+
+#  wso2am: #pwd B@yeNiass1
+#    image: docker.wso2.com/wso2am:4.2.0
+#    ports:
+#      - "9443:9443"
+#      - "8243:8243"
+#      - "8280:8280"
+#    environment:
+#      - WSO2_SERVER_PROFILE=api-manager
+
+networks:
+  default:
+    driver: bridge

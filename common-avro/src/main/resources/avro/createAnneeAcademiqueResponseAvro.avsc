@@ -1,0 +1,15 @@
+{
+  "namespace": "com.ecole221.common.avro",
+  "type": "record",
+  "name": "CreateAnneeAcademiqueAvroModel",
+  "fields": [
+    {
+      "name": "codeAnnee",
+      "type": "string"
+    },
+    {
+      "name": "etatAnnee",
+      "type": "string"
+    }
+  ]
+}

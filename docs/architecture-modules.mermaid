@@ -1,0 +1,51 @@
+graph TD
+%% Vue 1 - Dépendances entre modules Maven du projet scolarite-app-hexagonal
+%% Source : pom.xml de chaque module
+    classDef parent fill:#1f2937,stroke:#111827,color:#fff,stroke-width:2px;
+    classDef ms fill:#2563eb,stroke:#1e40af,color:#fff,stroke-width:2px;
+    classDef shared fill:#059669,stroke:#065f46,color:#fff,stroke-width:2px;
+    classDef infra fill:#7c3aed,stroke:#5b21b6,color:#fff,stroke-width:2px;
+    classDef ext fill:#f59e0b,stroke:#b45309,color:#1f2937,stroke-width:2px;
+
+    PARENT["scolarite-app-hexagonal<br/>(parent POM)"]:::parent
+
+    subgraph Microservices
+      ANNEE["annee-academique-service<br/>REST + JPA + Outbox"]:::ms
+      INSC["inscrption-service<br/>REST + JPA"]:::ms
+    end
+
+    subgraph "Modules partagés"
+      COMMON["common-service<br/>BaseEntity, AggregateRoot,<br/>DomainEvent, DomainException"]:::shared
+      AVRO["common-avro<br/>Schémas Avro générés"]:::shared
+      KAFKA["kafka-service<br/>Producer / Consumer Spring Kafka"]:::infra
+    end
+
+    subgraph "Infrastructure externe"
+      MYSQL[("MySQL")]:::ext
+      BROKER[("Kafka cluster<br/>3 brokers + Zookeeper")]:::ext
+      SR[("Schema Registry")]:::ext
+    end
+
+    PARENT --> ANNEE
+    PARENT --> INSC
+    PARENT --> COMMON
+    PARENT --> AVRO
+    PARENT --> KAFKA
+
+    ANNEE --> COMMON
+    ANNEE --> KAFKA
+    ANNEE --> AVRO
+
+    INSC --> COMMON
+    INSC --> KAFKA
+    INSC --> AVRO
+
+    KAFKA -. "spring-kafka<br/>kafka-avro-serializer" .-> BROKER
+    KAFKA -. utilise .-> SR
+    AVRO -. fournit les schémas à .-> SR
+
+    ANNEE -. JPA .-> MYSQL
+    INSC  -. JPA .-> MYSQL
+
+    ANNEE == "produit/consomme<br/>événements Avro" ==> BROKER
+    INSC  == "produit/consomme<br/>événements Avro" ==> BROKER

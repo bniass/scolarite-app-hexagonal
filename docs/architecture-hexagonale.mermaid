@@ -1,0 +1,72 @@
+graph LR
+%% Vue 2 - Architecture hexagonale interne du service annee-academique-service
+%% (le même schéma s'applique à inscrption-service)
+    classDef domain fill:#dc2626,stroke:#7f1d1d,color:#fff,stroke-width:2px;
+    classDef app fill:#2563eb,stroke:#1e3a8a,color:#fff,stroke-width:2px;
+    classDef port fill:#fbbf24,stroke:#92400e,color:#1f2937,stroke-width:2px;
+    classDef infra fill:#7c3aed,stroke:#4c1d95,color:#fff,stroke-width:2px;
+    classDef ext fill:#10b981,stroke:#065f46,color:#fff,stroke-width:2px;
+
+    %% --- Domain (cœur) ---
+    subgraph DOMAIN["DOMAIN (cœur métier — pas d'annotation Spring)"]
+      direction TB
+      AGG["AnneeAcademique<br/><i>AggregateRoot</i>"]:::domain
+      VO["Value Objects<br/>CodeAnnee, DatesAnnee,<br/>AnneeAcademiqueId"]:::domain
+      EVT["Domain Events<br/>AnneeAcademiqueCreee/Modifie/<br/>Publiee/Cloturee,<br/>InscriptionsOuvertes/Fermees"]:::domain
+      EXC["AnneeAcademiqueException<br/>NotFoundException"]:::domain
+    end
+
+    %% --- Application (use cases) ---
+    subgraph APP["APPLICATION (orchestration)"]
+      direction TB
+      UC["Use Case Services<br/>Creer / Modifier / Publier /<br/>OuvrirInscription / FermerInscription /<br/>CloturerAnneeAcademique"]:::app
+      CMD["Commands<br/>CreerAnneeAcademiqueCommand, …"]:::app
+    end
+
+    %% --- Ports ---
+    subgraph PORTS_IN["Ports IN (driving)"]
+      PIN["CreerAnneeAcademiqueUseCase<br/>ModifierAnneeAcademiqueUseCase<br/>PublierAnneeAcademiqueUseCase<br/>OuvrirInscriptionUseCase<br/>FermerInscriptionUseCase<br/>CloturerAnneeScolaireUseCase"]:::port
+    end
+
+    subgraph PORTS_OUT["Ports OUT (driven)"]
+      POUT_REPO["AnneeAcademiqueRepositoryPort"]:::port
+      POUT_OUTBOX["OutboxPort"]:::port
+      POUT_EVT["DomainEventPublisher"]:::port
+    end
+
+    %% --- Infrastructure (adapters) ---
+    subgraph INFRA["INFRASTRUCTURE (adapters)"]
+      direction TB
+      WEB["Web adapter<br/>AnneeAcademiqueController<br/>+ DTO + Mapper + GlobalControllerAdvice"]:::infra
+      JPA["Persistence adapter<br/>RepositoryMySqlAdapter<br/>+ JpaEntity + JpaRepository"]:::infra
+      OUTBOX["Outbox adapter<br/>OutboxEventJpaAdapter<br/>OutboxDomainEventPublisher<br/>OutboxPublisher (@Scheduled)"]:::infra
+      AVROSER["Avro serializer<br/>AvroSerializerUtil + AnneeMapper"]:::infra
+    end
+
+    %% --- Acteurs externes ---
+    CLIENT(["Client HTTP / Swagger"]):::ext
+    DB[("MySQL")]:::ext
+    KAFKA[("Kafka + Schema Registry")]:::ext
+
+    %% --- Flux ---
+    CLIENT --> WEB
+    WEB --> PIN
+    PIN --> UC
+    UC --> AGG
+    UC --> CMD
+    AGG --> VO
+    AGG --> EVT
+    AGG --> EXC
+
+    UC --> POUT_REPO
+    UC --> POUT_EVT
+    POUT_EVT --> POUT_OUTBOX
+
+    POUT_REPO --> JPA
+    POUT_OUTBOX --> OUTBOX
+    JPA --> DB
+    OUTBOX --> AVROSER
+    AVROSER --> KAFKA
+
+    %% Légende
+    LEGEND["🔴 Domain &nbsp;|&nbsp; 🔵 Application &nbsp;|&nbsp; 🟡 Ports &nbsp;|&nbsp; 🟣 Infrastructure &nbsp;|&nbsp; 🟢 Externe"]

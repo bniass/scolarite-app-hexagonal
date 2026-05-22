@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: etudiant-service
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:8889/etudiant-service
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: true
+
+kafka-config:
+  bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
+  schema-registry-url: http://localhost:8081
+  schema-registry-url-key: schema.registry.url
+  num-of-partitions: 3
+  replication-factor: 3
+
+kafka-producer:
+  acks: all
+  retry-count: 2147483647
+  idempotence: true
+  compression-type: snappy
+  linger-ms: 5
+  request-timeout-ms: 60000
+  key-serializer-class: org.apache.kafka.common.serialization.StringSerializer
+  value-serializer-class: io.confluent.kafka.serializers.KafkaAvroSerializer
+
+kafka-topics:
+  etudiant-cree-topic: etudiant-cree
+  etudiant-modifie-topic: etudiant-modifie
+
+server:
+  port: 8092

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Architecture — scolarite-app-hexagonal</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; color: #1f2937; }
+    h1 { border-bottom: 2px solid #2563eb; padding-bottom: .5rem; }
+    h2 { margin-top: 2.5rem; color: #1e40af; }
+    .diagram { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin: 1rem 0; overflow-x: auto; }
+    p.lead { color: #4b5563; font-size: 1.05rem; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: .92em; }
+    .legend { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: .9rem; margin: .5rem 0 1rem; }
+    .legend span { padding: 4px 10px; border-radius: 4px; color: #fff; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });</script>
+</head>
+<body>
+  <h1>Architecture du projet <em>scolarite-app-hexagonal</em></h1>
+  <p class="lead">Multi-module Maven / Spring Boot 3 / Java 21 / Kafka / Architecture hexagonale + DDD + Outbox Pattern.</p>
+
+  <h2>1. Dépendances entre modules Maven</h2>
+  <p>Vue macro des 5 modules du parent POM et de l'infrastructure externe utilisée.</p>
+  <div class="diagram">
+    <pre class="mermaid">
+graph TD
+    classDef parent fill:#1f2937,stroke:#111827,color:#fff,stroke-width:2px;
+    classDef ms fill:#2563eb,stroke:#1e40af,color:#fff,stroke-width:2px;
+    classDef shared fill:#059669,stroke:#065f46,color:#fff,stroke-width:2px;
+    classDef infra fill:#7c3aed,stroke:#5b21b6,color:#fff,stroke-width:2px;
+    classDef ext fill:#f59e0b,stroke:#b45309,color:#1f2937,stroke-width:2px;
+
+    PARENT["scolarite-app-hexagonal<br/>(parent POM)"]:::parent
+
+    subgraph Microservices
+      ANNEE["annee-academique-service<br/>REST + JPA + Outbox"]:::ms
+      INSC["inscrption-service<br/>REST + JPA"]:::ms
+    end
+
+    subgraph "Modules partagés"
+      COMMON["common-service<br/>BaseEntity, AggregateRoot,<br/>DomainEvent, DomainException"]:::shared
+      AVRO["common-avro<br/>Schémas Avro générés"]:::shared
+      KAFKA["kafka-service<br/>Producer / Consumer Spring Kafka"]:::infra
+    end
+
+    subgraph "Infrastructure externe"
+      MYSQL[("MySQL")]:::ext
+      BROKER[("Kafka cluster<br/>3 brokers + Zookeeper")]:::ext
+      SR[("Schema Registry")]:::ext
+    end
+
+    PARENT --> ANNEE
+    PARENT --> INSC
+    PARENT --> COMMON
+    PARENT --> AVRO
+    PARENT --> KAFKA
+
+    ANNEE --> COMMON
+    ANNEE --> KAFKA
+    ANNEE --> AVRO
+
+    INSC --> COMMON
+    INSC --> KAFKA
+    INSC --> AVRO
+
+    KAFKA -. "spring-kafka<br/>kafka-avro-serializer" .-> BROKER
+    KAFKA -. utilise .-> SR
+    AVRO -. fournit les schémas à .-> SR
+
+    ANNEE -. JPA .-> MYSQL
+    INSC  -. JPA .-> MYSQL
+
+    ANNEE == "événements Avro" ==> BROKER
+    INSC  == "événements Avro" ==> BROKER
+    </pre>
+  </div>
+
+  <h2>2. Architecture hexagonale interne (annee-academique-service)</h2>
+  <p>Mise en évidence des trois couches (Domain / Application / Infrastructure) et des ports IN / OUT.</p>
+  <div class="legend">
+    <span style="background:#dc2626">Domain</span>
+    <span style="background:#2563eb">Application</span>
+    <span style="background:#fbbf24;color:#1f2937">Ports</span>
+    <span style="background:#7c3aed">Infrastructure</span>
+    <span style="background:#10b981">Externe</span>
+  </div>
+  <div class="diagram">
+    <pre class="mermaid">
+graph LR
+    classDef domain fill:#dc2626,stroke:#7f1d1d,color:#fff,stroke-width:2px;
+    classDef app fill:#2563eb,stroke:#1e3a8a,color:#fff,stroke-width:2px;
+    classDef port fill:#fbbf24,stroke:#92400e,color:#1f2937,stroke-width:2px;
+    classDef infra fill:#7c3aed,stroke:#4c1d95,color:#fff,stroke-width:2px;
+    classDef ext fill:#10b981,stroke:#065f46,color:#fff,stroke-width:2px;
+
+    subgraph DOMAIN["DOMAIN — pas d'annotation Spring"]
+      direction TB
+      AGG["AnneeAcademique<br/><i>AggregateRoot</i>"]:::domain
+      VO["Value Objects<br/>CodeAnnee, DatesAnnee,<br/>AnneeAcademiqueId"]:::domain
+      EVT["Domain Events<br/>Creee/Modifie/Publiee/Cloturee<br/>InscriptionsOuvertes/Fermees"]:::domain
+      EXC["Exceptions métier"]:::domain
+    end
+
+    subgraph APP["APPLICATION"]
+      direction TB
+      UC["Use Case Services<br/>Creer / Modifier / Publier /<br/>OuvrirInscription / FermerInscription /<br/>Cloturer"]:::app
+      CMD["Commands"]:::app
+    end
+
+    subgraph PORTS_IN["Ports IN (driving)"]
+      PIN["UseCase interfaces"]:::port
+    end
+
+    subgraph PORTS_OUT["Ports OUT (driven)"]
+      POUT_REPO["RepositoryPort"]:::port
+      POUT_OUTBOX["OutboxPort"]:::port
+      POUT_EVT["DomainEventPublisher"]:::port
+    end
+
+    subgraph INFRA["INFRASTRUCTURE"]
+      direction TB
+      WEB["Web adapter<br/>Controller + DTO + Mapper"]:::infra
+      JPA["JPA adapter<br/>RepositoryMySqlAdapter"]:::infra
+      OUTBOX["Outbox adapter<br/>+ OutboxPublisher @Scheduled"]:::infra
+      AVROSER["Avro serializer"]:::infra
+    end
+
+    CLIENT(["Client HTTP / Swagger"]):::ext
+    DB[("MySQL")]:::ext
+    KAFKA[("Kafka + Schema Registry")]:::ext
+
+    CLIENT --> WEB
+    WEB --> PIN
+    PIN --> UC
+    UC --> AGG
+    UC --> CMD
+    AGG --> VO
+    AGG --> EVT
+    AGG --> EXC
+
+    UC --> POUT_REPO
+    UC --> POUT_EVT
+    POUT_EVT --> POUT_OUTBOX
+
+    POUT_REPO --> JPA
+    POUT_OUTBOX --> OUTBOX
+    JPA --> DB
+    OUTBOX --> AVROSER
+    AVROSER --> KAFKA
+    </pre>
+  </div>
+
+  <h2>3. Flux Outbox Pattern (événement métier → Kafka)</h2>
+  <p>Garantit la cohérence transactionnelle entre l'écriture en base et la publication des événements.</p>
+  <div class="diagram">
+    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant C as Client
+    participant W as Controller
+    participant U as UseCase Service
+    participant A as AnneeAcademique (Aggregate)
+    participant R as Repository (JPA)
+    participant O as OutboxPort
+    participant P as OutboxPublisher (@Scheduled)
+    participant K as Kafka
+
+    C->>W: POST /annees-academiques
+    W->>U: CreerAnneeAcademiqueCommand
+    U->>A: new AnneeAcademique(...)
+    A-->>U: AnneeAcademiqueCreeeEvent
+    rect rgba(37, 99, 235, 0.08)
+      Note over U,O: Transaction unique
+      U->>R: save(annee)
+      U->>O: save(OutboxEvent[CREEE], status=PENDING)
+    end
+    U-->>W: AnneeAcademique
+    W-->>C: 201 Created
+
+    loop polling
+      P->>O: findPending()
+      P->>K: send(Avro(CreateAnneeAcademiqueAvroModel))
+      K-->>P: ack
+      P->>O: markAsSent()
+    end
+    </pre>
+  </div>
+
+  <h2>4. Machine à états de <code>AnneeAcademique</code></h2>
+  <p>Implémentation du <strong>State Pattern</strong> dans <code>domain/state/</code> : <code>EtatAnnee</code> (interface), <code>AbstractEtatAnnee</code> (refuse tout par défaut), et 5 états concrets. Toute transition non autorisée lève <code>AnneeAcademiqueException</code>.</p>
+  <div class="diagram">
+    <pre class="mermaid">
+stateDiagram-v2
+    direction LR
+    [*] --> AnneeBrouillon : creer(annee, datesAnnee)
+    AnneeBrouillon --> AnneeBrouillon : modifier(dates)
+    AnneeBrouillon --> AnneePubliee : publier()
+    AnneePubliee --> InscriptionsOuvertes : ouvrirInscription()
+    InscriptionsOuvertes --> InscriptionsFermees : cloturerInscription()
+    InscriptionsFermees --> AnneeCloturee : cloturer()
+    AnneeCloturee --> [*]
+
+    note right of AnneeBrouillon
+      modifier() ré-initialise
+      dates + mois académiques
+    end note
+
+    note right of AnneePubliee
+      datePublication = now()
+    end note
+
+    note right of AnneeCloturee
+      État terminal
+    end note
+    </pre>
+  </div>
+
+  <h3>Matrice des transitions</h3>
+  <table style="border-collapse:collapse;width:100%;font-size:.92rem">
+    <thead>
+      <tr style="background:#f3f4f6">
+        <th style="text-align:left;padding:.5rem;border:1px solid #e5e7eb">État \ Action</th>
+        <th style="padding:.5rem;border:1px solid #e5e7eb">modifier</th>
+        <th style="padding:.5rem;border:1px solid #e5e7eb">publier</th>
+        <th style="padding:.5rem;border:1px solid #e5e7eb">ouvrirInscriptions</th>
+        <th style="padding:.5rem;border:1px solid #e5e7eb">fermerInscriptions</th>
+        <th style="padding:.5rem;border:1px solid #e5e7eb">cloturer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb"><strong>AnneeBrouillon</strong></td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#dcfce7">reste Brouillon</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#dcfce7">→ Publiee</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb"><strong>AnneePubliee</strong></td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#dcfce7">→ InscriptionsOuvertes</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb"><strong>InscriptionsOuvertes</strong></td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#dcfce7">→ InscriptionsFermees</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb"><strong>InscriptionsFermees</strong></td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#fee2e2">interdit</td><td style="padding:.4rem;border:1px solid #e5e7eb;background:#dcfce7">→ AnneeCloturee</td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb"><strong>AnneeCloturee</strong></td><td colspan="5" style="padding:.4rem;border:1px solid #e5e7eb;background:#f3f4f6;text-align:center">état terminal — toutes les actions interdites</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Observations</h3>
+  <ul>
+    <li>Dans <code>AnneeAcademique.modifier()</code>, <code>setData()</code> force l'état à <code>new AnneeBrouillon()</code> <strong>avant</strong> d'appeler <code>etatAnnee.modifier(...)</code>. La garde du State Pattern est donc <strong>court-circuitée</strong> : un <code>modifier()</code> depuis n'importe quel état réinitialise à <code>Brouillon</code> au lieu de lever une exception.</li>
+    <li>Toutes les méthodes publiques émettent un <code>AnneeAcademiqueCreeeEvent</code> (avec un <code>statut</code> différent), alors que des classes d'événement dédiées existent (<code>AnneeAcademiquePublieeEvent</code>, <code>InscriptionsOuvertesEvent</code>, etc.). La typologie gagnerait à être homogénéisée.</li>
+  </ul>
+
+  <h2>5. Diagramme de séquence — Création d'une année académique</h2>
+  <p>Flux complet du <code>POST /api/academic-years</code> : phase transactionnelle synchrone (Controller → UseCase → Domain → Repository MySQL → Outbox), puis publication Kafka asynchrone via <code>OutboxPublisher @Scheduled(5s)</code>.</p>
+  <div class="diagram">
+    <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Client
+    participant Ctrl as AnneeAcademiqueController
+    participant Mapper as AnneeAcademiqueMapper
+    participant UC as CreerAnneeAcademiqueService<br/>@Transactional
+    participant Repo as Repository<br/>(MySqlAdapter)
+    participant Domain as AnneeAcademique
+    participant Outbox as OutboxPort
+    participant DB as MySQL
+    participant Pub as OutboxPublisher<br/>@Scheduled(5s)
+    participant K as Kafka + Schema Registry
+
+    Client->>Ctrl: POST /api/academic-years<br/>CreerAnneeAcademiqueRequest
+    Note over Ctrl: @Pattern("^[0-9]{4}$")
+    Ctrl->>Mapper: toCommand(request)
+    Mapper-->>Ctrl: CreerAnneeAcademiqueCommand
+    Ctrl->>UC: executer(cmd)
+
+    rect rgba(37, 99, 235, 0.08)
+      Note over UC,DB: Transaction unique
+
+      UC->>Repo: findByCode(cmd.codeAnnee)
+      Repo->>DB: SELECT par code
+      DB-->>Repo: Optional<JpaEntity>
+      Repo-->>UC: Optional<AnneeAcademique>
+
+      alt déjà présente
+        UC-->>Ctrl: AnneeAcademiqueException
+        Ctrl-->>Client: 4xx (GlobalControllerAdvice)
+      else nouvelle
+        UC->>UC: new DatesAnnee(...)
+        UC->>Domain: AnneeAcademique.creer(code, dates)
+        activate Domain
+        Domain->>Domain: checkDates()
+        Domain->>Domain: checkIfDureAnnneEstValide(9 mois)
+        Domain->>Domain: genererMoisAcademiques()
+        Domain->>Domain: changerEtat(AnneeBrouillon)
+        Domain->>Domain: addEvent(AnneeAcademiqueCreeeEvent)
+        Domain-->>UC: AnneeAcademique
+        deactivate Domain
+
+        UC->>Repo: save(annee)
+        Repo->>DB: INSERT annee_academique + mois_academique
+        DB-->>Repo: ok
+
+        UC->>Domain: pullDomainEvents()
+        Domain-->>UC: List<DomainEvent>
+
+        loop pour chaque event
+          UC->>Outbox: save(event)
+          Outbox->>DB: INSERT outbox_event<br/>(payload Avro, status=PENDING)
+        end
+      end
+    end
+
+    UC-->>Ctrl: void
+    Ctrl-->>Client: 201 Created + Location
+
+    Note over Pub,K: --- Publication asynchrone (toutes les 5s) ---
+
+    loop @Scheduled(fixedDelay = 5000)
+      Pub->>DB: findTop50(PENDING, FAILED)
+      DB-->>Pub: events
+      loop pour chaque event
+        Pub->>Pub: AvroSerializerUtil.fromBytes(payload)
+        Pub->>K: send(topic, aggregateId, AvroModel)
+        alt succès
+          K-->>Pub: ack
+          Pub->>DB: status = PUBLISHED
+        else échec
+          Pub->>DB: status = FAILED
+        end
+      end
+    end
+    </pre>
+  </div>
+
+  <h3>Garanties</h3>
+  <ul>
+    <li><strong>Atomicité persistance + outbox</strong> — la même transaction couvre <code>save(annee)</code> et <code>outboxPort.save(event)</code>.</li>
+    <li><strong>Au moins une livraison</strong> Kafka — polling périodique + retry des <code>FAILED</code>.</li>
+    <li><strong>Ordre par agrégat</strong> — <code>ORDER BY occurredAt ASC</code> et clé Kafka = <code>aggregateId</code> (même partition).</li>
+    <li><strong>Idempotence</strong> côté consommateur — à assurer en aval.</li>
+  </ul>
+
+  <h3>Observation</h3>
+  <p>Le bean <code>DomainEventPublisher</code> est <strong>injecté dans <code>CreerAnneeAcademiqueService</code> mais jamais utilisé</strong> — c'est <code>outboxPort::save</code> qui est appelé directement. Il y a deux chemins concurrents vers la table outbox, l'un est mort. À nettoyer.</p>
+
+  <h2>6. Modèle C4</h2>
+  <p>Trois niveaux du modèle <a href="https://c4model.com" target="_blank" rel="noopener">C4</a> : Contexte, Conteneurs, Composants. Le support C4 de Mermaid est expérimental ; si un diagramme ne rend pas, recharge la page ou ouvre les <code>.mermaid</code> dans <a href="https://mermaid.live" target="_blank" rel="noopener">mermaid.live</a>.</p>
+
+  <h3>6.1 — Niveau 1 : Contexte</h3>
+  <div class="diagram">
+    <pre class="mermaid">
+C4Context
+    title C4 - Niveau 1 : Contexte système (Scolarité)
+
+    Person(admin, "Administration scolaire", "Crée et pilote les années académiques")
+    Person(etudiant, "Étudiant", "S'inscrit pour une année ouverte")
+
+    System(scolarite, "Système Scolarité", "Spring Boot 3 / Java 21 / hexagonal / Kafka")
+
+    System_Ext(mysql, "MySQL", "Persistance")
+    System_Ext(kafka, "Kafka + Schema Registry", "Bus événementiel")
+
+    Rel(admin, scolarite, "Gère les années académiques", "HTTPS / JSON")
+    Rel(etudiant, scolarite, "S'inscrit", "HTTPS / JSON")
+    Rel(scolarite, mysql, "Lit / écrit", "JDBC")
+    Rel(scolarite, kafka, "Publie / consomme", "Avro / TCP")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    </pre>
+  </div>
+
+  <h3>6.2 — Niveau 2 : Conteneurs</h3>
+  <div class="diagram">
+    <pre class="mermaid">
+C4Container
+    title C4 - Niveau 2 : Conteneurs
+
+    Person(admin, "Administration", "")
+    Person(etudiant, "Étudiant", "")
+
+    System_Boundary(scolarite, "Système Scolarité") {
+      Container(annee, "annee-academique-service", "Spring Boot 3 / Java 21", "REST + use cases + Outbox")
+      Container(inscription, "inscrption-service", "Spring Boot 3 / Java 21", "REST inscriptions, consomme événements")
+      ContainerDb(db, "MySQL", "MySQL 8", "annee_academique, mois_academique, outbox_event")
+      ContainerQueue(broker, "Kafka cluster", "Confluent 7.5 - 3 brokers + Zookeeper", "Topics d'événements")
+      Container(sr, "Schema Registry", "Confluent 7.5", "Schémas Avro")
+    }
+
+    Rel(admin, annee, "POST /api/academic-years, /publish, /open-enrollments, /close, /update", "HTTPS / JSON")
+    Rel(etudiant, inscription, "POST /inscriptions", "HTTPS / JSON")
+    Rel(annee, db, "Persiste agrégats + outbox", "JDBC")
+    Rel(inscription, db, "Persiste inscriptions", "JDBC")
+    Rel(annee, broker, "Publie événements (Outbox @Scheduled 5s)", "Avro / TCP")
+    Rel(inscription, broker, "Consomme événements année", "Avro / TCP")
+    Rel(broker, sr, "Schémas Avro", "HTTP")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    </pre>
+  </div>
+
+  <h3>6.3 — Niveau 3 : Composants de <code>annee-academique-service</code></h3>
+  <div class="diagram">
+    <pre class="mermaid">
+C4Component
+    title C4 - Niveau 3 : Composants
+
+    Person(admin, "Administration", "")
+    ContainerDb(db, "MySQL", "", "")
+    ContainerQueue(broker, "Kafka", "", "")
+
+    Container_Boundary(annee, "annee-academique-service") {
+      Component(ctrl, "AnneeAcademiqueController", "@RestController", "Endpoints REST")
+      Component(advice, "GlobalControllerAdvice", "@ControllerAdvice", "Exception -> ApiError")
+      Component(mapper, "AnneeAcademiqueMapper", "Mapper", "Request -> Command")
+      Component(uc, "Use Case Services", "@Service @Transactional", "Creer / Modifier / Publier / Ouvrir / Fermer / Cloturer")
+      Component(aggregate, "AnneeAcademique", "Domain Aggregate", "Invariants, State Pattern, événements")
+      Component(repoPort, "AnneeAcademiqueRepository", "Port OUT", "Interface domaine")
+      Component(outboxPort, "OutboxPort", "Port OUT", "Interface domaine")
+      Component(repoAdapter, "MySqlAdapter", "@Profile(mysql)", "Adapter JPA")
+      Component(outboxAdapter, "OutboxEventJpaAdapter", "@Component", "INSERT outbox_event PENDING")
+      Component(outboxPub, "OutboxPublisher", "@Scheduled(5s)", "Outbox -> Kafka")
+      Component(avroSer, "AvroSerializerUtil", "Avro", "Sérialisation payloads")
+    }
+
+    Rel(admin, ctrl, "HTTPS / JSON")
+    Rel(ctrl, mapper, "toCommand")
+    Rel(ctrl, uc, "executer(command)")
+    Rel(ctrl, advice, "throws")
+
+    Rel(uc, aggregate, "creer / modifier / publier / ...")
+    Rel(uc, repoPort, "save / findByCode")
+    Rel(uc, outboxPort, "save(events)")
+
+    Rel(repoPort, repoAdapter, "impl")
+    Rel(outboxPort, outboxAdapter, "impl")
+
+    Rel(repoAdapter, db, "JDBC")
+    Rel(outboxAdapter, db, "JDBC")
+    Rel(outboxPub, db, "SELECT / UPDATE outbox", "JDBC")
+    Rel(outboxPub, avroSer, "fromBytes")
+    Rel(outboxPub, broker, "send(topic, key, AvroModel)", "Avro / TCP")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
+    </pre>
+  </div>
+
+  <h3>Mapping C4 ↔ Architecture hexagonale</h3>
+  <table style="border-collapse:collapse;width:100%;font-size:.92rem">
+    <thead>
+      <tr style="background:#f3f4f6">
+        <th style="text-align:left;padding:.5rem;border:1px solid #e5e7eb">Concept C4 (Niveau 3)</th>
+        <th style="text-align:left;padding:.5rem;border:1px solid #e5e7eb">Couche hexagonale</th>
+        <th style="text-align:left;padding:.5rem;border:1px solid #e5e7eb">Package</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb">Controller, Mapper, GlobalControllerAdvice</td><td style="padding:.4rem;border:1px solid #e5e7eb">Infrastructure (adapter IN)</td><td style="padding:.4rem;border:1px solid #e5e7eb"><code>infrastructure/web/**</code></td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb">Use Case Services</td><td style="padding:.4rem;border:1px solid #e5e7eb">Application</td><td style="padding:.4rem;border:1px solid #e5e7eb"><code>application/usecase/**</code></td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb">Port IN (UseCase interfaces)</td><td style="padding:.4rem;border:1px solid #e5e7eb">Application</td><td style="padding:.4rem;border:1px solid #e5e7eb"><code>application/port/in/**</code></td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb"><strong>AnneeAcademique, EtatAnnee, VO, Events</strong></td><td style="padding:.4rem;border:1px solid #e5e7eb"><strong>Domain (cœur)</strong></td><td style="padding:.4rem;border:1px solid #e5e7eb"><code>domain/**</code></td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb">Ports OUT (Repository, Outbox, DomainEventPublisher)</td><td style="padding:.4rem;border:1px solid #e5e7eb">Application</td><td style="padding:.4rem;border:1px solid #e5e7eb"><code>application/port/out/**</code></td></tr>
+      <tr><td style="padding:.4rem;border:1px solid #e5e7eb">MySqlAdapter, OutboxEventJpaAdapter, OutboxPublisher, AvroSerializerUtil</td><td style="padding:.4rem;border:1px solid #e5e7eb">Infrastructure (adapters OUT)</td><td style="padding:.4rem;border:1px solid #e5e7eb"><code>infrastructure/persistence/**</code>, <code>infrastructure/event/**</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Sources analysées</h2>
+  <p>
+    <code>pom.xml</code> racine + <code>pom.xml</code> de chaque module,
+    <code>docker-compose.yml</code>, l'arborescence
+    <code>application/port/{in,out}</code>, <code>application/usecase</code>,
+    <code>domain/{model,event,valuobject}</code> et
+    <code>infrastructure/{web,persistence,event,persistence/outbox}</code>
+    de <code>annee-academique-service</code>.
+  </p>
+</body>
+</html>

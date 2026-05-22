@@ -1,0 +1,44 @@
+stateDiagram-v2
+%% Vue 4 - Machine à états de l'agrégat AnneeAcademique
+%% Implémentée via le State Pattern (domain/state/*)
+%% Toute transition non autorisée lève AnneeAcademiqueException
+%% (cf. AbstractEtatAnnee#interdit)
+    direction LR
+
+    [*] --> AnneeBrouillon : creer(annee, datesAnnee)
+
+    AnneeBrouillon --> AnneeBrouillon : modifier(dates)
+    AnneeBrouillon --> AnneePubliee : publier()
+
+    AnneePubliee --> InscriptionsOuvertes : ouvrirInscription()
+
+    InscriptionsOuvertes --> InscriptionsFermees : cloturerInscription()<br/>(fermerInscriptions)
+
+    InscriptionsFermees --> AnneeCloturee : cloturer()
+
+    AnneeCloturee --> [*]
+
+    note right of AnneeBrouillon
+      Émet AnneeAcademiqueCreeeEvent
+      (statut = BROUILLON)
+      modifier() ré-initialise les dates
+      et les mois académiques
+    end note
+
+    note right of AnneePubliee
+      datePublication = LocalDate.now()
+      Émet AnneeAcademiquePublieeEvent
+    end note
+
+    note right of InscriptionsOuvertes
+      Émet InscriptionsOuvertesEvent
+    end note
+
+    note right of InscriptionsFermees
+      Émet InscriptionsFermeesEvent
+    end note
+
+    note right of AnneeCloturee
+      État terminal
+      Émet AnneeAcademiqueClotureeEvent
+    end note

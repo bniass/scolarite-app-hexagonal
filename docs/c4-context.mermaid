@@ -1,0 +1,18 @@
+C4Context
+    title C4 - Niveau 1 : Contexte système (Scolarité)
+
+    Person(admin, "Administration scolaire", "Crée et pilote les années académiques, ouvre/ferme les inscriptions")
+    Person(etudiant, "Étudiant", "S'inscrit pour une année académique ouverte")
+
+    System(scolarite, "Système Scolarité", "Plateforme de gestion des années académiques et des inscriptions (Spring Boot 3, Java 21, architecture hexagonale)")
+
+    System_Ext(mysql, "MySQL", "Persistance des agrégats et de la table outbox")
+    System_Ext(kafka, "Kafka + Schema Registry", "Bus d'événements inter-services et registre des schémas Avro")
+
+    Rel(admin, scolarite, "Gère les années académiques", "HTTPS / JSON")
+    Rel(etudiant, scolarite, "S'inscrit", "HTTPS / JSON")
+
+    Rel(scolarite, mysql, "Lit / écrit", "JDBC")
+    Rel(scolarite, kafka, "Publie / consomme événements", "Avro / TCP")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")

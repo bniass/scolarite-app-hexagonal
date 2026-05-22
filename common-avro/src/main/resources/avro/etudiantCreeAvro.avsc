@@ -1,0 +1,13 @@
+{
+  "namespace": "com.ecole221.common.avro",
+  "type": "record",
+  "name": "EtudiantCreeAvroModel",
+  "fields": [
+    {"name": "etudiantId", "type": "string"},
+    {"name": "matricule", "type": "string"},
+    {"name": "nom", "type": "string"},
+    {"name": "prenom", "type": "string"},
+    {"name": "dateNaissance", "type": "string"},
+    {"name": "occurredAt", "type": "string"}
+  ]
+}

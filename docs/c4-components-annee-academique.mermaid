@@ -1,0 +1,79 @@
+sequenceDiagram
+%% Diagramme de séquence — Création d'une année académique
+%% Source : Controller -> UseCase Service -> Domain -> Repository JPA -> Outbox -> @Scheduled Publisher -> Kafka
+    autonumber
+    actor Client
+    participant Ctrl as AnneeAcademiqueController
+    participant Mapper as AnneeAcademiqueMapper
+    participant UC as CreerAnneeAcademiqueService<br/>@Transactional
+    participant Repo as AnneeAcademiqueRepository<br/>(MySqlAdapter)
+    participant Domain as AnneeAcademique<br/>(AggregateRoot)
+    participant Outbox as OutboxPort<br/>(JpaAdapter)
+    participant DB as MySQL
+    participant Pub as OutboxPublisher<br/>@Scheduled(5s)
+    participant K as Kafka + Schema Registry
+
+    Client->>Ctrl: POST /api/academic-years<br/>CreerAnneeAcademiqueRequest<br/>(code, dateDebut, dateFin,<br/>dateDebutInscriptions, dateFinInscriptions)
+    Note over Ctrl: Validation Bean<br/>@NotBlank + @Pattern("^[0-9]{4}$")
+    Ctrl->>Mapper: toCommand(request)
+    Mapper-->>Ctrl: CreerAnneeAcademiqueCommand
+    Ctrl->>UC: executer(cmd)
+
+    rect rgba(37, 99, 235, 0.08)
+      Note over UC,DB: Transaction unique (@Transactional)
+
+      UC->>Repo: findByCode(cmd.codeAnnee)
+      Repo->>DB: SELECT par code
+      DB-->>Repo: Optional<JpaEntity>
+      Repo-->>UC: Optional<AnneeAcademique>
+
+      alt déjà présente
+        UC-->>Ctrl: throw AnneeAcademiqueException<br/>("déjà existante")
+        Ctrl-->>Client: 4xx (GlobalControllerAdvice)
+      else nouvelle
+        UC->>UC: new DatesAnnee(...)
+        UC->>Domain: AnneeAcademique.creer(codeAnnee, datesAnnee)
+        activate Domain
+        Domain->>Domain: checkDates(datesAnnee)
+        Domain->>Domain: checkIfDureAnnneEstValide(9 mois)
+        Domain->>Domain: setData()<br/>genererMoisAcademiques()
+        Domain->>Domain: changerEtat(new AnneeBrouillon())
+        Domain->>Domain: addEvent(AnneeAcademiqueCreeeEvent<br/>statut=BROUILLON)
+        Domain-->>UC: AnneeAcademique
+        deactivate Domain
+
+        UC->>Repo: save(annee)
+        Repo->>Repo: mapper.toJpa(annee)
+        Repo->>DB: INSERT annee_academique<br/>+ mois_academique
+        DB-->>Repo: ok
+        Repo-->>UC: ok
+
+        UC->>Domain: pullDomainEvents()
+        Domain-->>UC: List<DomainEvent>
+
+        loop pour chaque event
+          UC->>Outbox: save(event)
+          Outbox->>DB: INSERT outbox_event<br/>(payload Avro bytes, status=PENDING)
+        end
+      end
+    end
+
+    UC-->>Ctrl: void
+    Ctrl-->>Client: 201 Created<br/>Location: /api/academic-years/{code}
+
+    Note over Pub,K: --- Publication asynchrone (toutes les 5s) ---
+
+    loop @Scheduled(fixedDelay = 5000)
+      Pub->>DB: findTop50ByStatusInOrderByOccurredAtAsc<br/>(PENDING, FAILED)
+      DB-->>Pub: List<OutboxEventJpaEntity>
+      loop pour chaque event
+        Pub->>Pub: AvroSerializerUtil.fromBytes(payload)
+        Pub->>K: send(topic, aggregateId,<br/>CreateAnneeAcademiqueAvroModel)
+        alt succès
+          K-->>Pub: ack
+          Pub->>DB: UPDATE status = PUBLISHED
+        else échec
+          Pub->>DB: UPDATE status = FAILED
+        end
+      end
+    end

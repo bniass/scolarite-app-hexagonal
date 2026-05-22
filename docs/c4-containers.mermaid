@@ -1,0 +1,27 @@
+C4Container
+    title C4 - Niveau 2 : Conteneurs (intérieur du Système Scolarité)
+
+    Person(admin, "Administration scolaire", "")
+    Person(etudiant, "Étudiant", "")
+
+    System_Boundary(scolarite, "Système Scolarité") {
+      Container(annee, "annee-academique-service", "Spring Boot 3 / Java 21", "API REST + use cases + Outbox. Source de vérité de l'agrégat AnneeAcademique")
+      Container(inscription, "inscrption-service", "Spring Boot 3 / Java 21", "API REST des inscriptions étudiants. Consomme les événements d'année")
+
+      ContainerDb(db, "MySQL", "MySQL 8", "Tables anneeacademique, mois_academique, outbox_event")
+      ContainerQueue(broker, "Kafka cluster", "Confluent Kafka 7.5 (3 brokers + Zookeeper)", "Topics anneeacademique-request, etc.")
+      Container(sr, "Schema Registry", "Confluent 7.5", "Schémas Avro centralisés")
+    }
+
+    Rel(admin, annee, "POST /api/academic-years, publier, ouvrir/fermer inscriptions, clôturer", "HTTPS / JSON")
+    Rel(etudiant, inscription, "POST /inscriptions", "HTTPS / JSON")
+
+    Rel(annee, db, "Persiste agrégats + outbox", "JDBC")
+    Rel(inscription, db, "Persiste inscriptions", "JDBC")
+
+    Rel(annee, broker, "Publie événements (Outbox @Scheduled 5s)", "Avro / TCP")
+    Rel(inscription, broker, "Consomme événements année", "Avro / TCP")
+
+    Rel(broker, sr, "Résolution / enregistrement des schémas", "HTTP")
+
+    UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
