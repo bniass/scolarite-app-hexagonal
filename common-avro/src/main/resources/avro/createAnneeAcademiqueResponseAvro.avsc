@@ -3,13 +3,8 @@
   "type": "record",
   "name": "CreateAnneeAcademiqueAvroModel",
   "fields": [
-    {
-      "name": "codeAnnee",
-      "type": "string"
-    },
-    {
-      "name": "etatAnnee",
-      "type": "string"
-    }
+    {"name": "codeAnnee", "type": "string"},
+    {"name": "etatAnnee", "type": "string"},
+    {"name": "moisAcademiques", "type": "string", "default": "[]"}
   ]
 }

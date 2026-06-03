@@ -54,7 +54,8 @@ public class AnneeAcademique extends AggregateRoot<AnneeAcademiqueId> {
                 new AnneeAcademiqueCreeeEvent(
                         anneeAcademique.getId().getValue().getCodeAnnee(),
                         StatutAnneeAcademique.BROUILLON.name(),
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        List.of()
                 )
         );
         return anneeAcademique;
@@ -72,7 +73,8 @@ public class AnneeAcademique extends AggregateRoot<AnneeAcademiqueId> {
                 new AnneeAcademiqueCreeeEvent(
                         this.getId().getValue().getCodeAnnee(),
                         StatutAnneeAcademique.BROUILLON.name(),
-                        LocalDateTime.now()
+                        LocalDateTime.now(),
+                        List.of()
                 )
         );
     }
@@ -91,46 +93,42 @@ public class AnneeAcademique extends AggregateRoot<AnneeAcademiqueId> {
     public void publier(){
         datePublication = LocalDate.now();
         etatAnnee.publier(this);
-        this.addEvent(
-                new AnneeAcademiqueCreeeEvent(
-                        this.getId().getValue().getCodeAnnee(),
-                        StatutAnneeAcademique.PUBLIEE.name(),
-                        LocalDateTime.now()
-                )
-        );
+        this.addEvent(new AnneeAcademiqueCreeeEvent(
+                this.getId().getValue().getCodeAnnee(),
+                StatutAnneeAcademique.PUBLIEE.name(),
+                LocalDateTime.now(),
+                List.of()
+        ));
     }
-    //ouvrir inscription
+    //ouvrir inscription — les mois sont inclus pour que inscription-service et paiement-service construisent leur projection
     public void ouvrirInscription(){
         etatAnnee.ouvrirInscriptions(this);
-        this.addEvent(
-                new AnneeAcademiqueCreeeEvent(
-                        this.getId().getValue().getCodeAnnee(),
-                        StatutAnneeAcademique.INSCRIPTIONS_OUVERTES.name(),
-                        LocalDateTime.now()
-                )
-        );
+        this.addEvent(new AnneeAcademiqueCreeeEvent(
+                this.getId().getValue().getCodeAnnee(),
+                StatutAnneeAcademique.INSCRIPTIONS_OUVERTES.name(),
+                LocalDateTime.now(),
+                this.moisAcademiques
+        ));
     }
     //cloturer inscription
     public void cloturerInscription(){
         etatAnnee.fermerInscriptions(this);
-        this.addEvent(
-                new AnneeAcademiqueCreeeEvent(
-                        this.getId().getValue().getCodeAnnee(),
-                        StatutAnneeAcademique.INSCRIPTIONS_FERMEES.name(),
-                        LocalDateTime.now()
-                )
-        );
+        this.addEvent(new AnneeAcademiqueCreeeEvent(
+                this.getId().getValue().getCodeAnnee(),
+                StatutAnneeAcademique.INSCRIPTIONS_FERMEES.name(),
+                LocalDateTime.now(),
+                List.of()
+        ));
     }
     //cloturer année
     public void cloturer(){
         etatAnnee.cloturer(this);
-        this.addEvent(
-                new AnneeAcademiqueCreeeEvent(
-                        this.getId().getValue().getCodeAnnee(),
-                        StatutAnneeAcademique.CLOTUREE.name(),
-                        LocalDateTime.now()
-                )
-        );
+        this.addEvent(new AnneeAcademiqueCreeeEvent(
+                this.getId().getValue().getCodeAnnee(),
+                StatutAnneeAcademique.CLOTUREE.name(),
+                LocalDateTime.now(),
+                List.of()
+        ));
     }
 
     public void changerEtat(EtatAnnee etatAnnee) {

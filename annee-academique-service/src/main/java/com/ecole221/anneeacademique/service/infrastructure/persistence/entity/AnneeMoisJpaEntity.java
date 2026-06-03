@@ -18,8 +18,9 @@ public class AnneeMoisJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "annee_id", nullable = false, length = 12)
-    private String anneeAcademiqueCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "annee_id", nullable = false)
+    private AnneeAcademiqueJpaEntity anneeAcademique;
 
     @Column(nullable = false)
     private int mois;
@@ -29,8 +30,8 @@ public class AnneeMoisJpaEntity {
 
     protected AnneeMoisJpaEntity() {}
 
-    public AnneeMoisJpaEntity(String anneeAcademiqueCode, int mois, int annee) {
-        this.anneeAcademiqueCode = anneeAcademiqueCode;
+    public AnneeMoisJpaEntity(AnneeAcademiqueJpaEntity anneeAcademique, int mois, int annee) {
+        this.anneeAcademique = anneeAcademique;
         this.mois = mois;
         this.annee = annee;
     }

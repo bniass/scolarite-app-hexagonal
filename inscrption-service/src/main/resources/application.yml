@@ -54,6 +54,13 @@ kafka-consumer:
 kafka-topics:
   anneeacademique-topic-request-name: creer-annee-request
   inscription-creee-topic: inscription-creee
+  paiement-confirme-topic: paiement-confirme
+
+etudiant-service:
+  base-url: http://localhost:8092
+
+school-service:
+  base-url: http://localhost:8094
 
 inscription:
   transfert:

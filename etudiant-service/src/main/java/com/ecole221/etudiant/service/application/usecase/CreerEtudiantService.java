@@ -26,15 +26,20 @@ public class CreerEtudiantService implements CreerEtudiantUseCase {
 
     @Override
     public Etudiant executer(CreerEtudiantCommand command) {
-        if (etudiantRepository.existeParMatricule(command.matricule())) {
-            throw new EtudiantException("Un étudiant existe déjà avec le matricule : " + command.matricule());
+        if (etudiantRepository.existeParEmail(command.email())) {
+            throw new EtudiantException("Un étudiant existe déjà avec l'email : " + command.email());
         }
 
+        String suffixe = Etudiant.suffixeAnnee(command.codeAnnee());
+        long ordre = etudiantRepository.compterParSuffixeAnnee(suffixe) + 1;
+
         Etudiant etudiant = Etudiant.creer(
-                command.matricule(),
                 command.nom(),
                 command.prenom(),
-                command.dateNaissance()
+                command.dateNaissance(),
+                command.email(),
+                ordre,
+                command.codeAnnee()
         );
 
         etudiantRepository.sauvegarder(etudiant);

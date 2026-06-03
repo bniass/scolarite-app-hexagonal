@@ -38,11 +38,7 @@ import java.util.List;
 
                 for (MoisAcademique m : domain.getMoisAcademiques()) {
                     entity.getMoisAcademiques().add(
-                            new AnneeMoisJpaEntity(
-                                    domain.getId().getValue().getCodeAnnee(),
-                                    m.mois(),
-                                    m.annee()
-                            )
+                            new AnneeMoisJpaEntity(entity, m.mois(), m.annee())
                     );
                 }
             }
@@ -66,6 +62,15 @@ import java.util.List;
             entity.setStatut(
                     EtatAnneeFactory.toStatut(domain.getEtatAnnee())
             );
+
+            if (domain.getEtatAnnee() instanceof AnneeBrouillon) {
+                entity.getMoisAcademiques().clear();
+                for (MoisAcademique m : domain.getMoisAcademiques()) {
+                    entity.getMoisAcademiques().add(
+                            new AnneeMoisJpaEntity(entity, m.mois(), m.annee())
+                    );
+                }
+            }
         }
 
 

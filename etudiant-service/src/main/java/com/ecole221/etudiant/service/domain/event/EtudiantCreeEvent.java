@@ -14,30 +14,28 @@ public class EtudiantCreeEvent implements DomainEvent<Etudiant> {
     private final String nom;
     private final String prenom;
     private final LocalDate dateNaissance;
+    private final String email;
     private final LocalDateTime occurredAt;
 
     public EtudiantCreeEvent(UUID etudiantId, String matricule, String nom,
-                              String prenom, LocalDate dateNaissance, LocalDateTime occurredAt) {
+                              String prenom, LocalDate dateNaissance, String email, LocalDateTime occurredAt) {
         this.etudiantId = etudiantId;
         this.matricule = matricule;
         this.nom = nom;
         this.prenom = prenom;
         this.dateNaissance = dateNaissance;
+        this.email = email;
         this.occurredAt = occurredAt;
     }
 
-    @Override
-    public String aggregateId() { return etudiantId.toString(); }
-
-    @Override
-    public String aggregateType() { return "Etudiant"; }
-
-    @Override
-    public LocalDateTime occurredAt() { return occurredAt; }
+    @Override public String aggregateId() { return etudiantId.toString(); }
+    @Override public String aggregateType() { return "Etudiant"; }
+    @Override public LocalDateTime occurredAt() { return occurredAt; }
 
     public UUID getEtudiantId() { return etudiantId; }
     public String getMatricule() { return matricule; }
     public String getNom() { return nom; }
     public String getPrenom() { return prenom; }
     public LocalDate getDateNaissance() { return dateNaissance; }
+    public String getEmail() { return email; }
 }

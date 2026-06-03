@@ -12,14 +12,16 @@ public class AnneeAcademiqueProjectionJpaMapper {
     public AnneeAcademiqueProjection toDomain(AnneeAcademiqueProjectionJpaEntity entity) {
         return new AnneeAcademiqueProjection(
                 new CodeAnnee(entity.getCodeAnnee()),
-                EtatAnnee.valueOf(entity.getEtatAnnee())
+                EtatAnnee.valueOf(entity.getEtatAnnee()),
+                entity.getMoisAcademiquesJson()
         );
     }
 
     public AnneeAcademiqueProjectionJpaEntity toEntity(AnneeAcademiqueProjection domain) {
         return new AnneeAcademiqueProjectionJpaEntity(
                 domain.getCodeAnnee().getValue(),
-                domain.getEtatAnnee().name()
+                domain.getEtatAnnee().name(),
+                domain.getMoisAcademiquesJson()
         );
     }
 }

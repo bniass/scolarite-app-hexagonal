@@ -28,9 +28,14 @@ public class SynchroniserAnneeAcademiqueService implements SynchroniserAnneeAcad
         AnneeAcademiqueProjection projection = repository.findByCodeAnnee(codeAnnee.getValue())
                 .map(existing -> {
                     existing.changerEtat(etatAnnee);
+                    // les mois ne sont portés que par l'event INSCRIPTIONS_OUVERTES
+                    if (etatAnnee == EtatAnnee.INSCRIPTIONS_OUVERTES) {
+                        existing.setMoisAcademiquesJson(command.moisAcademiquesJson());
+                    }
                     return existing;
                 })
-                .orElseGet(() -> new AnneeAcademiqueProjection(codeAnnee, etatAnnee));
+                .orElseGet(() -> new AnneeAcademiqueProjection(codeAnnee, etatAnnee,
+                        command.moisAcademiquesJson()));
 
         repository.save(projection);
     }

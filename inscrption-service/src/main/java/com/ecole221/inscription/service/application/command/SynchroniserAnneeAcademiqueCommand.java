@@ -5,6 +5,7 @@ import com.ecole221.inscription.service.domain.valueobject.EtatAnnee;
 
 public record SynchroniserAnneeAcademiqueCommand(
         CodeAnnee codeAnnee,
-        EtatAnnee etatAnnee
+        EtatAnnee etatAnnee,
+        String moisAcademiquesJson
 ) {
 }

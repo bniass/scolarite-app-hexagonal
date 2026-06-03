@@ -28,6 +28,7 @@
 		<module>kafka-service</module>
 		<module>etudiant-service</module>
 		<module>school-service</module>
+		<module>inscrption-service</module>
 		<module>paiement-service</module>
 	</modules>
 	<scm>
@@ -65,6 +66,11 @@
 			<dependency>
 				<groupId>com.ecole221</groupId>
 				<artifactId>annee-academique-service</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ecole221</groupId>
+				<artifactId>inscrption-service</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -107,12 +113,12 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
 				<configuration>
-					<release>23</release>
+					<release>21</release>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.32</version>
+							<version>1.18.36</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

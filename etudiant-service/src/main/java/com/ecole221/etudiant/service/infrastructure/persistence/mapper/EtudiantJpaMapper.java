@@ -16,6 +16,7 @@ public class EtudiantJpaMapper {
         entity.setNom(etudiant.getNom());
         entity.setPrenom(etudiant.getPrenom());
         entity.setDateNaissance(etudiant.getDateNaissance());
+        entity.setEmail(etudiant.getEmail());
         return entity;
     }
 
@@ -25,7 +26,8 @@ public class EtudiantJpaMapper {
                 new Matricule(entity.getMatricule()),
                 entity.getNom(),
                 entity.getPrenom(),
-                entity.getDateNaissance()
+                entity.getDateNaissance(),
+                entity.getEmail()
         );
     }
 }

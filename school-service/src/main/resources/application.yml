@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: school-service
+
+  profiles:
+    active: mysql
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:8889/school-service
+    username: root
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show_sql: true
+
+server:
+  port: 8094

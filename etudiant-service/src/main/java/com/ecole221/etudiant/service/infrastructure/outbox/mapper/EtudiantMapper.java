@@ -15,6 +15,7 @@ public class EtudiantMapper {
                 .setPrenom(event.getPrenom())
                 .setDateNaissance(event.getDateNaissance().toString())
                 .setOccurredAt(event.occurredAt().toString())
+                .setEmail(event.getEmail())
                 .build();
     }
 

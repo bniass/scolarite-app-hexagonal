@@ -4,12 +4,14 @@ import com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel;
 import com.ecole221.inscription.service.application.command.SynchroniserAnneeAcademiqueCommand;
 import com.ecole221.inscription.service.application.port.in.SynchroniserAnneeAcademiqueUseCase;
 import com.ecole221.inscription.service.infrastructure.event.kafka.mapper.AnneeAcademiqueEventMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class AnneeAcademiqueEventConsumer {
 
@@ -33,8 +35,10 @@ public class AnneeAcademiqueEventConsumer {
                         @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
                         @Header(KafkaHeaders.OFFSET) long offset) {
 
-        SynchroniserAnneeAcademiqueCommand command = mapper.toCommand(message);
+        log.info("[annee-academique] reçu: code={} etat={} mois={}",
+                message.getCodeAnnee(), message.getEtatAnnee(), message.getMoisAcademiques());
 
+        SynchroniserAnneeAcademiqueCommand command = mapper.toCommand(message);
         useCase.synchroniser(command);
     }
 }

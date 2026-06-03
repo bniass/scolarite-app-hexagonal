@@ -8,9 +8,11 @@ import com.ecole221.anneeacademique.service.domain.model.AnneeAcademique;
 import com.ecole221.anneeacademique.service.domain.exception.AnneeAcademiqueNotFoundException;
 import com.ecole221.anneeacademique.service.domain.valuobject.CodeAnnee;
 import com.ecole221.common.event.publisher.DomainEventPublisher;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 public class OuvrirInscriptionService
@@ -38,6 +40,8 @@ public class OuvrirInscriptionService
                                 "Année académique introuvable"
                         )
                 );
+
+        log.info("[ouvrirInscription] code={} mois chargés={}", annee.getId().getValue().getCodeAnnee(), annee.getMoisAcademiques().size());
 
         annee.ouvrirInscription();
 

@@ -10,9 +10,11 @@ import com.ecole221.anneeacademique.service.domain.model.DatesAnnee;
 import com.ecole221.anneeacademique.service.domain.exception.AnneeAcademiqueException;
 import com.ecole221.anneeacademique.service.domain.valuobject.CodeAnnee;
 import com.ecole221.common.event.publisher.DomainEventPublisher;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 public class CreerAnneeAcademiqueService
@@ -52,6 +54,7 @@ public class CreerAnneeAcademiqueService
         );
 
         repository.save(annee);
+        log.info("[creerAnnee] mois générés={}", annee.getMoisAcademiques().size());
 
         annee.pullDomainEvents()
                 .forEach(

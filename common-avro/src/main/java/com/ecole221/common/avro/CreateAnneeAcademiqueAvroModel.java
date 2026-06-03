@@ -6,313 +6,121 @@
 package com.ecole221.common.avro;
 
 import org.apache.avro.specific.SpecificData;
-import org.apache.avro.util.Utf8;
 import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class CreateAnneeAcademiqueAvroModel extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -6376825437506915761L;
+  private static final long serialVersionUID = -6376825437506915762L;
 
-
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CreateAnneeAcademiqueAvroModel\",\"namespace\":\"com.ecole221.common.avro\",\"fields\":[{\"name\":\"codeAnnee\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"etatAnnee\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CreateAnneeAcademiqueAvroModel\",\"namespace\":\"com.ecole221.common.avro\",\"fields\":[{\"name\":\"codeAnnee\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"etatAnnee\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"moisAcademiques\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"[]\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
+  private static final BinaryMessageEncoder<CreateAnneeAcademiqueAvroModel> ENCODER = new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<CreateAnneeAcademiqueAvroModel> DECODER = new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageEncoder<CreateAnneeAcademiqueAvroModel> ENCODER =
-      new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
-
-  private static final BinaryMessageDecoder<CreateAnneeAcademiqueAvroModel> DECODER =
-      new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
-
-  /**
-   * Return the BinaryMessageEncoder instance used by this class.
-   * @return the message encoder used by this class
-   */
-  public static BinaryMessageEncoder<CreateAnneeAcademiqueAvroModel> getEncoder() {
-    return ENCODER;
-  }
-
-  /**
-   * Return the BinaryMessageDecoder instance used by this class.
-   * @return the message decoder used by this class
-   */
-  public static BinaryMessageDecoder<CreateAnneeAcademiqueAvroModel> getDecoder() {
-    return DECODER;
-  }
-
-  /**
-   * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
-   * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
-   * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
-   */
+  public static BinaryMessageEncoder<CreateAnneeAcademiqueAvroModel> getEncoder() { return ENCODER; }
+  public static BinaryMessageDecoder<CreateAnneeAcademiqueAvroModel> getDecoder() { return DECODER; }
   public static BinaryMessageDecoder<CreateAnneeAcademiqueAvroModel> createDecoder(SchemaStore resolver) {
     return new BinaryMessageDecoder<>(MODEL$, SCHEMA$, resolver);
   }
 
-  /**
-   * Serializes this CreateAnneeAcademiqueAvroModel to a ByteBuffer.
-   * @return a buffer holding the serialized data for this instance
-   * @throws java.io.IOException if this instance could not be serialized
-   */
-  public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException {
-    return ENCODER.encode(this);
-  }
-
-  /**
-   * Deserializes a CreateAnneeAcademiqueAvroModel from a ByteBuffer.
-   * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a CreateAnneeAcademiqueAvroModel instance decoded from the given buffer
-   * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
-   */
-  public static CreateAnneeAcademiqueAvroModel fromByteBuffer(
-      java.nio.ByteBuffer b) throws java.io.IOException {
-    return DECODER.decode(b);
-  }
+  public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException { return ENCODER.encode(this); }
+  public static CreateAnneeAcademiqueAvroModel fromByteBuffer(java.nio.ByteBuffer b) throws java.io.IOException { return DECODER.decode(b); }
 
   private java.lang.String codeAnnee;
   private java.lang.String etatAnnee;
+  private java.lang.String moisAcademiques;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use <code>newBuilder()</code>.
-   */
   public CreateAnneeAcademiqueAvroModel() {}
 
-  /**
-   * All-args constructor.
-   * @param codeAnnee The new value for codeAnnee
-   * @param etatAnnee The new value for etatAnnee
-   */
-  public CreateAnneeAcademiqueAvroModel(java.lang.String codeAnnee, java.lang.String etatAnnee) {
+  public CreateAnneeAcademiqueAvroModel(java.lang.String codeAnnee, java.lang.String etatAnnee, java.lang.String moisAcademiques) {
     this.codeAnnee = codeAnnee;
     this.etatAnnee = etatAnnee;
+    this.moisAcademiques = moisAcademiques;
   }
 
-  @Override
-  public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
+  @Override public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
+  @Override public org.apache.avro.Schema getSchema() { return SCHEMA$; }
 
-  @Override
-  public org.apache.avro.Schema getSchema() { return SCHEMA$; }
-
-  // Used by DatumWriter.  Applications should not call.
   @Override
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return codeAnnee;
     case 1: return etatAnnee;
+    case 2: return moisAcademiques;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
-  // Used by DatumReader.  Applications should not call.
   @Override
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: codeAnnee = value$ != null ? value$.toString() : null; break;
     case 1: etatAnnee = value$ != null ? value$.toString() : null; break;
+    case 2: moisAcademiques = value$ != null ? value$.toString() : null; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
-  /**
-   * Gets the value of the 'codeAnnee' field.
-   * @return The value of the 'codeAnnee' field.
-   */
-  public java.lang.String getCodeAnnee() {
-    return codeAnnee;
-  }
+  public java.lang.String getCodeAnnee() { return codeAnnee; }
+  public void setCodeAnnee(java.lang.String value) { this.codeAnnee = value; }
+  public java.lang.String getEtatAnnee() { return etatAnnee; }
+  public void setEtatAnnee(java.lang.String value) { this.etatAnnee = value; }
+  public java.lang.String getMoisAcademiques() { return moisAcademiques; }
+  public void setMoisAcademiques(java.lang.String value) { this.moisAcademiques = value; }
 
-
-  /**
-   * Sets the value of the 'codeAnnee' field.
-   * @param value the value to set.
-   */
-  public void setCodeAnnee(java.lang.String value) {
-    this.codeAnnee = value;
-  }
-
-  /**
-   * Gets the value of the 'etatAnnee' field.
-   * @return The value of the 'etatAnnee' field.
-   */
-  public java.lang.String getEtatAnnee() {
-    return etatAnnee;
-  }
-
-
-  /**
-   * Sets the value of the 'etatAnnee' field.
-   * @param value the value to set.
-   */
-  public void setEtatAnnee(java.lang.String value) {
-    this.etatAnnee = value;
-  }
-
-  /**
-   * Creates a new CreateAnneeAcademiqueAvroModel RecordBuilder.
-   * @return A new CreateAnneeAcademiqueAvroModel RecordBuilder
-   */
   public static com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder newBuilder() {
     return new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder();
   }
-
-  /**
-   * Creates a new CreateAnneeAcademiqueAvroModel RecordBuilder by copying an existing Builder.
-   * @param other The existing builder to copy.
-   * @return A new CreateAnneeAcademiqueAvroModel RecordBuilder
-   */
   public static com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder newBuilder(com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder other) {
-    if (other == null) {
-      return new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder();
-    } else {
-      return new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder(other);
-    }
+    return other == null ? new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder() : new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder(other);
   }
-
-  /**
-   * Creates a new CreateAnneeAcademiqueAvroModel RecordBuilder by copying an existing CreateAnneeAcademiqueAvroModel instance.
-   * @param other The existing instance to copy.
-   * @return A new CreateAnneeAcademiqueAvroModel RecordBuilder
-   */
   public static com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder newBuilder(com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel other) {
-    if (other == null) {
-      return new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder();
-    } else {
-      return new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder(other);
-    }
+    return other == null ? new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder() : new com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder(other);
   }
 
-  /**
-   * RecordBuilder for CreateAnneeAcademiqueAvroModel instances.
-   */
   @org.apache.avro.specific.AvroGenerated
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<CreateAnneeAcademiqueAvroModel>
-    implements org.apache.avro.data.RecordBuilder<CreateAnneeAcademiqueAvroModel> {
+      implements org.apache.avro.data.RecordBuilder<CreateAnneeAcademiqueAvroModel> {
 
     private java.lang.String codeAnnee;
     private java.lang.String etatAnnee;
+    private java.lang.String moisAcademiques;
 
-    /** Creates a new Builder */
-    private Builder() {
-      super(SCHEMA$, MODEL$);
-    }
+    private Builder() { super(SCHEMA$, MODEL$); }
 
-    /**
-     * Creates a Builder by copying an existing Builder.
-     * @param other The existing Builder to copy.
-     */
     private Builder(com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.codeAnnee)) {
-        this.codeAnnee = data().deepCopy(fields()[0].schema(), other.codeAnnee);
-        fieldSetFlags()[0] = other.fieldSetFlags()[0];
-      }
-      if (isValidValue(fields()[1], other.etatAnnee)) {
-        this.etatAnnee = data().deepCopy(fields()[1].schema(), other.etatAnnee);
-        fieldSetFlags()[1] = other.fieldSetFlags()[1];
-      }
+      if (isValidValue(fields()[0], other.codeAnnee)) { this.codeAnnee = data().deepCopy(fields()[0].schema(), other.codeAnnee); fieldSetFlags()[0] = other.fieldSetFlags()[0]; }
+      if (isValidValue(fields()[1], other.etatAnnee)) { this.etatAnnee = data().deepCopy(fields()[1].schema(), other.etatAnnee); fieldSetFlags()[1] = other.fieldSetFlags()[1]; }
+      if (isValidValue(fields()[2], other.moisAcademiques)) { this.moisAcademiques = data().deepCopy(fields()[2].schema(), other.moisAcademiques); fieldSetFlags()[2] = other.fieldSetFlags()[2]; }
     }
 
-    /**
-     * Creates a Builder by copying an existing CreateAnneeAcademiqueAvroModel instance
-     * @param other The existing instance to copy.
-     */
     private Builder(com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel other) {
       super(SCHEMA$, MODEL$);
-      if (isValidValue(fields()[0], other.codeAnnee)) {
-        this.codeAnnee = data().deepCopy(fields()[0].schema(), other.codeAnnee);
-        fieldSetFlags()[0] = true;
-      }
-      if (isValidValue(fields()[1], other.etatAnnee)) {
-        this.etatAnnee = data().deepCopy(fields()[1].schema(), other.etatAnnee);
-        fieldSetFlags()[1] = true;
-      }
+      if (isValidValue(fields()[0], other.codeAnnee)) { this.codeAnnee = data().deepCopy(fields()[0].schema(), other.codeAnnee); fieldSetFlags()[0] = true; }
+      if (isValidValue(fields()[1], other.etatAnnee)) { this.etatAnnee = data().deepCopy(fields()[1].schema(), other.etatAnnee); fieldSetFlags()[1] = true; }
+      if (isValidValue(fields()[2], other.moisAcademiques)) { this.moisAcademiques = data().deepCopy(fields()[2].schema(), other.moisAcademiques); fieldSetFlags()[2] = true; }
     }
 
-    /**
-      * Gets the value of the 'codeAnnee' field.
-      * @return The value.
-      */
-    public java.lang.String getCodeAnnee() {
-      return codeAnnee;
-    }
+    public java.lang.String getCodeAnnee() { return codeAnnee; }
+    public Builder setCodeAnnee(java.lang.String value) { validate(fields()[0], value); this.codeAnnee = value; fieldSetFlags()[0] = true; return this; }
+    public boolean hasCodeAnnee() { return fieldSetFlags()[0]; }
+    public Builder clearCodeAnnee() { codeAnnee = null; fieldSetFlags()[0] = false; return this; }
 
+    public java.lang.String getEtatAnnee() { return etatAnnee; }
+    public Builder setEtatAnnee(java.lang.String value) { validate(fields()[1], value); this.etatAnnee = value; fieldSetFlags()[1] = true; return this; }
+    public boolean hasEtatAnnee() { return fieldSetFlags()[1]; }
+    public Builder clearEtatAnnee() { etatAnnee = null; fieldSetFlags()[1] = false; return this; }
 
-    /**
-      * Sets the value of the 'codeAnnee' field.
-      * @param value The value of 'codeAnnee'.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder setCodeAnnee(java.lang.String value) {
-      validate(fields()[0], value);
-      this.codeAnnee = value;
-      fieldSetFlags()[0] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'codeAnnee' field has been set.
-      * @return True if the 'codeAnnee' field has been set, false otherwise.
-      */
-    public boolean hasCodeAnnee() {
-      return fieldSetFlags()[0];
-    }
-
-
-    /**
-      * Clears the value of the 'codeAnnee' field.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder clearCodeAnnee() {
-      codeAnnee = null;
-      fieldSetFlags()[0] = false;
-      return this;
-    }
-
-    /**
-      * Gets the value of the 'etatAnnee' field.
-      * @return The value.
-      */
-    public java.lang.String getEtatAnnee() {
-      return etatAnnee;
-    }
-
-
-    /**
-      * Sets the value of the 'etatAnnee' field.
-      * @param value The value of 'etatAnnee'.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder setEtatAnnee(java.lang.String value) {
-      validate(fields()[1], value);
-      this.etatAnnee = value;
-      fieldSetFlags()[1] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'etatAnnee' field has been set.
-      * @return True if the 'etatAnnee' field has been set, false otherwise.
-      */
-    public boolean hasEtatAnnee() {
-      return fieldSetFlags()[1];
-    }
-
-
-    /**
-      * Clears the value of the 'etatAnnee' field.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel.Builder clearEtatAnnee() {
-      etatAnnee = null;
-      fieldSetFlags()[1] = false;
-      return this;
-    }
+    public java.lang.String getMoisAcademiques() { return moisAcademiques; }
+    public Builder setMoisAcademiques(java.lang.String value) { validate(fields()[2], value); this.moisAcademiques = value; fieldSetFlags()[2] = true; return this; }
+    public boolean hasMoisAcademiques() { return fieldSetFlags()[2]; }
+    public Builder clearMoisAcademiques() { moisAcademiques = null; fieldSetFlags()[2] = false; return this; }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -321,6 +129,7 @@ public class CreateAnneeAcademiqueAvroModel extends org.apache.avro.specific.Spe
         CreateAnneeAcademiqueAvroModel record = new CreateAnneeAcademiqueAvroModel();
         record.codeAnnee = fieldSetFlags()[0] ? this.codeAnnee : (java.lang.String) defaultValue(fields()[0]);
         record.etatAnnee = fieldSetFlags()[1] ? this.etatAnnee : (java.lang.String) defaultValue(fields()[1]);
+        record.moisAcademiques = fieldSetFlags()[2] ? this.moisAcademiques : (java.lang.String) defaultValue(fields()[2]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -332,55 +141,41 @@ public class CreateAnneeAcademiqueAvroModel extends org.apache.avro.specific.Spe
 
   @SuppressWarnings("unchecked")
   private static final org.apache.avro.io.DatumWriter<CreateAnneeAcademiqueAvroModel>
-    WRITER$ = (org.apache.avro.io.DatumWriter<CreateAnneeAcademiqueAvroModel>)MODEL$.createDatumWriter(SCHEMA$);
+    WRITER$ = (org.apache.avro.io.DatumWriter<CreateAnneeAcademiqueAvroModel>) MODEL$.createDatumWriter(SCHEMA$);
 
-  @Override public void writeExternal(java.io.ObjectOutput out)
-    throws java.io.IOException {
+  @Override public void writeExternal(java.io.ObjectOutput out) throws java.io.IOException {
     WRITER$.write(this, SpecificData.getEncoder(out));
   }
 
   @SuppressWarnings("unchecked")
   private static final org.apache.avro.io.DatumReader<CreateAnneeAcademiqueAvroModel>
-    READER$ = (org.apache.avro.io.DatumReader<CreateAnneeAcademiqueAvroModel>)MODEL$.createDatumReader(SCHEMA$);
+    READER$ = (org.apache.avro.io.DatumReader<CreateAnneeAcademiqueAvroModel>) MODEL$.createDatumReader(SCHEMA$);
 
-  @Override public void readExternal(java.io.ObjectInput in)
-    throws java.io.IOException {
+  @Override public void readExternal(java.io.ObjectInput in) throws java.io.IOException {
     READER$.read(this, SpecificData.getDecoder(in));
   }
 
   @Override protected boolean hasCustomCoders() { return true; }
 
-  @Override public void customEncode(org.apache.avro.io.Encoder out)
-    throws java.io.IOException
-  {
+  @Override public void customEncode(org.apache.avro.io.Encoder out) throws java.io.IOException {
     out.writeString(this.codeAnnee);
-
     out.writeString(this.etatAnnee);
-
+    out.writeString(this.moisAcademiques != null ? this.moisAcademiques : "[]");
   }
 
-  @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in)
-    throws java.io.IOException
-  {
+  @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in) throws java.io.IOException {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
       this.codeAnnee = in.readString();
-
       this.etatAnnee = in.readString();
-
+      this.moisAcademiques = in.readString();
     } else {
-      for (int i = 0; i < 2; i++) {
+      for (int i = 0; i < 3; i++) {
         switch (fieldOrder[i].pos()) {
-        case 0:
-          this.codeAnnee = in.readString();
-          break;
-
-        case 1:
-          this.etatAnnee = in.readString();
-          break;
-
-        default:
-          throw new java.io.IOException("Corrupt ResolvingDecoder.");
+        case 0: this.codeAnnee = in.readString(); break;
+        case 1: this.etatAnnee = in.readString(); break;
+        case 2: this.moisAcademiques = in.readString(); break;
+        default: throw new java.io.IOException("Corrupt ResolvingDecoder.");
         }
       }
     }
@@ -391,34 +186,17 @@ public class CreateAnneeAcademiqueAvroModel extends org.apache.avro.specific.Spe
     int result = 1;
     result = 31 * result + (codeAnnee == null ? 0 : codeAnnee.hashCode());
     result = 31 * result + (etatAnnee == null ? 0 : etatAnnee.hashCode());
+    result = 31 * result + (moisAcademiques == null ? 0 : moisAcademiques.hashCode());
     return result;
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof CreateAnneeAcademiqueAvroModel)) {
-      return false;
-    }
+    if (this == o) return true;
+    if (!(o instanceof CreateAnneeAcademiqueAvroModel)) return false;
     CreateAnneeAcademiqueAvroModel other = (CreateAnneeAcademiqueAvroModel) o;
-    if (!java.util.Objects.equals(this.codeAnnee, other.codeAnnee)) {
-      return false;
-    }
-    if (!java.util.Objects.equals(this.etatAnnee, other.etatAnnee)) {
-      return false;
-    }
-    return true;
+    return java.util.Objects.equals(this.codeAnnee, other.codeAnnee)
+        && java.util.Objects.equals(this.etatAnnee, other.etatAnnee)
+        && java.util.Objects.equals(this.moisAcademiques, other.moisAcademiques);
   }
 }
-
-
-
-
-
-
-
-
-
-

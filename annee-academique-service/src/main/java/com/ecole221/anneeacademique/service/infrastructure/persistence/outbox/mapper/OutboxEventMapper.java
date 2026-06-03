@@ -1,18 +1,23 @@
 package com.ecole221.anneeacademique.service.infrastructure.persistence.outbox.mapper;
 
 import com.ecole221.anneeacademique.service.domain.event.AnneeAcademiqueCreeeEvent;
+import com.ecole221.anneeacademique.service.domain.model.MoisAcademique;
 import com.ecole221.common.avro.AvroSerializerUtil;
 import com.ecole221.anneeacademique.service.infrastructure.persistence.outbox.dto.OutboxEventPayload;
 import com.ecole221.anneeacademique.service.infrastructure.persistence.outbox.entity.OutboxEventJpaEntity;
 import com.ecole221.anneeacademique.service.infrastructure.persistence.outbox.exception.OutboxSerializationException;
 import com.ecole221.common.avro.CreateAnneeAcademiqueAvroModel;
 import com.ecole221.common.event.DomainEvent;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OutboxEventMapper {
@@ -20,17 +25,19 @@ public class OutboxEventMapper {
     private final ObjectMapper objectMapper;
 
     public OutboxEventJpaEntity toJpa(DomainEvent event) {
-
         try {
-            AnneeAcademiqueCreeeEvent anneeAcademiqueCreeeEvent =
-                    (AnneeAcademiqueCreeeEvent)event;
-            CreateAnneeAcademiqueAvroModel createAnneeAcademiqueAvroModel =
-                    CreateAnneeAcademiqueAvroModel.newBuilder()
-                            .setCodeAnnee(anneeAcademiqueCreeeEvent.getCode())
-                            .setEtatAnnee(anneeAcademiqueCreeeEvent.getEtatAnnee())
-                            .build();
+            AnneeAcademiqueCreeeEvent anneeEvent = (AnneeAcademiqueCreeeEvent) event;
 
-            byte[] payload = AvroSerializerUtil.toBytes(createAnneeAcademiqueAvroModel);
+            log.info("[OutboxEventMapper] etat={} mois={}", anneeEvent.getEtatAnnee(), anneeEvent.getMoisAcademiques());
+            String moisJson = serializerMois(anneeEvent.getMoisAcademiques());
+
+            CreateAnneeAcademiqueAvroModel avroModel = CreateAnneeAcademiqueAvroModel.newBuilder()
+                    .setCodeAnnee(anneeEvent.getCode())
+                    .setEtatAnnee(anneeEvent.getEtatAnnee())
+                    .setMoisAcademiques(moisJson)
+                    .build();
+
+            byte[] payload = AvroSerializerUtil.toBytes(avroModel);
             objectMapper.registerModule(new JavaTimeModule());
 
             return new OutboxEventJpaEntity(
@@ -44,12 +51,9 @@ public class OutboxEventMapper {
         } catch (Exception e) {
             e.printStackTrace();
             throw new OutboxSerializationException(
-                    "Erreur de sérialisation de l'événement " + event.getClass().getSimpleName(),
-                    e
-            );
+                    "Erreur de sérialisation de l'événement " + event.getClass().getSimpleName(), e);
         }
     }
-
 
     public static OutboxEventPayload from(DomainEvent event) {
         return new OutboxEventPayload(
@@ -58,5 +62,12 @@ public class OutboxEventMapper {
                 event.getClass().getSimpleName(),
                 event.occurredAt()
         );
+    }
+
+    private static String serializerMois(List<MoisAcademique> mois) {
+        if (mois == null || mois.isEmpty()) return "[]";
+        return mois.stream()
+                .map(m -> "{\"mois\":" + m.mois() + ",\"annee\":" + m.annee() + "}")
+                .collect(Collectors.joining(",", "[", "]"));
     }
 }

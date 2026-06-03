@@ -7,6 +7,8 @@ import com.ecole221.etudiant.service.domain.model.Etudiant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @Transactional(readOnly = true)
 public class RechercherEtudiantService implements RechercherEtudiantUseCase {
@@ -20,6 +22,12 @@ public class RechercherEtudiantService implements RechercherEtudiantUseCase {
     @Override
     public Etudiant parMatricule(String matricule) {
         return etudiantRepository.trouverParMatricule(matricule)
-                .orElseThrow(() -> new EtudiantNotFoundException(matricule));
+                .orElseThrow(() -> new EtudiantNotFoundException("Étudiant introuvable avec le matricule : " + matricule));
+    }
+
+    @Override
+    public Etudiant parId(UUID id) {
+        return etudiantRepository.trouverParId(id)
+                .orElseThrow(() -> new EtudiantNotFoundException("Étudiant introuvable avec l'id : " + id));
     }
 }

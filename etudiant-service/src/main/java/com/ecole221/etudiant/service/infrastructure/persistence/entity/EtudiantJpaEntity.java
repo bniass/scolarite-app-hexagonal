@@ -25,6 +25,9 @@ public class EtudiantJpaEntity {
     @Column(name = "date_naissance", nullable = false)
     private LocalDate dateNaissance;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
     public EtudiantJpaEntity() {}
 
     public UUID getId() { return id; }
@@ -41,4 +44,6 @@ public class EtudiantJpaEntity {
 
     public LocalDate getDateNaissance() { return dateNaissance; }
     public void setDateNaissance(LocalDate dateNaissance) { this.dateNaissance = dateNaissance; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 }

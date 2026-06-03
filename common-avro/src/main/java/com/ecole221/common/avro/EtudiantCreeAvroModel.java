@@ -13,10 +13,9 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 1514181381366168962L;
+  private static final long serialVersionUID = 1514181381366168963L;
 
-
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EtudiantCreeAvroModel\",\"namespace\":\"com.ecole221.common.avro\",\"fields\":[{\"name\":\"etudiantId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"matricule\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"nom\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"prenom\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"dateNaissance\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"occurredAt\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"EtudiantCreeAvroModel\",\"namespace\":\"com.ecole221.common.avro\",\"fields\":[{\"name\":\"etudiantId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"matricule\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"nom\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"prenom\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"dateNaissance\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"occurredAt\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"email\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
@@ -27,48 +26,18 @@ public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificReco
   private static final BinaryMessageDecoder<EtudiantCreeAvroModel> DECODER =
       new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
 
-  /**
-   * Return the BinaryMessageEncoder instance used by this class.
-   * @return the message encoder used by this class
-   */
-  public static BinaryMessageEncoder<EtudiantCreeAvroModel> getEncoder() {
-    return ENCODER;
-  }
+  public static BinaryMessageEncoder<EtudiantCreeAvroModel> getEncoder() { return ENCODER; }
+  public static BinaryMessageDecoder<EtudiantCreeAvroModel> getDecoder() { return DECODER; }
 
-  /**
-   * Return the BinaryMessageDecoder instance used by this class.
-   * @return the message decoder used by this class
-   */
-  public static BinaryMessageDecoder<EtudiantCreeAvroModel> getDecoder() {
-    return DECODER;
-  }
-
-  /**
-   * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
-   * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
-   * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
-   */
   public static BinaryMessageDecoder<EtudiantCreeAvroModel> createDecoder(SchemaStore resolver) {
     return new BinaryMessageDecoder<>(MODEL$, SCHEMA$, resolver);
   }
 
-  /**
-   * Serializes this EtudiantCreeAvroModel to a ByteBuffer.
-   * @return a buffer holding the serialized data for this instance
-   * @throws java.io.IOException if this instance could not be serialized
-   */
   public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException {
     return ENCODER.encode(this);
   }
 
-  /**
-   * Deserializes a EtudiantCreeAvroModel from a ByteBuffer.
-   * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a EtudiantCreeAvroModel instance decoded from the given buffer
-   * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
-   */
-  public static EtudiantCreeAvroModel fromByteBuffer(
-      java.nio.ByteBuffer b) throws java.io.IOException {
+  public static EtudiantCreeAvroModel fromByteBuffer(java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
 
@@ -78,39 +47,25 @@ public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificReco
   private java.lang.String prenom;
   private java.lang.String dateNaissance;
   private java.lang.String occurredAt;
+  private java.lang.String email;
 
-  /**
-   * Default constructor.  Note that this does not initialize fields
-   * to their default values from the schema.  If that is desired then
-   * one should use <code>newBuilder()</code>.
-   */
   public EtudiantCreeAvroModel() {}
 
-  /**
-   * All-args constructor.
-   * @param etudiantId The new value for etudiantId
-   * @param matricule The new value for matricule
-   * @param nom The new value for nom
-   * @param prenom The new value for prenom
-   * @param dateNaissance The new value for dateNaissance
-   * @param occurredAt The new value for occurredAt
-   */
-  public EtudiantCreeAvroModel(java.lang.String etudiantId, java.lang.String matricule, java.lang.String nom, java.lang.String prenom, java.lang.String dateNaissance, java.lang.String occurredAt) {
+  public EtudiantCreeAvroModel(java.lang.String etudiantId, java.lang.String matricule,
+      java.lang.String nom, java.lang.String prenom, java.lang.String dateNaissance,
+      java.lang.String occurredAt, java.lang.String email) {
     this.etudiantId = etudiantId;
     this.matricule = matricule;
     this.nom = nom;
     this.prenom = prenom;
     this.dateNaissance = dateNaissance;
     this.occurredAt = occurredAt;
+    this.email = email;
   }
 
-  @Override
-  public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
+  @Override public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
+  @Override public org.apache.avro.Schema getSchema() { return SCHEMA$; }
 
-  @Override
-  public org.apache.avro.Schema getSchema() { return SCHEMA$; }
-
-  // Used by DatumWriter.  Applications should not call.
   @Override
   public java.lang.Object get(int field$) {
     switch (field$) {
@@ -120,11 +75,11 @@ public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificReco
     case 3: return prenom;
     case 4: return dateNaissance;
     case 5: return occurredAt;
+    case 6: return email;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
-  // Used by DatumReader.  Applications should not call.
   @Override
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
@@ -135,152 +90,45 @@ public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificReco
     case 3: prenom = value$ != null ? value$.toString() : null; break;
     case 4: dateNaissance = value$ != null ? value$.toString() : null; break;
     case 5: occurredAt = value$ != null ? value$.toString() : null; break;
+    case 6: email = value$ != null ? value$.toString() : null; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
-  /**
-   * Gets the value of the 'etudiantId' field.
-   * @return The value of the 'etudiantId' field.
-   */
-  public java.lang.String getEtudiantId() {
-    return etudiantId;
-  }
+  public java.lang.String getEtudiantId() { return etudiantId; }
+  public void setEtudiantId(java.lang.String value) { this.etudiantId = value; }
+  public java.lang.String getMatricule() { return matricule; }
+  public void setMatricule(java.lang.String value) { this.matricule = value; }
+  public java.lang.String getNom() { return nom; }
+  public void setNom(java.lang.String value) { this.nom = value; }
+  public java.lang.String getPrenom() { return prenom; }
+  public void setPrenom(java.lang.String value) { this.prenom = value; }
+  public java.lang.String getDateNaissance() { return dateNaissance; }
+  public void setDateNaissance(java.lang.String value) { this.dateNaissance = value; }
+  public java.lang.String getOccurredAt() { return occurredAt; }
+  public void setOccurredAt(java.lang.String value) { this.occurredAt = value; }
+  public java.lang.String getEmail() { return email; }
+  public void setEmail(java.lang.String value) { this.email = value; }
 
-
-  /**
-   * Sets the value of the 'etudiantId' field.
-   * @param value the value to set.
-   */
-  public void setEtudiantId(java.lang.String value) {
-    this.etudiantId = value;
-  }
-
-  /**
-   * Gets the value of the 'matricule' field.
-   * @return The value of the 'matricule' field.
-   */
-  public java.lang.String getMatricule() {
-    return matricule;
-  }
-
-
-  /**
-   * Sets the value of the 'matricule' field.
-   * @param value the value to set.
-   */
-  public void setMatricule(java.lang.String value) {
-    this.matricule = value;
-  }
-
-  /**
-   * Gets the value of the 'nom' field.
-   * @return The value of the 'nom' field.
-   */
-  public java.lang.String getNom() {
-    return nom;
-  }
-
-
-  /**
-   * Sets the value of the 'nom' field.
-   * @param value the value to set.
-   */
-  public void setNom(java.lang.String value) {
-    this.nom = value;
-  }
-
-  /**
-   * Gets the value of the 'prenom' field.
-   * @return The value of the 'prenom' field.
-   */
-  public java.lang.String getPrenom() {
-    return prenom;
-  }
-
-
-  /**
-   * Sets the value of the 'prenom' field.
-   * @param value the value to set.
-   */
-  public void setPrenom(java.lang.String value) {
-    this.prenom = value;
-  }
-
-  /**
-   * Gets the value of the 'dateNaissance' field.
-   * @return The value of the 'dateNaissance' field.
-   */
-  public java.lang.String getDateNaissance() {
-    return dateNaissance;
-  }
-
-
-  /**
-   * Sets the value of the 'dateNaissance' field.
-   * @param value the value to set.
-   */
-  public void setDateNaissance(java.lang.String value) {
-    this.dateNaissance = value;
-  }
-
-  /**
-   * Gets the value of the 'occurredAt' field.
-   * @return The value of the 'occurredAt' field.
-   */
-  public java.lang.String getOccurredAt() {
-    return occurredAt;
-  }
-
-
-  /**
-   * Sets the value of the 'occurredAt' field.
-   * @param value the value to set.
-   */
-  public void setOccurredAt(java.lang.String value) {
-    this.occurredAt = value;
-  }
-
-  /**
-   * Creates a new EtudiantCreeAvroModel RecordBuilder.
-   * @return A new EtudiantCreeAvroModel RecordBuilder
-   */
   public static com.ecole221.common.avro.EtudiantCreeAvroModel.Builder newBuilder() {
     return new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder();
   }
 
-  /**
-   * Creates a new EtudiantCreeAvroModel RecordBuilder by copying an existing Builder.
-   * @param other The existing builder to copy.
-   * @return A new EtudiantCreeAvroModel RecordBuilder
-   */
-  public static com.ecole221.common.avro.EtudiantCreeAvroModel.Builder newBuilder(com.ecole221.common.avro.EtudiantCreeAvroModel.Builder other) {
-    if (other == null) {
-      return new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder();
-    } else {
-      return new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder(other);
-    }
+  public static com.ecole221.common.avro.EtudiantCreeAvroModel.Builder newBuilder(
+      com.ecole221.common.avro.EtudiantCreeAvroModel.Builder other) {
+    return other == null ? new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder()
+        : new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder(other);
   }
 
-  /**
-   * Creates a new EtudiantCreeAvroModel RecordBuilder by copying an existing EtudiantCreeAvroModel instance.
-   * @param other The existing instance to copy.
-   * @return A new EtudiantCreeAvroModel RecordBuilder
-   */
-  public static com.ecole221.common.avro.EtudiantCreeAvroModel.Builder newBuilder(com.ecole221.common.avro.EtudiantCreeAvroModel other) {
-    if (other == null) {
-      return new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder();
-    } else {
-      return new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder(other);
-    }
+  public static com.ecole221.common.avro.EtudiantCreeAvroModel.Builder newBuilder(
+      com.ecole221.common.avro.EtudiantCreeAvroModel other) {
+    return other == null ? new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder()
+        : new com.ecole221.common.avro.EtudiantCreeAvroModel.Builder(other);
   }
 
-  /**
-   * RecordBuilder for EtudiantCreeAvroModel instances.
-   */
   @org.apache.avro.specific.AvroGenerated
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<EtudiantCreeAvroModel>
-    implements org.apache.avro.data.RecordBuilder<EtudiantCreeAvroModel> {
+      implements org.apache.avro.data.RecordBuilder<EtudiantCreeAvroModel> {
 
     private java.lang.String etudiantId;
     private java.lang.String matricule;
@@ -288,315 +136,66 @@ public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificReco
     private java.lang.String prenom;
     private java.lang.String dateNaissance;
     private java.lang.String occurredAt;
+    private java.lang.String email;
 
-    /** Creates a new Builder */
-    private Builder() {
-      super(SCHEMA$, MODEL$);
-    }
+    private Builder() { super(SCHEMA$, MODEL$); }
 
-    /**
-     * Creates a Builder by copying an existing Builder.
-     * @param other The existing Builder to copy.
-     */
     private Builder(com.ecole221.common.avro.EtudiantCreeAvroModel.Builder other) {
       super(other);
-      if (isValidValue(fields()[0], other.etudiantId)) {
-        this.etudiantId = data().deepCopy(fields()[0].schema(), other.etudiantId);
-        fieldSetFlags()[0] = other.fieldSetFlags()[0];
-      }
-      if (isValidValue(fields()[1], other.matricule)) {
-        this.matricule = data().deepCopy(fields()[1].schema(), other.matricule);
-        fieldSetFlags()[1] = other.fieldSetFlags()[1];
-      }
-      if (isValidValue(fields()[2], other.nom)) {
-        this.nom = data().deepCopy(fields()[2].schema(), other.nom);
-        fieldSetFlags()[2] = other.fieldSetFlags()[2];
-      }
-      if (isValidValue(fields()[3], other.prenom)) {
-        this.prenom = data().deepCopy(fields()[3].schema(), other.prenom);
-        fieldSetFlags()[3] = other.fieldSetFlags()[3];
-      }
-      if (isValidValue(fields()[4], other.dateNaissance)) {
-        this.dateNaissance = data().deepCopy(fields()[4].schema(), other.dateNaissance);
-        fieldSetFlags()[4] = other.fieldSetFlags()[4];
-      }
-      if (isValidValue(fields()[5], other.occurredAt)) {
-        this.occurredAt = data().deepCopy(fields()[5].schema(), other.occurredAt);
-        fieldSetFlags()[5] = other.fieldSetFlags()[5];
-      }
+      if (isValidValue(fields()[0], other.etudiantId)) { this.etudiantId = data().deepCopy(fields()[0].schema(), other.etudiantId); fieldSetFlags()[0] = other.fieldSetFlags()[0]; }
+      if (isValidValue(fields()[1], other.matricule)) { this.matricule = data().deepCopy(fields()[1].schema(), other.matricule); fieldSetFlags()[1] = other.fieldSetFlags()[1]; }
+      if (isValidValue(fields()[2], other.nom)) { this.nom = data().deepCopy(fields()[2].schema(), other.nom); fieldSetFlags()[2] = other.fieldSetFlags()[2]; }
+      if (isValidValue(fields()[3], other.prenom)) { this.prenom = data().deepCopy(fields()[3].schema(), other.prenom); fieldSetFlags()[3] = other.fieldSetFlags()[3]; }
+      if (isValidValue(fields()[4], other.dateNaissance)) { this.dateNaissance = data().deepCopy(fields()[4].schema(), other.dateNaissance); fieldSetFlags()[4] = other.fieldSetFlags()[4]; }
+      if (isValidValue(fields()[5], other.occurredAt)) { this.occurredAt = data().deepCopy(fields()[5].schema(), other.occurredAt); fieldSetFlags()[5] = other.fieldSetFlags()[5]; }
+      if (isValidValue(fields()[6], other.email)) { this.email = data().deepCopy(fields()[6].schema(), other.email); fieldSetFlags()[6] = other.fieldSetFlags()[6]; }
     }
 
-    /**
-     * Creates a Builder by copying an existing EtudiantCreeAvroModel instance
-     * @param other The existing instance to copy.
-     */
     private Builder(com.ecole221.common.avro.EtudiantCreeAvroModel other) {
       super(SCHEMA$, MODEL$);
-      if (isValidValue(fields()[0], other.etudiantId)) {
-        this.etudiantId = data().deepCopy(fields()[0].schema(), other.etudiantId);
-        fieldSetFlags()[0] = true;
-      }
-      if (isValidValue(fields()[1], other.matricule)) {
-        this.matricule = data().deepCopy(fields()[1].schema(), other.matricule);
-        fieldSetFlags()[1] = true;
-      }
-      if (isValidValue(fields()[2], other.nom)) {
-        this.nom = data().deepCopy(fields()[2].schema(), other.nom);
-        fieldSetFlags()[2] = true;
-      }
-      if (isValidValue(fields()[3], other.prenom)) {
-        this.prenom = data().deepCopy(fields()[3].schema(), other.prenom);
-        fieldSetFlags()[3] = true;
-      }
-      if (isValidValue(fields()[4], other.dateNaissance)) {
-        this.dateNaissance = data().deepCopy(fields()[4].schema(), other.dateNaissance);
-        fieldSetFlags()[4] = true;
-      }
-      if (isValidValue(fields()[5], other.occurredAt)) {
-        this.occurredAt = data().deepCopy(fields()[5].schema(), other.occurredAt);
-        fieldSetFlags()[5] = true;
-      }
+      if (isValidValue(fields()[0], other.etudiantId)) { this.etudiantId = data().deepCopy(fields()[0].schema(), other.etudiantId); fieldSetFlags()[0] = true; }
+      if (isValidValue(fields()[1], other.matricule)) { this.matricule = data().deepCopy(fields()[1].schema(), other.matricule); fieldSetFlags()[1] = true; }
+      if (isValidValue(fields()[2], other.nom)) { this.nom = data().deepCopy(fields()[2].schema(), other.nom); fieldSetFlags()[2] = true; }
+      if (isValidValue(fields()[3], other.prenom)) { this.prenom = data().deepCopy(fields()[3].schema(), other.prenom); fieldSetFlags()[3] = true; }
+      if (isValidValue(fields()[4], other.dateNaissance)) { this.dateNaissance = data().deepCopy(fields()[4].schema(), other.dateNaissance); fieldSetFlags()[4] = true; }
+      if (isValidValue(fields()[5], other.occurredAt)) { this.occurredAt = data().deepCopy(fields()[5].schema(), other.occurredAt); fieldSetFlags()[5] = true; }
+      if (isValidValue(fields()[6], other.email)) { this.email = data().deepCopy(fields()[6].schema(), other.email); fieldSetFlags()[6] = true; }
     }
 
-    /**
-      * Gets the value of the 'etudiantId' field.
-      * @return The value.
-      */
-    public java.lang.String getEtudiantId() {
-      return etudiantId;
-    }
+    public java.lang.String getEtudiantId() { return etudiantId; }
+    public Builder setEtudiantId(java.lang.String value) { validate(fields()[0], value); this.etudiantId = value; fieldSetFlags()[0] = true; return this; }
+    public boolean hasEtudiantId() { return fieldSetFlags()[0]; }
+    public Builder clearEtudiantId() { etudiantId = null; fieldSetFlags()[0] = false; return this; }
 
+    public java.lang.String getMatricule() { return matricule; }
+    public Builder setMatricule(java.lang.String value) { validate(fields()[1], value); this.matricule = value; fieldSetFlags()[1] = true; return this; }
+    public boolean hasMatricule() { return fieldSetFlags()[1]; }
+    public Builder clearMatricule() { matricule = null; fieldSetFlags()[1] = false; return this; }
 
-    /**
-      * Sets the value of the 'etudiantId' field.
-      * @param value The value of 'etudiantId'.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder setEtudiantId(java.lang.String value) {
-      validate(fields()[0], value);
-      this.etudiantId = value;
-      fieldSetFlags()[0] = true;
-      return this;
-    }
+    public java.lang.String getNom() { return nom; }
+    public Builder setNom(java.lang.String value) { validate(fields()[2], value); this.nom = value; fieldSetFlags()[2] = true; return this; }
+    public boolean hasNom() { return fieldSetFlags()[2]; }
+    public Builder clearNom() { nom = null; fieldSetFlags()[2] = false; return this; }
 
-    /**
-      * Checks whether the 'etudiantId' field has been set.
-      * @return True if the 'etudiantId' field has been set, false otherwise.
-      */
-    public boolean hasEtudiantId() {
-      return fieldSetFlags()[0];
-    }
+    public java.lang.String getPrenom() { return prenom; }
+    public Builder setPrenom(java.lang.String value) { validate(fields()[3], value); this.prenom = value; fieldSetFlags()[3] = true; return this; }
+    public boolean hasPrenom() { return fieldSetFlags()[3]; }
+    public Builder clearPrenom() { prenom = null; fieldSetFlags()[3] = false; return this; }
 
+    public java.lang.String getDateNaissance() { return dateNaissance; }
+    public Builder setDateNaissance(java.lang.String value) { validate(fields()[4], value); this.dateNaissance = value; fieldSetFlags()[4] = true; return this; }
+    public boolean hasDateNaissance() { return fieldSetFlags()[4]; }
+    public Builder clearDateNaissance() { dateNaissance = null; fieldSetFlags()[4] = false; return this; }
 
-    /**
-      * Clears the value of the 'etudiantId' field.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder clearEtudiantId() {
-      etudiantId = null;
-      fieldSetFlags()[0] = false;
-      return this;
-    }
+    public java.lang.String getOccurredAt() { return occurredAt; }
+    public Builder setOccurredAt(java.lang.String value) { validate(fields()[5], value); this.occurredAt = value; fieldSetFlags()[5] = true; return this; }
+    public boolean hasOccurredAt() { return fieldSetFlags()[5]; }
+    public Builder clearOccurredAt() { occurredAt = null; fieldSetFlags()[5] = false; return this; }
 
-    /**
-      * Gets the value of the 'matricule' field.
-      * @return The value.
-      */
-    public java.lang.String getMatricule() {
-      return matricule;
-    }
-
-
-    /**
-      * Sets the value of the 'matricule' field.
-      * @param value The value of 'matricule'.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder setMatricule(java.lang.String value) {
-      validate(fields()[1], value);
-      this.matricule = value;
-      fieldSetFlags()[1] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'matricule' field has been set.
-      * @return True if the 'matricule' field has been set, false otherwise.
-      */
-    public boolean hasMatricule() {
-      return fieldSetFlags()[1];
-    }
-
-
-    /**
-      * Clears the value of the 'matricule' field.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder clearMatricule() {
-      matricule = null;
-      fieldSetFlags()[1] = false;
-      return this;
-    }
-
-    /**
-      * Gets the value of the 'nom' field.
-      * @return The value.
-      */
-    public java.lang.String getNom() {
-      return nom;
-    }
-
-
-    /**
-      * Sets the value of the 'nom' field.
-      * @param value The value of 'nom'.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder setNom(java.lang.String value) {
-      validate(fields()[2], value);
-      this.nom = value;
-      fieldSetFlags()[2] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'nom' field has been set.
-      * @return True if the 'nom' field has been set, false otherwise.
-      */
-    public boolean hasNom() {
-      return fieldSetFlags()[2];
-    }
-
-
-    /**
-      * Clears the value of the 'nom' field.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder clearNom() {
-      nom = null;
-      fieldSetFlags()[2] = false;
-      return this;
-    }
-
-    /**
-      * Gets the value of the 'prenom' field.
-      * @return The value.
-      */
-    public java.lang.String getPrenom() {
-      return prenom;
-    }
-
-
-    /**
-      * Sets the value of the 'prenom' field.
-      * @param value The value of 'prenom'.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder setPrenom(java.lang.String value) {
-      validate(fields()[3], value);
-      this.prenom = value;
-      fieldSetFlags()[3] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'prenom' field has been set.
-      * @return True if the 'prenom' field has been set, false otherwise.
-      */
-    public boolean hasPrenom() {
-      return fieldSetFlags()[3];
-    }
-
-
-    /**
-      * Clears the value of the 'prenom' field.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder clearPrenom() {
-      prenom = null;
-      fieldSetFlags()[3] = false;
-      return this;
-    }
-
-    /**
-      * Gets the value of the 'dateNaissance' field.
-      * @return The value.
-      */
-    public java.lang.String getDateNaissance() {
-      return dateNaissance;
-    }
-
-
-    /**
-      * Sets the value of the 'dateNaissance' field.
-      * @param value The value of 'dateNaissance'.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder setDateNaissance(java.lang.String value) {
-      validate(fields()[4], value);
-      this.dateNaissance = value;
-      fieldSetFlags()[4] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'dateNaissance' field has been set.
-      * @return True if the 'dateNaissance' field has been set, false otherwise.
-      */
-    public boolean hasDateNaissance() {
-      return fieldSetFlags()[4];
-    }
-
-
-    /**
-      * Clears the value of the 'dateNaissance' field.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder clearDateNaissance() {
-      dateNaissance = null;
-      fieldSetFlags()[4] = false;
-      return this;
-    }
-
-    /**
-      * Gets the value of the 'occurredAt' field.
-      * @return The value.
-      */
-    public java.lang.String getOccurredAt() {
-      return occurredAt;
-    }
-
-
-    /**
-      * Sets the value of the 'occurredAt' field.
-      * @param value The value of 'occurredAt'.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder setOccurredAt(java.lang.String value) {
-      validate(fields()[5], value);
-      this.occurredAt = value;
-      fieldSetFlags()[5] = true;
-      return this;
-    }
-
-    /**
-      * Checks whether the 'occurredAt' field has been set.
-      * @return True if the 'occurredAt' field has been set, false otherwise.
-      */
-    public boolean hasOccurredAt() {
-      return fieldSetFlags()[5];
-    }
-
-
-    /**
-      * Clears the value of the 'occurredAt' field.
-      * @return This builder.
-      */
-    public com.ecole221.common.avro.EtudiantCreeAvroModel.Builder clearOccurredAt() {
-      occurredAt = null;
-      fieldSetFlags()[5] = false;
-      return this;
-    }
+    public java.lang.String getEmail() { return email; }
+    public Builder setEmail(java.lang.String value) { validate(fields()[6], value); this.email = value; fieldSetFlags()[6] = true; return this; }
+    public boolean hasEmail() { return fieldSetFlags()[6]; }
+    public Builder clearEmail() { email = null; fieldSetFlags()[6] = false; return this; }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -609,6 +208,7 @@ public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificReco
         record.prenom = fieldSetFlags()[3] ? this.prenom : (java.lang.String) defaultValue(fields()[3]);
         record.dateNaissance = fieldSetFlags()[4] ? this.dateNaissance : (java.lang.String) defaultValue(fields()[4]);
         record.occurredAt = fieldSetFlags()[5] ? this.occurredAt : (java.lang.String) defaultValue(fields()[5]);
+        record.email = fieldSetFlags()[6] ? this.email : (java.lang.String) defaultValue(fields()[6]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -620,87 +220,53 @@ public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificReco
 
   @SuppressWarnings("unchecked")
   private static final org.apache.avro.io.DatumWriter<EtudiantCreeAvroModel>
-    WRITER$ = (org.apache.avro.io.DatumWriter<EtudiantCreeAvroModel>)MODEL$.createDatumWriter(SCHEMA$);
+    WRITER$ = (org.apache.avro.io.DatumWriter<EtudiantCreeAvroModel>) MODEL$.createDatumWriter(SCHEMA$);
 
-  @Override public void writeExternal(java.io.ObjectOutput out)
-    throws java.io.IOException {
+  @Override public void writeExternal(java.io.ObjectOutput out) throws java.io.IOException {
     WRITER$.write(this, SpecificData.getEncoder(out));
   }
 
   @SuppressWarnings("unchecked")
   private static final org.apache.avro.io.DatumReader<EtudiantCreeAvroModel>
-    READER$ = (org.apache.avro.io.DatumReader<EtudiantCreeAvroModel>)MODEL$.createDatumReader(SCHEMA$);
+    READER$ = (org.apache.avro.io.DatumReader<EtudiantCreeAvroModel>) MODEL$.createDatumReader(SCHEMA$);
 
-  @Override public void readExternal(java.io.ObjectInput in)
-    throws java.io.IOException {
+  @Override public void readExternal(java.io.ObjectInput in) throws java.io.IOException {
     READER$.read(this, SpecificData.getDecoder(in));
   }
 
   @Override protected boolean hasCustomCoders() { return true; }
 
-  @Override public void customEncode(org.apache.avro.io.Encoder out)
-    throws java.io.IOException
-  {
+  @Override public void customEncode(org.apache.avro.io.Encoder out) throws java.io.IOException {
     out.writeString(this.etudiantId);
-
     out.writeString(this.matricule);
-
     out.writeString(this.nom);
-
     out.writeString(this.prenom);
-
     out.writeString(this.dateNaissance);
-
     out.writeString(this.occurredAt);
-
+    out.writeString(this.email);
   }
 
-  @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in)
-    throws java.io.IOException
-  {
+  @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in) throws java.io.IOException {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
       this.etudiantId = in.readString();
-
       this.matricule = in.readString();
-
       this.nom = in.readString();
-
       this.prenom = in.readString();
-
       this.dateNaissance = in.readString();
-
       this.occurredAt = in.readString();
-
+      this.email = in.readString();
     } else {
-      for (int i = 0; i < 6; i++) {
+      for (int i = 0; i < 7; i++) {
         switch (fieldOrder[i].pos()) {
-        case 0:
-          this.etudiantId = in.readString();
-          break;
-
-        case 1:
-          this.matricule = in.readString();
-          break;
-
-        case 2:
-          this.nom = in.readString();
-          break;
-
-        case 3:
-          this.prenom = in.readString();
-          break;
-
-        case 4:
-          this.dateNaissance = in.readString();
-          break;
-
-        case 5:
-          this.occurredAt = in.readString();
-          break;
-
-        default:
-          throw new java.io.IOException("Corrupt ResolvingDecoder.");
+        case 0: this.etudiantId = in.readString(); break;
+        case 1: this.matricule = in.readString(); break;
+        case 2: this.nom = in.readString(); break;
+        case 3: this.prenom = in.readString(); break;
+        case 4: this.dateNaissance = in.readString(); break;
+        case 5: this.occurredAt = in.readString(); break;
+        case 6: this.email = in.readString(); break;
+        default: throw new java.io.IOException("Corrupt ResolvingDecoder.");
         }
       }
     }
@@ -715,46 +281,21 @@ public class EtudiantCreeAvroModel extends org.apache.avro.specific.SpecificReco
     result = 31 * result + (prenom == null ? 0 : prenom.hashCode());
     result = 31 * result + (dateNaissance == null ? 0 : dateNaissance.hashCode());
     result = 31 * result + (occurredAt == null ? 0 : occurredAt.hashCode());
+    result = 31 * result + (email == null ? 0 : email.hashCode());
     return result;
   }
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof EtudiantCreeAvroModel)) {
-      return false;
-    }
+    if (this == o) return true;
+    if (!(o instanceof EtudiantCreeAvroModel)) return false;
     EtudiantCreeAvroModel other = (EtudiantCreeAvroModel) o;
-    if (!java.util.Objects.equals(this.etudiantId, other.etudiantId)) {
-      return false;
-    }
-    if (!java.util.Objects.equals(this.matricule, other.matricule)) {
-      return false;
-    }
-    if (!java.util.Objects.equals(this.nom, other.nom)) {
-      return false;
-    }
-    if (!java.util.Objects.equals(this.prenom, other.prenom)) {
-      return false;
-    }
-    if (!java.util.Objects.equals(this.dateNaissance, other.dateNaissance)) {
-      return false;
-    }
-    if (!java.util.Objects.equals(this.occurredAt, other.occurredAt)) {
-      return false;
-    }
-    return true;
+    return java.util.Objects.equals(this.etudiantId, other.etudiantId)
+        && java.util.Objects.equals(this.matricule, other.matricule)
+        && java.util.Objects.equals(this.nom, other.nom)
+        && java.util.Objects.equals(this.prenom, other.prenom)
+        && java.util.Objects.equals(this.dateNaissance, other.dateNaissance)
+        && java.util.Objects.equals(this.occurredAt, other.occurredAt)
+        && java.util.Objects.equals(this.email, other.email);
   }
 }
-
-
-
-
-
-
-
-
-
-

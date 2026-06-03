@@ -10,10 +10,11 @@ import org.springframework.stereotype.Component;
 public class AnneeAcademiqueEventMapper {
 
     public SynchroniserAnneeAcademiqueCommand toCommand(
-            CreateAnneeAcademiqueAvroModel createAnneeAcademiqueAvroModel) {
+            CreateAnneeAcademiqueAvroModel model) {
         return new SynchroniserAnneeAcademiqueCommand(
-                new CodeAnnee(createAnneeAcademiqueAvroModel.getCodeAnnee()),
-                EtatAnnee.valueOf(createAnneeAcademiqueAvroModel.getEtatAnnee())
+                new CodeAnnee(model.getCodeAnnee()),
+                EtatAnnee.valueOf(model.getEtatAnnee()),
+                model.getMoisAcademiques()
         );
     }
 }

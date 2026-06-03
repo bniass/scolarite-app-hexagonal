@@ -17,16 +17,19 @@ public class Etudiant extends AggregateRoot<EtudiantId> {
     private String nom;
     private String prenom;
     private LocalDate dateNaissance;
+    private String email;
 
     private Etudiant() {}
 
-    public static Etudiant creer(String matricule, String nom, String prenom, LocalDate dateNaissance) {
+    public static Etudiant creer(String nom, String prenom, LocalDate dateNaissance,
+                                  String email, long ordreInscription, String codeAnnee) {
         Etudiant etudiant = new Etudiant();
         etudiant.setId(new EtudiantId(UUID.randomUUID()));
-        etudiant.matricule = new Matricule(matricule);
+        etudiant.matricule = new Matricule(genererMatricule(ordreInscription, codeAnnee));
         etudiant.nom = validerNom(nom);
         etudiant.prenom = validerPrenom(prenom);
         etudiant.dateNaissance = validerDateNaissance(dateNaissance);
+        etudiant.email = validerEmail(email);
 
         etudiant.addEvent(new EtudiantCreeEvent(
                 etudiant.getId().getValue(),
@@ -34,6 +37,7 @@ public class Etudiant extends AggregateRoot<EtudiantId> {
                 etudiant.nom,
                 etudiant.prenom,
                 etudiant.dateNaissance,
+                etudiant.email,
                 LocalDateTime.now()
         ));
 
@@ -41,13 +45,14 @@ public class Etudiant extends AggregateRoot<EtudiantId> {
     }
 
     public static Etudiant reconstituer(EtudiantId id, Matricule matricule,
-                                         String nom, String prenom, LocalDate dateNaissance) {
+                                         String nom, String prenom, LocalDate dateNaissance, String email) {
         Etudiant etudiant = new Etudiant();
         etudiant.setId(id);
         etudiant.matricule = matricule;
         etudiant.nom = nom;
         etudiant.prenom = prenom;
         etudiant.dateNaissance = dateNaissance;
+        etudiant.email = email;
         return etudiant;
     }
 
@@ -66,6 +71,19 @@ public class Etudiant extends AggregateRoot<EtudiantId> {
         ));
     }
 
+    // codeAnnee format: "2024-2025" → suffixe "2425"
+    public static String suffixeAnnee(String codeAnnee) {
+        String[] parts = codeAnnee.split("-");
+        if (parts.length != 2 || parts[0].length() < 2 || parts[1].length() < 2) {
+            throw new EtudiantException("Format du code année invalide : " + codeAnnee);
+        }
+        return parts[0].substring(2) + parts[1].substring(2);
+    }
+
+    private static String genererMatricule(long ordre, String codeAnnee) {
+        return String.format("M%05d-%s", ordre, suffixeAnnee(codeAnnee));
+    }
+
     private static String validerNom(String nom) {
         if (nom == null || nom.isBlank()) throw new EtudiantException("Le nom est obligatoire");
         return nom.trim();
@@ -82,8 +100,16 @@ public class Etudiant extends AggregateRoot<EtudiantId> {
         return dateNaissance;
     }
 
+    private static String validerEmail(String email) {
+        if (email == null || email.isBlank()) throw new EtudiantException("L'email est obligatoire");
+        String trimmed = email.trim().toLowerCase();
+        if (!trimmed.contains("@")) throw new EtudiantException("Format d'email invalide");
+        return trimmed;
+    }
+
     public Matricule getMatricule() { return matricule; }
     public String getNom() { return nom; }
     public String getPrenom() { return prenom; }
     public LocalDate getDateNaissance() { return dateNaissance; }
+    public String getEmail() { return email; }
 }

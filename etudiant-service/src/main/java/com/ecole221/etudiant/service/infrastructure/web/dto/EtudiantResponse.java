@@ -8,5 +8,6 @@ public record EtudiantResponse(
         String matricule,
         String nom,
         String prenom,
-        LocalDate dateNaissance
+        LocalDate dateNaissance,
+        String email
 ) {}

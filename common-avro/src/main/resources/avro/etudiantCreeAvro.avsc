@@ -8,6 +8,7 @@
     {"name": "nom", "type": "string"},
     {"name": "prenom", "type": "string"},
     {"name": "dateNaissance", "type": "string"},
-    {"name": "occurredAt", "type": "string"}
+    {"name": "occurredAt", "type": "string"},
+    {"name": "email", "type": "string"}
   ]
 }

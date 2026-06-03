@@ -32,11 +32,7 @@ public class MoisAcademiquePersistenceMapper {
 
         for (MoisAcademique mois : domain.getMoisAcademiques()) {
             jpa.getMoisAcademiques().add(
-                    new AnneeMoisJpaEntity(
-                            domain.getId().getValue().getCodeAnnee(), // code année académique
-                            mois.mois(),
-                            mois.annee()
-                    )
+                    new AnneeMoisJpaEntity(jpa, mois.mois(), mois.annee())
             );
         }
     }

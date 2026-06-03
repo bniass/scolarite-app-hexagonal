@@ -34,10 +34,10 @@ public class AnneeAcademiqueJpaEntity {
        ======================= */
 
     @OneToMany(
+            mappedBy = "anneeAcademique",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    @JoinColumn(name = "annee_id")
     private List<AnneeMoisJpaEntity> moisAcademiques = new ArrayList<>();
 }
