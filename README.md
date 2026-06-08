@@ -734,11 +734,11 @@ Sauvegarder.
 **Étape 1 — Télécharger les specs OpenAPI** (services démarrés localement) :
 
 ```bash
-curl http://localhost:8080/v3/api-docs -o annee-api.json
-curl http://localhost:8091/v3/api-docs -o inscription-api.json
-curl http://localhost:8092/v3/api-docs -o etudiant-api.json
-curl http://localhost:8093/v3/api-docs -o paiement-api.json
-curl http://localhost:8094/v3/api-docs -o school-api.json
+curl http://localhost:8080/v3/api-docs -o annee-academique-service-api.json
+curl http://localhost:8091/v3/api-docs -o inscription-service-api.json
+curl http://localhost:8092/v3/api-docs -o etudiant-service-api.json
+curl http://localhost:8093/v3/api-docs -o paiement-service-api.json
+curl http://localhost:8094/v3/api-docs -o school-service-api.json
 ```
 
 **Étape 2 — Importer dans Publisher** :
