@@ -604,7 +604,7 @@ Client (mobile / web / Swagger)
     ┌────┴────────────────────────────────────┐
     ▼         ▼           ▼                  ▼
 inscrption  school    etudiant           paiement   annee-academique
-:8091       :8094      :8092              :8093          :8090
+:8091       :8094      :8092              :8093          :8080
   (valident le JWT avec la clé publique Keycloak via JWKS)
 ```
 
