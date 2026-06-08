@@ -81,7 +81,7 @@ scolarite-app-hexagonal (parent POM)
 
 ## 3. Microservices
 
-### 3.1 `annee-academique-service` — port **8090**
+### 3.1 `annee-academique-service` — port **8080**
 
 Gère le cycle de vie des années académiques.
 
@@ -438,7 +438,7 @@ docker-compose up -d
 ./mvnw clean install -pl common-service,common-avro,kafka-service
 
 # 4. Démarrer les services (dans n'importe quel ordre)
-./mvnw spring-boot:run -pl annee-academique-service
+./mvnw spring-boot:run -pl annee-academique-service   # :8080
 ./mvnw spring-boot:run -pl school-service
 ./mvnw spring-boot:run -pl etudiant-service
 ./mvnw spring-boot:run -pl inscrption-service
@@ -458,7 +458,7 @@ docker-compose up -d
 
 ## 10. Endpoints REST
 
-### `annee-academique-service` — :8090
+### `annee-academique-service` — :8080
 
 | Méthode | Endpoint | Description |
 |---------|----------|-------------|
@@ -734,7 +734,7 @@ Sauvegarder.
 **Étape 1 — Télécharger les specs OpenAPI** (services démarrés localement) :
 
 ```bash
-curl http://localhost:8090/v3/api-docs -o annee-api.json
+curl http://localhost:8080/v3/api-docs -o annee-api.json
 curl http://localhost:8091/v3/api-docs -o inscription-api.json
 curl http://localhost:8092/v3/api-docs -o etudiant-api.json
 curl http://localhost:8093/v3/api-docs -o paiement-api.json
@@ -749,7 +749,7 @@ curl http://localhost:8094/v3/api-docs -o school-api.json
 
 | Service | URL backend |
 |---------|------------|
-| `annee-academique-service` | `http://host.docker.internal:8090` |
+| `annee-academique-service` | `http://host.docker.internal:8080` |
 | `inscrption-service` | `http://host.docker.internal:8091` |
 | `etudiant-service` | `http://host.docker.internal:8092` |
 | `paiement-service` | `http://host.docker.internal:8093` |
