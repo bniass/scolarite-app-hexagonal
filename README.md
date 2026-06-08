@@ -731,14 +731,16 @@ Sauvegarder.
 
 #### Publier les APIs
 
-**Étape 1 — Télécharger les specs OpenAPI** (services démarrés localement) :
+**Étape 1 — Specs OpenAPI**
 
-```bash
-curl http://localhost:8080/v3/api-docs -o annee-academique-service-api.json
-curl http://localhost:8091/v3/api-docs -o inscription-service-api.json
-curl http://localhost:8092/v3/api-docs -o etudiant-service-api.json
-curl http://localhost:8093/v3/api-docs -o paiement-service-api.json
-curl http://localhost:8094/v3/api-docs -o school-service-api.json
+Les fichiers OpenAPI sont déjà présents à la racine du projet :
+
+```
+annee-api-wso2.json
+inscription-api-wso2.json
+etudiant-api-wso2.json
+paiement-api-wso2.json
+school-api-wso2.json
 ```
 
 **Étape 2 — Importer dans Publisher** :
