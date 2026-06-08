@@ -1,0 +1,446 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "School Service API",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://host.docker.internal:8094",
+      "description": "Backend service"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Filiere",
+      "description": "Gestion des filières"
+    },
+    {
+      "name": "Tarif",
+      "description": "Gestion des tarifs"
+    },
+    {
+      "name": "Classe",
+      "description": "Gestion des classes"
+    }
+  ],
+  "paths": {
+    "/api/tarifs": {
+      "post": {
+        "tags": [
+          "Tarif"
+        ],
+        "operationId": "creer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreerTarifRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/filieres": {
+      "post": {
+        "tags": [
+          "Filiere"
+        ],
+        "operationId": "creer_1",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreerFiliereRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/classes": {
+      "post": {
+        "tags": [
+          "Classe"
+        ],
+        "operationId": "creer_2",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreerClasseRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/classes/{classeId}/tarif": {
+      "post": {
+        "tags": [
+          "Classe"
+        ],
+        "operationId": "affecterTarif",
+        "parameters": [
+          {
+            "name": "classeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AffecterTarifRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/classes/{classeId}/tarifs/historique": {
+      "get": {
+        "tags": [
+          "Classe"
+        ],
+        "operationId": "historiqueTarifs",
+        "parameters": [
+          {
+            "name": "classeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HistoriqueTarifResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/classes/{classeId}/tarif-actif": {
+      "get": {
+        "tags": [
+          "Classe"
+        ],
+        "operationId": "tarifActif",
+        "parameters": [
+          {
+            "name": "classeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TarifActifResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiError": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      },
+      "CreerTarifRequest": {
+        "type": "object",
+        "properties": {
+          "fraisInscription": {
+            "type": "number"
+          },
+          "mensualite": {
+            "type": "number"
+          },
+          "autresFrais": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "autresFrais",
+          "fraisInscription",
+          "mensualite"
+        ]
+      },
+      "CreerFiliereRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "nom": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "code",
+          "nom"
+        ]
+      },
+      "CreerClasseRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "nom": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cycle": {
+            "type": "string",
+            "enum": [
+              "LICENCE",
+              "MASTER"
+            ]
+          },
+          "niveau": {
+            "type": "string",
+            "enum": [
+              "L1",
+              "L2",
+              "L3",
+              "M1",
+              "M2"
+            ]
+          },
+          "filiereId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "code",
+          "cycle",
+          "filiereId",
+          "niveau",
+          "nom"
+        ]
+      },
+      "AffecterTarifRequest": {
+        "type": "object",
+        "properties": {
+          "tarifId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "tarifId"
+        ]
+      },
+      "HistoriqueTarifResponse": {
+        "type": "object",
+        "properties": {
+          "tarifId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fraisInscription": {
+            "type": "number"
+          },
+          "mensualite": {
+            "type": "number"
+          },
+          "autresFrais": {
+            "type": "number"
+          },
+          "dateActivation": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateDesactivation": {
+            "type": "string",
+            "format": "date"
+          },
+          "actif": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TarifActifResponse": {
+        "type": "object",
+        "properties": {
+          "classeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "cycle": {
+            "type": "string",
+            "enum": [
+              "LICENCE",
+              "MASTER"
+            ]
+          },
+          "niveau": {
+            "type": "string",
+            "enum": [
+              "L1",
+              "L2",
+              "L3",
+              "M1",
+              "M2"
+            ]
+          },
+          "tarifId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fraisInscription": {
+            "type": "number"
+          },
+          "mensualite": {
+            "type": "number"
+          },
+          "autresFrais": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}

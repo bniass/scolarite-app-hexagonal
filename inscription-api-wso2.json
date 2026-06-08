@@ -1,0 +1,274 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Inscription Service API",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://host.docker.internal:8091",
+      "description": "Backend service"
+    }
+  ],
+  "paths": {
+    "/api/inscriptions": {
+      "post": {
+        "tags": [
+          "inscription-controller"
+        ],
+        "operationId": "creer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreerInscriptionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InscriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inscriptions/{id}": {
+      "get": {
+        "tags": [
+          "inscription-controller"
+        ],
+        "operationId": "consulter",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/InscriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Banque": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MoyenPaiementRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "nomBanque": {
+                "type": "string"
+              },
+              "numeroTransaction": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "Comptant": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MoyenPaiementRequest"
+          }
+        ]
+      },
+      "CreerInscriptionRequest": {
+        "type": "object",
+        "properties": {
+          "etudiantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nouvelEtudiant": {
+            "$ref": "#/components/schemas/NouvelEtudiantRequest"
+          },
+          "classeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "codeAnnee": {
+            "type": "string",
+            "minLength": 1
+          },
+          "montant": {
+            "type": "number"
+          },
+          "moyenPaiement": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Banque"
+              },
+              {
+                "$ref": "#/components/schemas/Comptant"
+              },
+              {
+                "$ref": "#/components/schemas/MobileMoney"
+              }
+            ]
+          },
+          "etudiantValide": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "classeId",
+          "codeAnnee",
+          "montant",
+          "moyenPaiement"
+        ]
+      },
+      "MobileMoney": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MoyenPaiementRequest"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "operateur": {
+                "type": "string"
+              },
+              "referencePaiement": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "MoyenPaiementRequest": {
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "properties": {
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "NouvelEtudiantRequest": {
+        "type": "object",
+        "properties": {
+          "nom": {
+            "type": "string",
+            "minLength": 1
+          },
+          "prenom": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dateNaissance": {
+            "type": "string",
+            "format": "date"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "dateNaissance",
+          "email",
+          "nom",
+          "prenom"
+        ]
+      },
+      "InscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "etudiantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "classeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "codeAnnee": {
+            "type": "string"
+          },
+          "fraisInscription": {
+            "type": "number"
+          },
+          "mensualite": {
+            "type": "number"
+          },
+          "autresFrais": {
+            "type": "number"
+          },
+          "statut": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "CONFIRMEE",
+              "ECHOUEE",
+              "ANNULEE"
+            ]
+          },
+          "creeLe": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "moisAcademiques": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MoisAcademiqueDto"
+            }
+          }
+        }
+      },
+      "MoisAcademiqueDto": {
+        "type": "object",
+        "properties": {
+          "mois": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "annee": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ordrePaiement": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    }
+  }
+}

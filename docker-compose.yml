@@ -16,6 +16,8 @@ services:
     volumes:
       - "./volumes/zookeeper-scolarite/data:/var/lib/zookeeper/data"
       - "./volumes/zookeeper-scolarite/transactions:/var/lib/zookeeper/log"
+    networks:
+      - scolarite-net
 
   kafka-broker-scolarite-1:
     image: confluentinc/cp-kafka:7.5.0
@@ -33,6 +35,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_COMPRESSION_TYPE: producer
+    networks:
+      - scolarite-net
 
   kafka-broker-scolarite-2:
     image: confluentinc/cp-kafka:7.5.0
@@ -50,6 +54,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_COMPRESSION_TYPE: producer
+    networks:
+      - scolarite-net
 
   kafka-broker-scolarite-3:
     image: confluentinc/cp-kafka:7.5.0
@@ -67,7 +73,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       KAFKA_COMPRESSION_TYPE: producer
-
+    networks:
+      - scolarite-net
 
   schema-registry-scolarite:
     image: confluentinc/cp-schema-registry:7.5.0
@@ -85,6 +92,8 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry-scolarite:8081
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka-broker-scolarite-2:9092
       SCHEMA_REGISTRY_DEBUG: 'true'
+    networks:
+      - scolarite-net
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.5.0
@@ -107,33 +116,56 @@ services:
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
-#
-#  keycloak-scolarite:
-#    image: quay.io/keycloak/keycloak:24.0
-#    container_name: keycloak
-#    command: start-dev
-#    environment:
-#      KC_DB: postgres
-#      KC_DB_URL_HOST: host.docker.internal
-#      KC_DB_URL_DATABASE: keycloak-1
-#      KC_DB_USERNAME: postgres
-#      KC_DB_PASSWORD: passer
-#
-#      KEYCLOAK_ADMIN: bniass
-#      KEYCLOAK_ADMIN_PASSWORD: passer
-#    ports:
-#      - "8180:8080"
+    networks:
+      - scolarite-net
 
+  keycloak-scolarite:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: keycloak-scolarite
+    hostname: keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8180
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+    ports:
+      - "8180:8180"
+    volumes:
+      - wso2am-keycloak:/opt/keycloak/data
+    networks:
+      - scolarite-net
 
-#  wso2am: #pwd B@yeNiass1
-#    image: docker.wso2.com/wso2am:4.2.0
-#    ports:
-#      - "9443:9443"
-#      - "8243:8243"
-#      - "8280:8280"
-#    environment:
-#      - WSO2_SERVER_PROFILE=api-manager
+  wso2am:
+    image: wso2am:4.7.0
+    container_name: wso2am-scolarite
+    hostname: wso2am
+    ports:
+      - "9443:9443"   # Publisher / DevPortal / Admin (HTTPS)
+      - "8243:8243"   # Gateway HTTPS
+      - "8280:8280"   # Gateway HTTP
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # accès aux services Spring Boot sur l'hôte
+    volumes:
+      - "./volumes/wso2am/repository/logs:/home/wso2carbon/wso2am-4.7.0/repository/logs"
+      - wso2am-database:/home/wso2carbon/wso2am-4.7.0/repository/database
+      - wso2am-solr:/home/wso2carbon/solr
+      - "./volumes/wso2am/repository/conf/deployment.toml:/home/wso2carbon/wso2am-4.7.0/repository/conf/deployment.toml"
+    networks:
+      - scolarite-net
+    healthcheck:
+      test: ["CMD", "curl", "-k", "-f", "https://localhost:9443/carbon/admin/login.jsp"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
 
 networks:
-  default:
+  scolarite-net:
     driver: bridge
+
+volumes:
+  wso2am-database:   # base H2 WSO2
+  wso2am-solr:       # index Solr WSO2
+  wso2am-keycloak:   # données Keycloak (users, realms, clients)

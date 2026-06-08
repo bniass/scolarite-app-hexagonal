@@ -8,6 +8,7 @@ import com.ecole221.anneeacademique.service.application.port.out.repository.Anne
 import com.ecole221.anneeacademique.service.domain.model.AnneeAcademique;
 import com.ecole221.anneeacademique.service.domain.model.DatesAnnee;
 import com.ecole221.anneeacademique.service.domain.exception.AnneeAcademiqueException;
+import com.ecole221.anneeacademique.service.domain.model.Statut;
 import com.ecole221.anneeacademique.service.domain.valuobject.CodeAnnee;
 import com.ecole221.common.event.publisher.DomainEventPublisher;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,13 @@ public class CreerAnneeAcademiqueService
                     "Année académique déjà existante"
             );
         }
+
+        if(repository.existsByStatutNot(Statut.CLOTUREE)){
+            throw new AnneeAcademiqueException(
+                    "Impossible de creer cette année académique tant qu'il existe une annee non cloturee!"
+            );
+        }
+
         DatesAnnee datesAnnee = new DatesAnnee(
                 cmd.dateDebut(),
                 cmd.dateFin(),

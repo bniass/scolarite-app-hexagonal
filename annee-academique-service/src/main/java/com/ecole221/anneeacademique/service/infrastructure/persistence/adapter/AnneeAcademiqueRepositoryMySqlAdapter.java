@@ -2,6 +2,7 @@ package com.ecole221.anneeacademique.service.infrastructure.persistence.adapter;
 
 import com.ecole221.anneeacademique.service.application.port.out.repository.AnneeAcademiqueRepository;
 import com.ecole221.anneeacademique.service.domain.model.AnneeAcademique;
+import com.ecole221.anneeacademique.service.domain.model.Statut;
 import com.ecole221.anneeacademique.service.infrastructure.persistence.entity.AnneeAcademiqueJpaEntity;
 import com.ecole221.anneeacademique.service.infrastructure.persistence.mapper.AnneeAcademiquePersistenceMapper;
 import com.ecole221.anneeacademique.service.infrastructure.persistence.repository.AnneeAcademiqueJpaRepository;
@@ -24,6 +25,11 @@ public class AnneeAcademiqueRepositoryMySqlAdapter
     public Optional<AnneeAcademique> findByCode(String code) {
         return jpaRepository.findByCode(code)
                 .map(mapper::toDomain);
+    }
+
+    @Override
+    public boolean existsByStatutNot(Statut statut) {
+        return jpaRepository.existsByStatutNot(statut);
     }
 
     @Override

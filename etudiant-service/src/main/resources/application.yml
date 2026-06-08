@@ -1,6 +1,19 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: etudiant-service
+
+  profiles:
+    active: dev
+
+  # WSO2 API Gateway — validation JWT
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8180/realms/scolarite/protocol/openid-connect/certs
+          issuer-uri: http://keycloak:8180/realms/scolarite
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

@@ -1,0 +1,5 @@
+2026-06-08T11:04:50,979 [-] [PassThroughMessageProcessor-1]  INFO __SynapseService STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /token, HEALTH CHECK URL = /token
+2026-06-08T11:07:45,541 [-] [PassThroughMessageProcessor-2]  INFO __SynapseService STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /token, HEALTH CHECK URL = /token
+2026-06-08T11:08:15,159 [-] [PassThroughMessageProcessor-3]  INFO __SynapseService STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /token, HEALTH CHECK URL = /token
+2026-06-08T11:10:21,937 [-] [PassThroughMessageProcessor-4]  INFO __SynapseService STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /oauth2/token, HEALTH CHECK URL = /oauth2/token
+2026-06-08T11:11:27,427 [-] [PassThroughMessageProcessor-5]  INFO __SynapseService STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /oauth2/token, HEALTH CHECK URL = /oauth2/token

@@ -2,6 +2,8 @@ package com.ecole221.anneeacademique.service.application.port.out.repository.imp
 
 import com.ecole221.anneeacademique.service.application.port.out.repository.AnneeAcademiqueRepository;
 import com.ecole221.anneeacademique.service.domain.model.AnneeAcademique;
+import com.ecole221.anneeacademique.service.domain.model.Statut;
+import com.ecole221.anneeacademique.service.domain.state.AnneeCloturee;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +21,14 @@ public class InMemoryAnneeAcademiqueRepository implements AnneeAcademiqueReposit
     public Optional<AnneeAcademique> findByCode(String code) {
         return Optional.ofNullable(data.get(code));
     }
+
+    @Override
+    public boolean existsByStatutNot(Statut statut) {
+        return data.values().stream().anyMatch(
+                anneeAcademique ->  !(anneeAcademique.getEtatAnnee() instanceof AnneeCloturee)
+        );
+    }
+
 
     @Override
     public void save(AnneeAcademique anneeAcademique) {

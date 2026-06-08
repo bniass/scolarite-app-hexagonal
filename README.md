@@ -17,6 +17,7 @@ Plateforme de gestion scolaire construite en **microservices** avec une **archit
 9. [Démarrage rapide](#9-démarrage-rapide)
 10. [Endpoints REST](#10-endpoints-rest)
 11. [Variables de configuration](#11-variables-de-configuration)
+12. [Sécurité — Keycloak + WSO2 API Gateway](#12-sécurité--keycloak--wso2-api-gateway)
 
 ---
 
@@ -388,8 +389,15 @@ docker-compose up -d
 | `kafka-broker-scolarite-3` | 39092 | Broker Kafka |
 | `schema-registry-scolarite` | 8081 | Registre schémas Avro |
 | `control-center-scolarite` | 9021 | UI monitoring Kafka |
+| `keycloak-scolarite` | 8180 | Identity Provider (SSO) |
+| `wso2am-scolarite` | 8280 / 8243 / 9443 | API Gateway |
 
 > Confluent Control Center accessible sur **http://localhost:9021**
+
+> **Important** : ajouter `keycloak` au fichier hosts de la machine hôte pour que les tokens JWT aient le bon issuer :
+> ```bash
+> sudo sh -c 'echo "127.0.0.1 keycloak" >> /etc/hosts'
+> ```
 
 ### Bases de données MySQL
 
@@ -568,6 +576,289 @@ kafka-consumer:
   auto-offset-reset: earliest
   auto-commit: false
   concurrency: 3
+```
+
+---
+
+---
+
+## 12. Sécurité — Keycloak + WSO2 API Gateway
+
+### Architecture
+
+```
+Client (mobile / web / Swagger)
+        │
+        │ 1. POST /token → Keycloak (via hostname keycloak:8180)
+        │    ← access_token JWT (iss=http://keycloak:8180/realms/scolarite)
+        │
+        │ 2. GET|POST /api/... → WSO2 Gateway (8243 HTTPS / 8280 HTTP)
+        │    Authorization: Bearer <token>
+        ▼
+  ┌──────────────┐       ┌─────────────────┐
+  │  WSO2 AM     │──────▶│  Keycloak 24    │
+  │  Gateway     │ JWKS  │  realm:scolarite│
+  │  Key Manager │◀──────│  :8180          │
+  └──────┬───────┘       └─────────────────┘
+         │ forward + Authorization: Bearer (enable_outbound_auth_header=true)
+    ┌────┴────────────────────────────────────┐
+    ▼         ▼           ▼                  ▼
+inscrption  school    etudiant           paiement   annee-academique
+:8091       :8094      :8092              :8093          :8090
+  (valident le JWT avec la clé publique Keycloak via JWKS)
+```
+
+**Keycloak est l'autorité d'authentification.** WSO2 joue le rôle de gateway (routage, rate limiting, sécurité périmètre) et délègue la validation des tokens à Keycloak via JWKS (Self Validate JWT).
+
+---
+
+### Prérequis — fichier hosts
+
+Ajouter `keycloak` à `/etc/hosts` sur la machine hôte pour que les tokens aient `iss=http://keycloak:8180/...` (requis par WSO2 et Spring Boot) :
+
+```bash
+sudo sh -c 'echo "127.0.0.1 keycloak" >> /etc/hosts'
+```
+
+---
+
+### Configuration Keycloak
+
+#### 1. Démarrer Keycloak
+
+```bash
+docker-compose up -d keycloak-scolarite
+```
+
+Keycloak Admin : **http://localhost:8180** — `admin / admin`
+
+#### 2. Créer le realm `scolarite`
+
+Admin Console → **Create Realm** → name: `scolarite`
+
+#### 3. Créer les rôles realm
+
+Realm Settings → **Roles** → Add :
+
+| Rôle | Usage |
+|------|-------|
+| `super` | Accès total (POST, PUT, DELETE, GET) |
+| `admin` | Gestion courante (POST, PUT, GET selon service) |
+| `user` | Lecture seule (GET) |
+
+#### 4. Créer les utilisateurs
+
+**Users → Add User** pour chaque utilisateur, puis onglet **Credentials** (mot de passe `admin`, Temporary OFF) et onglet **Role Mappings** :
+
+| Utilisateur | Rôles |
+|-------------|-------|
+| `baye` | `super`, `admin`, `user` |
+| `mouha` | `admin`, `user` |
+| `barham` | `user` |
+
+#### 5. Créer le client `wso2-dcr`
+
+**Clients → Create Client** :
+
+| Champ | Valeur |
+|-------|--------|
+| Client ID | `wso2-dcr` |
+| Client authentication | ON (confidential) |
+| Service accounts roles | ON |
+| Standard flow | OFF |
+
+Onglet **Service account roles** → Assign role → Filter by clients → `realm-management` → ajouter `create-client`, `manage-clients`, `view-clients`.
+
+Onglet **Credentials** → noter le `Client secret`.
+
+Onglet **Client Scopes** → Add client scope → `openid` (Optional).
+
+---
+
+### Configuration WSO2
+
+#### Démarrage
+
+```bash
+docker-compose up -d wso2am
+```
+
+> L'image `wso2am:4.7.0` doit être construite localement :
+> ```bash
+> git clone --depth 1 https://github.com/wso2/docker-apim.git /tmp/docker-apim
+> cd /tmp/docker-apim/dockerfiles/ubuntu/apim
+> docker build -t wso2am:4.7.0 .
+> ```
+
+Attendre ~2 min. Vérifier :
+```bash
+curl -k -o /dev/null -s -w "%{http_code}" https://localhost:9443/carbon/admin/login.jsp
+# → 200
+```
+
+**Portails WSO2 :**
+
+| Portail | URL | Identifiants |
+|---------|-----|--------------|
+| Publisher | https://localhost:9443/publisher | admin / admin |
+| Developer Portal | https://localhost:9443/devportal | admin / admin |
+| Admin Console | https://localhost:9443/admin | admin / admin |
+
+#### Patch `deployment.toml` — transmettre le token au backend
+
+Sans ce patch, WSO2 strip le header `Authorization` avant de forwarder vers Spring Boot :
+
+```bash
+docker exec wso2am-scolarite bash -c "echo -e '\n[apim.oauth_config]\nenable_outbound_auth_header = true' >> /home/wso2carbon/wso2am-4.7.0/repository/conf/deployment.toml"
+docker restart wso2am-scolarite
+```
+
+#### Configurer Keycloak comme Key Manager
+
+**Admin Console → Key Managers → Add Key Manager** :
+
+| Champ | Valeur |
+|-------|--------|
+| Type | KeyCloak |
+| Well-known URL | `http://keycloak:8180/realms/scolarite/.well-known/openid-configuration` |
+| → cliquer **Import** | (auto-remplit les endpoints) |
+| Issuer | `http://keycloak:8180/realms/scolarite` |
+| Client ID | `wso2-dcr` |
+| Client Secret | `<secret copié depuis Keycloak>` |
+| Self Validate JWT | ✅ activé |
+
+Sauvegarder.
+
+#### Publier les APIs
+
+**Étape 1 — Télécharger les specs OpenAPI** (services démarrés localement) :
+
+```bash
+curl http://localhost:8090/v3/api-docs -o annee-api.json
+curl http://localhost:8091/v3/api-docs -o inscription-api.json
+curl http://localhost:8092/v3/api-docs -o etudiant-api.json
+curl http://localhost:8093/v3/api-docs -o paiement-api.json
+curl http://localhost:8094/v3/api-docs -o school-api.json
+```
+
+**Étape 2 — Importer dans Publisher** :
+
+1. **https://localhost:9443/publisher** → Create API → Import OpenAPI
+2. Uploader le fichier JSON
+3. Endpoint backend :
+
+| Service | URL backend |
+|---------|------------|
+| `annee-academique-service` | `http://host.docker.internal:8090` |
+| `inscrption-service` | `http://host.docker.internal:8091` |
+| `etudiant-service` | `http://host.docker.internal:8092` |
+| `paiement-service` | `http://host.docker.internal:8093` |
+| `school-service` | `http://host.docker.internal:8094` |
+
+> Sur Linux : remplacer `host.docker.internal` par `172.17.0.1`
+
+4. Business Plans → `Unlimited`
+5. **Deploy** → **Publish**
+
+**Étape 3 — Créer une application et générer les clés** :
+
+1. **https://localhost:9443/devportal** → Applications → New Application (`ScolariteApp`)
+2. Subscriptions → s'abonner à chaque API
+3. **Production Keys** → onglet **KEYCLOAK** → Generate Keys
+4. Noter le `Consumer Key` et `Consumer Secret`
+
+---
+
+### Obtenir un token et appeler une API
+
+#### 1. Obtenir un token depuis Keycloak
+
+```bash
+curl -s -X POST http://keycloak:8180/realms/scolarite/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "username=baye" \
+  -d "password=admin" \
+  -d "client_id=<CONSUMER_KEY>" \
+  -d "client_secret=<CONSUMER_SECRET>"
+```
+
+Réponse :
+```json
+{
+  "access_token": "eyJ...",
+  "expires_in": 300,
+  "token_type": "Bearer"
+}
+```
+
+#### 2. Appeler une API via WSO2 Gateway
+
+```bash
+TOKEN="eyJ..."
+
+# Exemple : lister les années académiques
+curl -k -X GET "https://localhost:8243/anneeA-academique-service-api/v1/api/academic-years" \
+  -H "Authorization: Bearer $TOKEN"
+
+# Exemple : créer une inscription
+curl -k -X POST "https://localhost:8243/inscription-service-api/v1/api/inscriptions" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{ ... }'
+```
+
+---
+
+### Validation JWT côté Spring Boot
+
+Chaque service valide le JWT avec la **clé publique Keycloak** (JWKS) :
+
+```yaml
+# application.yml de chaque service
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8180/realms/scolarite/protocol/openid-connect/certs
+          issuer-uri: http://keycloak:8180/realms/scolarite
+```
+
+Les rôles sont extraits depuis `realm_access.roles` du token JWT via un `JwtAuthenticationConverter` personnalisé dans chaque `SecurityConfig`.
+
+**Matrice des droits par service :**
+
+| Service | POST/PUT | DELETE | GET |
+|---------|----------|--------|-----|
+| `annee-academique-service` | `super` | — | `admin`, `super` |
+| `school-service` | `super` | `super` | `admin`, `super`, `user` |
+| `etudiant-service` | `admin`, `super` | `super` | `admin`, `super`, `user` |
+| `inscrption-service` | `admin`, `super` | `super` | `admin`, `super`, `user` |
+| `paiement-service` | `admin`, `super` | — | `admin`, `super`, `user` |
+
+---
+
+### Résumé du flux de sécurité
+
+```
+1. Client → POST http://keycloak:8180/realms/scolarite/protocol/openid-connect/token
+            (username, password, client_id, client_secret)
+            ← access_token JWT signé RS256, iss=http://keycloak:8180/realms/scolarite
+
+2. Client → https://localhost:8243/<api-context>/v1/...
+            Authorization: Bearer <access_token>
+
+3. WSO2 Gateway → vérifie signature via JWKS Keycloak (Self Validate JWT)
+                → si valide, forward la requête avec Authorization: Bearer intact
+
+4. Spring Boot → vérifie à nouveau le JWT via JWKS Keycloak
+              → extrait les rôles depuis realm_access.roles
+              → autorise ou rejette selon SecurityConfig
+
+5. Spring Boot → traitement métier → réponse JSON
 ```
 
 ---
