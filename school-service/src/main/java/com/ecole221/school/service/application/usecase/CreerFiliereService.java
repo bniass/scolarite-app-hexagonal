@@ -17,10 +17,13 @@ public class CreerFiliereService implements CreerFiliereUseCase {
 
     private final FiliereRepository filiereRepository;
     private final OutboxPort outboxPort;
+    private final ListerFilieresService listerFilieresService;
 
-    public CreerFiliereService(FiliereRepository filiereRepository, OutboxPort outboxPort) {
+    public CreerFiliereService(FiliereRepository filiereRepository, OutboxPort outboxPort,
+                               ListerFilieresService listerFilieresService) {
         this.filiereRepository = filiereRepository;
         this.outboxPort = outboxPort;
+        this.listerFilieresService = listerFilieresService;
     }
 
     @Override
@@ -31,6 +34,7 @@ public class CreerFiliereService implements CreerFiliereUseCase {
         Filiere filiere = Filiere.creer(command.code(), command.nom());
         filiereRepository.save(filiere);
         filiere.pullDomainEvents().forEach(outboxPort::save);
+        listerFilieresService.invaliderCache();
         return filiere.getId().getValue();
     }
 }

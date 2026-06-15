@@ -83,6 +83,14 @@ public class CreerInscriptionService implements CreerInscriptionUseCase {
             throw new InscriptionException("Le montant versé doit être supérieur à 0");
         }
 
+        BigDecimal maximumAverser = tarif.fraisInscription()
+                .add(tarif.autresFrais())
+                .add(tarif.mensualite());
+
+        if (montant.compareTo(maximumAverser) <= 0) {
+            throw new InscriptionException("Vous devez verset au minimum les frais d'inscriptionm qutres frais et une mensualite");
+        }
+
         BigDecimal maximum = tarif.fraisInscription()
                 .add(tarif.autresFrais())
                 .add(tarif.mensualite().multiply(BigDecimal.valueOf(nbMois)));

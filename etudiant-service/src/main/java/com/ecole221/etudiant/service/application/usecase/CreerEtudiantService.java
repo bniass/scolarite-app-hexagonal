@@ -7,6 +7,8 @@ import com.ecole221.etudiant.service.application.port.out.EtudiantRepository;
 import com.ecole221.etudiant.service.application.port.out.OutboxPort;
 import com.ecole221.etudiant.service.domain.exception.EtudiantException;
 import com.ecole221.etudiant.service.domain.model.Etudiant;
+import com.ecole221.etudiant.service.infrastructure.persistence.entity.MatriculeSequenceJpaEntity;
+import com.ecole221.etudiant.service.infrastructure.persistence.repository.MatriculeSequenceJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +20,13 @@ public class CreerEtudiantService implements CreerEtudiantUseCase {
 
     private final EtudiantRepository etudiantRepository;
     private final OutboxPort outboxPort;
+    private final MatriculeSequenceJpaRepository matriculeSequenceRepository;
 
-    public CreerEtudiantService(EtudiantRepository etudiantRepository, OutboxPort outboxPort) {
+    public CreerEtudiantService(EtudiantRepository etudiantRepository, OutboxPort outboxPort,
+                                 MatriculeSequenceJpaRepository matriculeSequenceRepository) {
         this.etudiantRepository = etudiantRepository;
         this.outboxPort = outboxPort;
+        this.matriculeSequenceRepository = matriculeSequenceRepository;
     }
 
     @Override
@@ -31,7 +36,8 @@ public class CreerEtudiantService implements CreerEtudiantUseCase {
         }
 
         String suffixe = Etudiant.suffixeAnnee(command.codeAnnee());
-        long ordre = etudiantRepository.compterParSuffixeAnnee(suffixe) + 1;
+        // AUTO_INCREMENT garantit un ordre unique même sous concurrence totale
+        long ordre = matriculeSequenceRepository.save(new MatriculeSequenceJpaEntity(suffixe)).getId();
 
         Etudiant etudiant = Etudiant.creer(
                 command.nom(),

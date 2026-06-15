@@ -1,0 +1,8 @@
+{
+  "out": ["influxdb=http://localhost:8086/k6"],
+  "influxdb": {
+    "pushInterval": "5s",
+    "concurrentWrites": 8,
+    "batchSize": 1000
+  }
+}

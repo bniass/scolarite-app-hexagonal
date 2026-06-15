@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -30,6 +31,13 @@ public class AnneeAcademiqueRepositoryMySqlAdapter
     @Override
     public boolean existsByStatutNot(Statut statut) {
         return jpaRepository.existsByStatutNot(statut);
+    }
+
+    @Override
+    public List<AnneeAcademique> findAll() {
+        return jpaRepository.findAll().stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 
     @Override

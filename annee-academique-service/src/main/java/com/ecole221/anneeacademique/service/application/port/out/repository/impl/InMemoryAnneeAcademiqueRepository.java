@@ -7,7 +7,9 @@ import com.ecole221.anneeacademique.service.domain.state.AnneeCloturee;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,6 +31,11 @@ public class InMemoryAnneeAcademiqueRepository implements AnneeAcademiqueReposit
         );
     }
 
+
+    @Override
+    public List<AnneeAcademique> findAll() {
+        return new ArrayList<>(data.values());
+    }
 
     @Override
     public void save(AnneeAcademique anneeAcademique) {

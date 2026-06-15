@@ -1,0 +1,209 @@
+TID: [] [] [2026-06-09 08:25:16,731]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--anneeA-academique-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 08:25:16,747]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--anneeA-academique-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [-1234] [publisher] [2026-06-09 08:31:36,933] ERROR {org.apache.jsp.services.refresh.refresh_jsp} - org.wso2.carbon.ui.filters.cache.ContentTypeBasedCachePreventionFilter$1@654a7fd
+TID: [-1234] [publisher] [2026-06-09 08:31:36,933] ERROR {org.apache.jsp.services.refresh.refresh_jsp} - org.wso2.carbon.ui.filters.cache.ContentTypeBasedCachePreventionFilter$1@34cf483e
+TID: [-1234] [publisher] [2026-06-09 08:31:36,933] ERROR {org.apache.jsp.services.refresh.refresh_jsp} - org.wso2.carbon.ui.filters.cache.ContentTypeBasedCachePreventionFilter$1@597ea42c
+TID: [-1234] [api/am/publisher] [2026-06-09 08:31:36,943] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Invalid OAuth Token : Invalid Access Token. ACTIVE access token is not found.
+TID: [-1234] [api/am/publisher] [2026-06-09 08:31:36,943] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Invalid OAuth Token : Invalid Access Token. ACTIVE access token is not found.
+TID: [-1234] [api/am/publisher] [2026-06-09 08:31:36,943] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Invalid OAuth Token : Invalid Access Token. ACTIVE access token is not found.
+TID: [-1234] [api/am/publisher] [2026-06-09 08:31:36,943] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Provided access token is invalid
+TID: [-1234] [api/am/publisher] [2026-06-09 08:31:36,943] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Provided access token is invalid
+TID: [-1234] [api/am/publisher] [2026-06-09 08:31:36,943] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Provided access token is invalid
+TID: [-1234] [api/am/publisher] [2026-06-09 08:32:00,910] ERROR {org.wso2.carbon.apimgt.rest.api.publisher.v1.impl.ApisApiServiceImpl} - Cannot remove the API 940dcbbf-332c-466a-ae0a-45c6b66675fc as active subscriptions exist
+TID: [] [] [2026-06-09 08:32:22,795]  INFO {org.wso2.carbon.databridge.core.DataBridge} - user admin connected
+TID: [] [] [2026-06-09 08:32:22,915]  INFO {org.wso2.carbon.event.output.adapter.jms.internal.util.JMSConnectionFactory} - JMS ConnectionFactory : notificationJMSPublisher initialized
+TID: [-1234] [api/am/publisher] [2026-06-09 08:32:30,714]  INFO {org.wso2.carbon.apimgt.impl.gateway.DeploymentModeResolver} - Resolving deployment targets for organization: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:32:30,724]  INFO {org.wso2.carbon.apimgt.impl.gateway.DeploymentModeResolver} - Resolving deployment targets for organization: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:32:30,727]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Undeploy API: anneeA-academique-service-api from 1 environments
+TID: [] [] [2026-06-09 08:32:31,053]  INFO {org.apache.synapse.api.API} - {api:prod--anneeA-academique-service-api:vv1} Destroying API: prod--anneeA-academique-service-api:vv1
+TID: [] [] [2026-06-09 08:32:31,055]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - API : prod--anneeA-academique-service-api:vv1 was removed from the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:32:31,055]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Local entry : 940dcbbf-332c-466a-ae0a-45c6b66675fc was removed from the Synapse configuration successfully
+TID: [-1234] [api/am/publisher] [2026-06-09 08:32:55,188] ERROR {org.wso2.carbon.apimgt.rest.api.publisher.v1.impl.ApisApiServiceImpl} - Error while parsing OpenAPI definition. Error code: 900754. Error: paths.'/api/academic-years/{code}/update'. Declared path parameter code needs to be defined as a path parameter in path or operation level
+TID: [-1234] [api/am/publisher] [2026-06-09 08:32:55,222] ERROR {org.wso2.carbon.apimgt.rest.api.publisher.v1.impl.ApisApiServiceImpl} - Error while parsing OpenAPI definition. Error code: 900754. Error: paths.'/api/academic-years/{code}/update'. Declared path parameter code needs to be defined as a path parameter in path or operation level
+TID: [-1234] [api/am/publisher] [2026-06-09 08:38:17,342]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Processing API revision deployment for API: 2965ffa2-f2a2-44fc-8ddb-fe021f1f875d, revision: 6c821be3-171f-40c3-8b77-82ee3ffbadf9, deployments count: 1
+TID: [-1234] [api/am/publisher] [2026-06-09 08:38:17,345]  INFO {org.wso2.carbon.apimgt.impl.gateway.DeploymentModeResolver} - Resolving deployment targets for organization: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:38:17,346]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Deploying API revision: 6c821be3-171f-40c3-8b77-82ee3ffbadf9 to 1 environments
+TID: [-1234] [api/am/publisher] [2026-06-09 08:38:17,346]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Deploying API: annee-academique-service-api version: v1 to tenant: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:38:17,346]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Sending deployment event for API: annee-academique-service-api version: v1 to gateways
+TID: [-1234] [internal/data/v1] [2026-06-09 08:38:22,582]  INFO {org.wso2.carbon.apimgt.impl.importexport.utils.CommonUtil} - Creation of folder is successful. Directory Name : Definitions
+TID: [] [] [2026-06-09 08:38:22,702]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Local entry : 2965ffa2-f2a2-44fc-8ddb-fe021f1f875d was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:38:22,704]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : annee-academique-service-api--vv1_APIsandboxEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:38:22,705]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : annee-academique-service-api--vv1_APIproductionEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:38:22,710]  INFO {org.apache.synapse.api.API} - {api:prod--annee-academique-service-api:vv1} Initializing API: prod--annee-academique-service-api:vv1
+TID: [] [] [2026-06-09 08:38:22,710]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - API : prod--annee-academique-service-api:vv1 was added to the Synapse configuration successfully
+TID: [-1234] [api/am/publisher] [2026-06-09 08:40:19,717]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Processing API revision deployment for API: b4e694d8-34a1-4fe2-9afa-913e0ae935d9, revision: b31631fb-c8e4-4e8d-ad63-e6f605cf22a7, deployments count: 1
+TID: [-1234] [api/am/publisher] [2026-06-09 08:40:19,720]  INFO {org.wso2.carbon.apimgt.impl.gateway.DeploymentModeResolver} - Resolving deployment targets for organization: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:40:19,721]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Deploying API revision: b31631fb-c8e4-4e8d-ad63-e6f605cf22a7 to 1 environments
+TID: [-1234] [api/am/publisher] [2026-06-09 08:40:19,721]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Deploying API: etudiant-service-api version: v1 to tenant: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:40:19,721]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Sending deployment event for API: etudiant-service-api version: v1 to gateways
+TID: [-1234] [internal/data/v1] [2026-06-09 08:40:25,785]  INFO {org.wso2.carbon.apimgt.impl.importexport.utils.CommonUtil} - Creation of folder is successful. Directory Name : Definitions
+TID: [] [] [2026-06-09 08:40:25,920]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Local entry : b4e694d8-34a1-4fe2-9afa-913e0ae935d9 was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:40:25,922]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : etudiant-service-api--vv1_APIproductionEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:40:25,922]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : etudiant-service-api--vv1_APIsandboxEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:40:25,926]  INFO {org.apache.synapse.api.API} - {api:prod--etudiant-service-api:vv1} Initializing API: prod--etudiant-service-api:vv1
+TID: [] [] [2026-06-09 08:40:25,926]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - API : prod--etudiant-service-api:vv1 was added to the Synapse configuration successfully
+TID: [-1234] [api/am/publisher] [2026-06-09 08:41:17,405]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Processing API revision deployment for API: fc38a457-34f6-48fd-8892-d34153919a5a, revision: 9fab5088-9d9b-4c17-8be5-9e6caaa31c74, deployments count: 1
+TID: [-1234] [api/am/publisher] [2026-06-09 08:41:17,409]  INFO {org.wso2.carbon.apimgt.impl.gateway.DeploymentModeResolver} - Resolving deployment targets for organization: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:41:17,409]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Deploying API revision: 9fab5088-9d9b-4c17-8be5-9e6caaa31c74 to 1 environments
+TID: [-1234] [api/am/publisher] [2026-06-09 08:41:17,409]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Deploying API: inscription-service-api version: v1 to tenant: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:41:17,409]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Sending deployment event for API: inscription-service-api version: v1 to gateways
+TID: [-1234] [internal/data/v1] [2026-06-09 08:41:22,850]  INFO {org.wso2.carbon.apimgt.impl.importexport.utils.CommonUtil} - Creation of folder is successful. Directory Name : Definitions
+TID: [] [] [2026-06-09 08:41:22,945]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Local entry : fc38a457-34f6-48fd-8892-d34153919a5a was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:41:22,946]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : inscription-service-api--vv1_APIsandboxEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:41:22,947]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : inscription-service-api--vv1_APIproductionEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:41:22,949]  INFO {org.apache.synapse.api.API} - {api:prod--inscription-service-api:vv1} Initializing API: prod--inscription-service-api:vv1
+TID: [] [] [2026-06-09 08:41:22,950]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - API : prod--inscription-service-api:vv1 was added to the Synapse configuration successfully
+TID: [-1234] [api/am/publisher] [2026-06-09 08:42:27,111]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Processing API revision deployment for API: 5e0596bb-fa4b-48e1-828f-09996244b313, revision: 633927b6-6dc7-4b4a-9bf0-898821696065, deployments count: 1
+TID: [-1234] [api/am/publisher] [2026-06-09 08:42:27,114]  INFO {org.wso2.carbon.apimgt.impl.gateway.DeploymentModeResolver} - Resolving deployment targets for organization: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:42:27,114]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Deploying API revision: 633927b6-6dc7-4b4a-9bf0-898821696065 to 1 environments
+TID: [-1234] [api/am/publisher] [2026-06-09 08:42:27,114]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Deploying API: paiement-service-api version: v1 to tenant: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:42:27,114]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Sending deployment event for API: paiement-service-api version: v1 to gateways
+TID: [-1234] [internal/data/v1] [2026-06-09 08:42:32,936]  INFO {org.wso2.carbon.apimgt.impl.importexport.utils.CommonUtil} - Creation of folder is successful. Directory Name : Definitions
+TID: [] [] [2026-06-09 08:42:33,096]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Local entry : 5e0596bb-fa4b-48e1-828f-09996244b313 was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:42:33,100]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : paiement-service-api--vv1_APIsandboxEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:42:33,101]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : paiement-service-api--vv1_APIproductionEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:42:33,117]  INFO {org.apache.synapse.api.API} - {api:prod--paiement-service-api:vv1} Initializing API: prod--paiement-service-api:vv1
+TID: [] [] [2026-06-09 08:42:33,119]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - API : prod--paiement-service-api:vv1 was added to the Synapse configuration successfully
+TID: [-1234] [api/am/publisher] [2026-06-09 08:43:14,846]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Processing API revision deployment for API: 09c76604-0fdc-47b8-b914-de03ecb9150f, revision: d7bd18f7-6be5-4a99-b98f-95263231e946, deployments count: 1
+TID: [-1234] [api/am/publisher] [2026-06-09 08:43:14,849]  INFO {org.wso2.carbon.apimgt.impl.gateway.DeploymentModeResolver} - Resolving deployment targets for organization: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:43:14,850]  INFO {org.wso2.carbon.apimgt.impl.APIProviderImpl} - Deploying API revision: d7bd18f7-6be5-4a99-b98f-95263231e946 to 1 environments
+TID: [-1234] [api/am/publisher] [2026-06-09 08:43:14,850]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Deploying API: school-service-api version: v1 to tenant: carbon.super
+TID: [-1234] [api/am/publisher] [2026-06-09 08:43:14,850]  INFO {org.wso2.carbon.apimgt.impl.APIGatewayManager} - Sending deployment event for API: school-service-api version: v1 to gateways
+TID: [-1234] [internal/data/v1] [2026-06-09 08:43:20,086]  INFO {org.wso2.carbon.apimgt.impl.importexport.utils.CommonUtil} - Creation of folder is successful. Directory Name : Definitions
+TID: [] [] [2026-06-09 08:43:20,132]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Local entry : 09c76604-0fdc-47b8-b914-de03ecb9150f was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:43:20,133]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : school-service-api--vv1_APIproductionEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:43:20,133]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - Endpoint : school-service-api--vv1_APIsandboxEndpoint was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:43:20,137]  INFO {org.apache.synapse.api.API} - {api:prod--school-service-api:vv1} Initializing API: prod--school-service-api:vv1
+TID: [] [] [2026-06-09 08:43:20,137]  INFO {org.wso2.carbon.mediation.dependency.mgt.DependencyTracker} - API : prod--school-service-api:vv1 was added to the Synapse configuration successfully
+TID: [] [] [2026-06-09 08:45:11,247]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /oauth2/token, HEALTH CHECK URL = /oauth2/token
+TID: [] [] [2026-06-09 08:48:39,124]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /oauth2/token, HEALTH CHECK URL = /oauth2/token
+TID: [-1234] [admin] [2026-06-09 08:50:27,940] ERROR {org.apache.jsp.services.refresh.refresh_jsp} - org.wso2.carbon.ui.filters.cache.ContentTypeBasedCachePreventionFilter$1@7e5cbe75
+TID: [-1234] [api/am/admin] [2026-06-09 08:50:27,949] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Invalid OAuth Token : Invalid Access Token. ACTIVE access token is not found.
+TID: [-1234] [api/am/admin] [2026-06-09 08:50:27,949] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Provided access token is invalid
+TID: [-1234] [admin] [2026-06-09 08:50:27,953] ERROR {org.apache.jsp.services.refresh.refresh_jsp} - org.wso2.carbon.ui.filters.cache.ContentTypeBasedCachePreventionFilter$1@38d22368
+TID: [-1234] [api/am/admin] [2026-06-09 08:50:27,964] ERROR {org.wso2.carbon.apimgt.rest.api.util.impl.OAuthOpaqueAuthenticatorImpl} - Provided access token is invalid
+TID: [] [] [2026-06-09 08:55:34,666]  WARN {org.apache.synapse.transport.passthru.SourceHandler} - I/O error: (certificate_unknown) Received fatal alert: certificate_unknown
+TID: [] [] [2026-06-09 08:55:34,872]  INFO {org.wso2.carbon.databridge.core.DataBridge} - user admin connected
+TID: [] [] [2026-06-09 08:58:56,565]  WARN {org.apache.synapse.transport.passthru.SourceHandler} - I/O error: (unknown_ca) Received fatal alert: unknown_ca
+TID: [] [] [2026-06-09 09:01:42,061]  WARN {org.apache.synapse.transport.passthru.SourceHandler} - I/O error: (certificate_unknown) Received fatal alert: certificate_unknown
+TID: [] [] [2026-06-09 09:03:53,210]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Missing Credentials for requestURI=/annee-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:06:07,653]  WARN {org.apache.synapse.transport.passthru.SourceHandler} - I/O error: (unknown_ca) Received fatal alert: unknown_ca
+TID: [] [] [2026-06-09 09:06:52,052]  WARN {org.apache.synapse.transport.passthru.SourceHandler} - I/O error: (certificate_unknown) Received fatal alert: certificate_unknown
+TID: [] [] [2026-06-09 09:10:52,793]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /anneeA-academique-service-api/v1/api/academic-years, HEALTH CHECK URL = /anneeA-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:10:52,802]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /anneeA-academique-service-api/v1/api/academic-years, HEALTH CHECK URL = /anneeA-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:11:01,282]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /anneeA-academique-service-api/v1/api/academic-years, HEALTH CHECK URL = /anneeA-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:11:01,292]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /anneeA-academique-service-api/v1/api/academic-years, HEALTH CHECK URL = /anneeA-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:11:32,520]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /anneeA-academique-service-api/v1/api/academic-years, HEALTH CHECK URL = /anneeA-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:13:16,216]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--school-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:16,216]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--school-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:16,241]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--school-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:16,242]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--school-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:20,083]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--etudiant-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:20,095]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--etudiant-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:24,708]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--school-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:24,709]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--school-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:24,720]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--school-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [] [] [2026-06-09 09:13:24,720]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - {api:prod--school-service-api:vv1} STATUS = Executing default 'fault' sequence, ERROR_CODE = 405, ERROR_MESSAGE = Method not allowed for given API resource
+TID: [-1234] [api/am/devportal] [2026-06-09 09:27:01,008] ERROR {org.wso2.carbon.apimgt.rest.api.util.interceptors.PostAuthenticationInterceptor} - Authentication failed: expected Opaque, JWT, Basic, or Platform Gateway API Key
+TID: [-1234] [api/am/devportal] [2026-06-09 09:27:01,008] ERROR {org.wso2.carbon.apimgt.rest.api.util.interceptors.PostAuthenticationInterceptor} - Authentication failed: expected Opaque, JWT, Basic, or Platform Gateway API Key
+TID: [] [] [2026-06-09 09:29:33,130]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /anneeA-academique-service-api/v1/api/academic-years, HEALTH CHECK URL = /anneeA-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:29:33,149]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /anneeA-academique-service-api/v1/api/academic-years, HEALTH CHECK URL = /anneeA-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:31:25,910]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Resource forbidden  for requestURI=/annee-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:31:25,951]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Resource forbidden  for requestURI=/annee-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:31:46,151]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Resource forbidden  for requestURI=/annee-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:31:46,169]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Resource forbidden  for requestURI=/annee-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:33:18,978]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Resource forbidden  for requestURI=/annee-academique-service-api/v1/api/academic-years
+TID: [] [] [2026-06-09 09:33:18,995]  WARN {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Resource forbidden  for requestURI=/annee-academique-service-api/v1/api/academic-years
+TID: [-1234] [api/am/admin] [2026-06-09 09:37:10,475] ERROR {org.wso2.carbon.apimgt.rest.api.util.interceptors.PostAuthenticationInterceptor} - Authentication failed: expected Opaque, JWT, Basic, or Platform Gateway API Key
+TID: [] [] [2026-06-09 09:40:27,781]  INFO {org.apache.synapse.mediators.builtin.LogMediator} - STATUS = Message dispatched to the main sequence. Invalid URL., RESOURCE = /token, HEALTH CHECK URL = /token
+TID: [] [] [2026-06-09 09:40:27,869] ERROR {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Unclassified Authentication Failureorg.wso2.carbon.apimgt.gateway.handlers.security.APISecurityException: Access failure for API: /annee-academique-service-api/v1, version: v1 status: (900900) - Unclassified Authentication Failure
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.isAuthenticate_aroundBody68(APIAuthenticationHandler.java:661)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.isAuthenticate(APIAuthenticationHandler.java:1)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.handleRequest_aroundBody58(APIAuthenticationHandler.java:504)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.handleRequest(APIAuthenticationHandler.java:1)
+	at org.apache.synapse.api.API.process(API.java:437)
+	at org.apache.synapse.api.AbstractApiHandler.apiProcessNonDefaultStrategy(AbstractApiHandler.java:109)
+	at org.apache.synapse.api.AbstractApiHandler.identifyAPI(AbstractApiHandler.java:129)
+	at org.apache.synapse.api.AbstractApiHandler.dispatchToAPI(AbstractApiHandler.java:61)
+	at org.apache.synapse.api.rest.RestRequestHandler.dispatchToAPI(RestRequestHandler.java:90)
+	at org.apache.synapse.api.rest.RestRequestHandler.process(RestRequestHandler.java:76)
+	at org.apache.synapse.rest.RESTRequestHandler.process(RESTRequestHandler.java:54)
+	at org.apache.synapse.core.axis2.Axis2SynapseEnvironment.injectMessage(Axis2SynapseEnvironment.java:353)
+	at org.apache.synapse.core.axis2.SynapseMessageReceiver.receive(SynapseMessageReceiver.java:101)
+	at org.apache.axis2.engine.AxisEngine.receive(AxisEngine.java:180)
+	at org.apache.synapse.transport.passthru.ServerWorker.processNonEntityEnclosingRESTHandler(ServerWorker.java:401)
+	at org.apache.synapse.transport.passthru.ServerWorker.run(ServerWorker.java:215)
+	at org.apache.axis2.transport.base.threads.NativeWorkerPool$1.run(NativeWorkerPool.java:172)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+TID: [] [] [2026-06-09 09:40:45,052] ERROR {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Unclassified Authentication Failureorg.wso2.carbon.apimgt.gateway.handlers.security.APISecurityException: Access failure for API: /annee-academique-service-api/v1, version: v1 status: (900900) - Unclassified Authentication Failure
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.isAuthenticate_aroundBody68(APIAuthenticationHandler.java:661)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.isAuthenticate(APIAuthenticationHandler.java:1)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.handleRequest_aroundBody58(APIAuthenticationHandler.java:504)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.handleRequest(APIAuthenticationHandler.java:1)
+	at org.apache.synapse.api.API.process(API.java:437)
+	at org.apache.synapse.api.AbstractApiHandler.apiProcessNonDefaultStrategy(AbstractApiHandler.java:109)
+	at org.apache.synapse.api.AbstractApiHandler.identifyAPI(AbstractApiHandler.java:129)
+	at org.apache.synapse.api.AbstractApiHandler.dispatchToAPI(AbstractApiHandler.java:61)
+	at org.apache.synapse.api.rest.RestRequestHandler.dispatchToAPI(RestRequestHandler.java:90)
+	at org.apache.synapse.api.rest.RestRequestHandler.process(RestRequestHandler.java:76)
+	at org.apache.synapse.rest.RESTRequestHandler.process(RESTRequestHandler.java:54)
+	at org.apache.synapse.core.axis2.Axis2SynapseEnvironment.injectMessage(Axis2SynapseEnvironment.java:353)
+	at org.apache.synapse.core.axis2.SynapseMessageReceiver.receive(SynapseMessageReceiver.java:101)
+	at org.apache.axis2.engine.AxisEngine.receive(AxisEngine.java:180)
+	at org.apache.synapse.transport.passthru.ServerWorker.processNonEntityEnclosingRESTHandler(ServerWorker.java:401)
+	at org.apache.synapse.transport.passthru.ServerWorker.run(ServerWorker.java:215)
+	at org.apache.axis2.transport.base.threads.NativeWorkerPool$1.run(NativeWorkerPool.java:172)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+TID: [] [] [2026-06-09 09:41:08,027] ERROR {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Unclassified Authentication Failureorg.wso2.carbon.apimgt.gateway.handlers.security.APISecurityException: Access failure for API: /annee-academique-service-api/v1, version: v1 status: (900900) - Unclassified Authentication Failure
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.isAuthenticate_aroundBody68(APIAuthenticationHandler.java:661)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.isAuthenticate(APIAuthenticationHandler.java:1)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.handleRequest_aroundBody58(APIAuthenticationHandler.java:504)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.handleRequest(APIAuthenticationHandler.java:1)
+	at org.apache.synapse.api.API.process(API.java:437)
+	at org.apache.synapse.api.AbstractApiHandler.apiProcessNonDefaultStrategy(AbstractApiHandler.java:109)
+	at org.apache.synapse.api.AbstractApiHandler.identifyAPI(AbstractApiHandler.java:129)
+	at org.apache.synapse.api.AbstractApiHandler.dispatchToAPI(AbstractApiHandler.java:61)
+	at org.apache.synapse.api.rest.RestRequestHandler.dispatchToAPI(RestRequestHandler.java:90)
+	at org.apache.synapse.api.rest.RestRequestHandler.process(RestRequestHandler.java:76)
+	at org.apache.synapse.rest.RESTRequestHandler.process(RESTRequestHandler.java:54)
+	at org.apache.synapse.core.axis2.Axis2SynapseEnvironment.injectMessage(Axis2SynapseEnvironment.java:353)
+	at org.apache.synapse.core.axis2.SynapseMessageReceiver.receive(SynapseMessageReceiver.java:101)
+	at org.apache.axis2.engine.AxisEngine.receive(AxisEngine.java:180)
+	at org.apache.synapse.transport.passthru.ServerWorker.processNonEntityEnclosingRESTHandler(ServerWorker.java:401)
+	at org.apache.synapse.transport.passthru.ServerWorker.run(ServerWorker.java:215)
+	at org.apache.axis2.transport.base.threads.NativeWorkerPool$1.run(NativeWorkerPool.java:172)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+TID: [] [] [2026-06-09 09:41:36,338]  INFO {org.wso2.carbon.databridge.core.DataBridge} - user admin connected
+TID: [] [] [2026-06-09 09:45:37,450] ERROR {org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler} - API authentication failure due to Unclassified Authentication Failureorg.wso2.carbon.apimgt.gateway.handlers.security.APISecurityException: Access failure for API: /annee-academique-service-api/v1, version: v1 status: (900900) - Unclassified Authentication Failure
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.isAuthenticate_aroundBody68(APIAuthenticationHandler.java:661)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.isAuthenticate(APIAuthenticationHandler.java:1)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.handleRequest_aroundBody58(APIAuthenticationHandler.java:504)
+	at org.wso2.carbon.apimgt.gateway.handlers.security.APIAuthenticationHandler.handleRequest(APIAuthenticationHandler.java:1)
+	at org.apache.synapse.api.API.process(API.java:437)
+	at org.apache.synapse.api.AbstractApiHandler.apiProcessNonDefaultStrategy(AbstractApiHandler.java:109)
+	at org.apache.synapse.api.AbstractApiHandler.identifyAPI(AbstractApiHandler.java:129)
+	at org.apache.synapse.api.AbstractApiHandler.dispatchToAPI(AbstractApiHandler.java:61)
+	at org.apache.synapse.api.rest.RestRequestHandler.dispatchToAPI(RestRequestHandler.java:90)
+	at org.apache.synapse.api.rest.RestRequestHandler.process(RestRequestHandler.java:76)
+	at org.apache.synapse.rest.RESTRequestHandler.process(RESTRequestHandler.java:54)
+	at org.apache.synapse.core.axis2.Axis2SynapseEnvironment.injectMessage(Axis2SynapseEnvironment.java:353)
+	at org.apache.synapse.core.axis2.SynapseMessageReceiver.receive(SynapseMessageReceiver.java:101)
+	at org.apache.axis2.engine.AxisEngine.receive(AxisEngine.java:180)
+	at org.apache.synapse.transport.passthru.ServerWorker.processNonEntityEnclosingRESTHandler(ServerWorker.java:401)
+	at org.apache.synapse.transport.passthru.ServerWorker.run(ServerWorker.java:215)
+	at org.apache.axis2.transport.base.threads.NativeWorkerPool$1.run(NativeWorkerPool.java:172)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+
+TID: [] [] [2026-06-09 11:30:07,905]  INFO {org.wso2.carbon.identity.application.authentication.framework.store.SessionCleanUpService} - Session Data cleanup task is running successfully for removing expired Data
+TID: [] [] [2026-06-09 11:32:45,247]  INFO {org.wso2.carbon.databridge.core.DataBridge} - user admin connected

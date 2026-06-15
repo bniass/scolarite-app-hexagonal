@@ -82,3 +82,10 @@ app:
 
 server:
   port: 8091
+
+logging:
+  file:
+    name: /tmp/inscription-service.log
+  level:
+    root: INFO
+    com.ecole221: DEBUG

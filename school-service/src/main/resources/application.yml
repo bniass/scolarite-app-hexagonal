@@ -20,6 +20,11 @@ spring:
     url: jdbc:mysql://localhost:8889/school-service
     username: root
     password: root
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+      connection-timeout: 3000
+      idle-timeout: 30000
 
   jpa:
     hibernate:
@@ -32,3 +37,9 @@ spring:
 
 server:
   port: 8094
+  tomcat:
+    threads:
+      max: 400
+      min-spare: 40
+    accept-count: 400
+    connection-timeout: 5s

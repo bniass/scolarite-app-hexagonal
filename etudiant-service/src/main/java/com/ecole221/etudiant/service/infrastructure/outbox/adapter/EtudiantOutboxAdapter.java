@@ -39,7 +39,7 @@ public class EtudiantOutboxAdapter implements OutboxPort {
             entity.setStatus(OutboxStatus.PENDING);
             repository.save(entity);
         } catch (Exception e) {
-            throw new RuntimeException("Erreur sérialisation événement outbox", e);
+            throw new RuntimeException("Erreur sérialisation événement outbox : " + e.getMessage() + " — cause: " + (e.getCause() != null ? e.getCause().getMessage() : "null"), e);
         }
     }
 }

@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.3",
+  "openapi": "3.1.0",
   "info": {
     "title": "Annee Academique Service API",
     "version": "v1"
@@ -7,17 +7,53 @@
   "servers": [
     {
       "url": "http://host.docker.internal:8080",
-      "description": "Backend service"
+      "description": "Local dev"
+    }
+  ],
+  "security": [
+    {
+      "keycloak": []
     }
   ],
   "tags": [
     {
       "name": "AnneeAcademique",
-      "description": "Gestion de l'année académique"
+      "description": "Gestion de l'ann\u00e9e acad\u00e9mique"
     }
   ],
   "paths": {
     "/api/academic-years": {
+      "get": {
+        "tags": [
+          "AnneeAcademique"
+        ],
+        "operationId": "lister",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AnneeAcademiqueResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "AnneeAcademique"
@@ -301,6 +337,48 @@
           "dateFinInscriptions": {
             "type": "string",
             "format": "date"
+          }
+        }
+      },
+      "AnneeAcademiqueResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "dateDebut": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateFin": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateDebutInscriptions": {
+            "type": "string",
+            "format": "date"
+          },
+          "dateFinInscriptions": {
+            "type": "string",
+            "format": "date"
+          },
+          "datePublication": {
+            "type": "string",
+            "format": "date"
+          },
+          "statut": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "keycloak": {
+        "type": "oauth2",
+        "flows": {
+          "password": {
+            "tokenUrl": "http://keycloak:8180/realms/scolarite/protocol/openid-connect/token",
+            "scopes": {}
           }
         }
       }

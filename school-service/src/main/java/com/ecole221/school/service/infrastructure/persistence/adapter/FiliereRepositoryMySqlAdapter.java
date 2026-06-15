@@ -9,6 +9,7 @@ import com.ecole221.school.service.infrastructure.persistence.repository.Filiere
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -44,5 +45,10 @@ public class FiliereRepositoryMySqlAdapter implements FiliereRepository {
     @Override
     public Optional<Filiere> findByCode(String code) {
         return jpaRepository.findByCode(code).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<Filiere> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
     }
 }

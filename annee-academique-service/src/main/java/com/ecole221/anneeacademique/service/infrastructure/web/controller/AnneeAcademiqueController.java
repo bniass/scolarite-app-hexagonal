@@ -2,12 +2,14 @@ package com.ecole221.anneeacademique.service.infrastructure.web.controller;
 
 import com.ecole221.anneeacademique.service.application.command.*;
 import com.ecole221.anneeacademique.service.application.port.in.*;
+import com.ecole221.anneeacademique.service.infrastructure.web.dto.AnneeAcademiqueResponse;
 import com.ecole221.anneeacademique.service.infrastructure.web.mapper.AnneeAcademiqueMapper;
 import com.ecole221.anneeacademique.service.infrastructure.web.dto.CreerAnneeAcademiqueRequest;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @Tag(name = "AnneeAcademique", description = "Gestion de l'année académique")
@@ -19,6 +21,7 @@ public class AnneeAcademiqueController {
     private final OuvrirInscriptionUseCase ouvrirUC;
     private final CloturerAnneeScolaireUseCase cloturerUC;
     private final ModifierAnneeAcademiqueUseCase modifierUC;
+    private final ListerAnneesAcademiquesUseCase listerUC;
 
     public AnneeAcademiqueController(
             FermerInscriptionUseCase fermerUC,
@@ -26,7 +29,8 @@ public class AnneeAcademiqueController {
             PublierAnneeAcademiqueUseCase publierUC,
             OuvrirInscriptionUseCase ouvrirUC,
             CloturerAnneeScolaireUseCase cloturerUC,
-            ModifierAnneeAcademiqueUseCase modifierUC
+            ModifierAnneeAcademiqueUseCase modifierUC,
+            ListerAnneesAcademiquesUseCase listerUC
     ) {
         this.fermerUC = fermerUC;
         this.creerUC = creerUC;
@@ -34,6 +38,16 @@ public class AnneeAcademiqueController {
         this.ouvrirUC = ouvrirUC;
         this.cloturerUC = cloturerUC;
         this.modifierUC = modifierUC;
+        this.listerUC = listerUC;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AnneeAcademiqueResponse>> lister() {
+        List<AnneeAcademiqueResponse> annees = listerUC.executer()
+                .stream()
+                .map(AnneeAcademiqueResponse::from)
+                .toList();
+        return ResponseEntity.ok(annees);
     }
 
     @PostMapping
