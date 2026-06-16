@@ -51,4 +51,10 @@ public class InscriptionJpaEntity {
 
     @Column(name = "cree_le", nullable = false)
     private LocalDateTime creeLe;
+
+    @Column(name = "annule_le")
+    private LocalDateTime annuleLe;
+
+    @Column(name = "motif_annulation", length = 500)
+    private String motifAnnulation;
 }

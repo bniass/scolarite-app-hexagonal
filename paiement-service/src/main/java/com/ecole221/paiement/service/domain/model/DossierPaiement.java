@@ -45,10 +45,6 @@ public class DossierPaiement extends AggregateRoot<UUID> {
         d.autresFrais = autresFrais;
         d.statut = StatutDossier.INITIALISE;
         d.lignes = d.genererLignes(moisAcademiques);
-
-        d.addEvent(new DossierInitialiseEvent(
-                inscriptionId.toString(), "CONFIRME", "", LocalDateTime.now()
-        ));
         return d;
     }
 
@@ -84,6 +80,16 @@ public class DossierPaiement extends AggregateRoot<UUID> {
         }
         if (montantTotal == null || montantTotal.compareTo(BigDecimal.ZERO) <= 0) {
             throw new PaiementDomainException("Le montant à distribuer doit être positif");
+        }
+
+        // Premier versement : doit couvrir au minimum fraisInscription + autresFrais + 1 mensualité
+        if (statut == StatutDossier.INITIALISE) {
+            BigDecimal minimum = fraisInscription.add(autresFrais).add(mensualite);
+            if (montantTotal.compareTo(minimum) < 0) {
+                throw new PaiementDomainException(
+                        "Le premier versement (" + montantTotal + ") doit couvrir au minimum les frais d'inscription"
+                        + " + autres frais + 1 mensualité (" + minimum + ")");
+            }
         }
 
         // Plafond : on ne peut pas payer plus que ce qui reste
@@ -124,6 +130,9 @@ public class DossierPaiement extends AggregateRoot<UUID> {
     private void mettreAJourStatut() {
         if (statut == StatutDossier.INITIALISE) {
             statut = StatutDossier.ACTIF;
+            // Premier versement reçu → l'inscription peut être confirmée
+            addEvent(new DossierInitialiseEvent(
+                    inscriptionId.toString(), "CONFIRME", "", LocalDateTime.now()));
         }
         if (lignes.stream().allMatch(LignePaiement::estPayee)) {
             statut = StatutDossier.CLOTURE;

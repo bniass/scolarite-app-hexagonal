@@ -23,6 +23,8 @@ public record InscriptionResponse(
         BigDecimal autresFrais,
         StatutInscription statut,
         LocalDateTime creeLe,
+        LocalDateTime annuleLe,
+        String motifAnnulation,
         List<MoisAcademiqueDto> moisAcademiques
 ) {
     // Ordre de paiement : juin=1, oct=2, nov=3, déc=4, jan=5, fév=6, mar=7, avr=8, mai=9
@@ -39,6 +41,7 @@ public record InscriptionResponse(
                 i.getId(), i.getEtudiantId(), i.getClasseId(),
                 i.getCodeAnnee(), i.getFraisInscription(), i.getMensualite(),
                 i.getAutresFrais(), i.getStatut(), i.getCreeLe(),
+                i.getAnnuleLe(), i.getMotifAnnulation(),
                 parseMoisOrdonnés(i.getMoisAcademiquesJson())
         );
     }

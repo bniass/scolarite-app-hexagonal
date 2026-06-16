@@ -47,6 +47,8 @@
 		<avro.version>1.12.1</avro.version>
 		<spring-kafka.version>3.2.4</spring-kafka.version>
 		<kafka-avro-serializer.version>7.3.3</kafka-avro-serializer.version>
+		<!-- Lombok 1.18.36 crash sur JDK 26 (TypeTag::UNKNOWN) ; 1.18.38 supporte JDK 26 -->
+		<lombok.version>1.18.38</lombok.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -127,7 +129,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.36</version>
+							<version>${lombok.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

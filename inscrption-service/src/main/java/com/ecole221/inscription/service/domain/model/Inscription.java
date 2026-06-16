@@ -1,6 +1,7 @@
 package com.ecole221.inscription.service.domain.model;
 
 import com.ecole221.common.entity.AggregateRoot;
+import com.ecole221.inscription.service.domain.event.InscriptionAnnuleeEvent;
 import com.ecole221.inscription.service.domain.event.InscriptionCreeeEvent;
 import com.ecole221.inscription.service.domain.exception.InscriptionException;
 import com.ecole221.inscription.service.domain.valueobject.StatutInscription;
@@ -20,15 +21,15 @@ public class Inscription extends AggregateRoot<UUID> {
     private String moisAcademiquesJson;
     private StatutInscription statut;
     private LocalDateTime creeLe;
-    /** true si l'étudiant a été créé lors de cette inscription (compensation = supprimer l'étudiant) */
     private boolean etudiantNouveau;
+    private LocalDateTime annuleLe;
+    private String motifAnnulation;
 
     private Inscription() {}
 
-    public static Inscription creer(UUID etudiantId, boolean etudiantNouveau, UUID classeId, String codeAnnee,
-            BigDecimal fraisInscription, BigDecimal mensualite, BigDecimal autresFrais,
-            String moisAcademiquesJson, BigDecimal montantVerse, String typePaiement,
-            String operateur, String referencePaiement, String nomBanque, String numeroTransaction) {
+    public static Inscription creer(UUID etudiantId, boolean etudiantNouveau, UUID classeId,
+            String codeAnnee, BigDecimal fraisInscription, BigDecimal mensualite,
+            BigDecimal autresFrais, String moisAcademiquesJson) {
         Inscription i = new Inscription();
         i.setId(UUID.randomUUID());
         i.etudiantId = etudiantId;
@@ -44,9 +45,7 @@ public class Inscription extends AggregateRoot<UUID> {
 
         i.addEvent(new InscriptionCreeeEvent(
                 i.getId().toString(), etudiantId, classeId, codeAnnee,
-                fraisInscription, mensualite, autresFrais, moisAcademiquesJson,
-                montantVerse, typePaiement, operateur, referencePaiement,
-                nomBanque, numeroTransaction, i.creeLe
+                fraisInscription, mensualite, autresFrais, moisAcademiquesJson, i.creeLe
         ));
         return i;
     }
@@ -54,7 +53,7 @@ public class Inscription extends AggregateRoot<UUID> {
     public static Inscription reconstituer(UUID id, UUID etudiantId, boolean etudiantNouveau,
             UUID classeId, String codeAnnee, BigDecimal fraisInscription, BigDecimal mensualite,
             BigDecimal autresFrais, String moisAcademiquesJson, StatutInscription statut,
-            LocalDateTime creeLe) {
+            LocalDateTime creeLe, LocalDateTime annuleLe, String motifAnnulation) {
         Inscription i = new Inscription();
         i.setId(id);
         i.etudiantId = etudiantId;
@@ -67,6 +66,8 @@ public class Inscription extends AggregateRoot<UUID> {
         i.moisAcademiquesJson = moisAcademiquesJson;
         i.statut = statut;
         i.creeLe = creeLe;
+        i.annuleLe = annuleLe;
+        i.motifAnnulation = motifAnnulation;
         return i;
     }
 
@@ -84,6 +85,24 @@ public class Inscription extends AggregateRoot<UUID> {
         statut = StatutInscription.ECHOUEE;
     }
 
+    public void annuler(String motif) {
+        if (statut == StatutInscription.CONFIRMEE) {
+            throw new InscriptionException(
+                    "Impossible d'annuler une inscription ayant au moins un versement (statut : CONFIRMEE)");
+        }
+        if (statut == StatutInscription.ANNULEE) {
+            throw new InscriptionException("L'inscription est déjà annulée");
+        }
+        if (statut != StatutInscription.PENDING) {
+            throw new InscriptionException(
+                    "Impossible d'annuler une inscription en statut " + statut);
+        }
+        statut = StatutInscription.ANNULEE;
+        annuleLe = LocalDateTime.now();
+        motifAnnulation = motif;
+        addEvent(new InscriptionAnnuleeEvent(getId().toString(), annuleLe));
+    }
+
     public UUID getEtudiantId() { return etudiantId; }
     public boolean isEtudiantNouveau() { return etudiantNouveau; }
     public UUID getClasseId() { return classeId; }
@@ -94,4 +113,6 @@ public class Inscription extends AggregateRoot<UUID> {
     public String getMoisAcademiquesJson() { return moisAcademiquesJson; }
     public StatutInscription getStatut() { return statut; }
     public LocalDateTime getCreeLe() { return creeLe; }
+    public LocalDateTime getAnnuleLe() { return annuleLe; }
+    public String getMotifAnnulation() { return motifAnnulation; }
 }

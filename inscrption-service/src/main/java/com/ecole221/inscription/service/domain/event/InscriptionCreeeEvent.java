@@ -12,20 +12,10 @@ public class InscriptionCreeeEvent extends InscriptionEvent {
     private final BigDecimal mensualite;
     private final BigDecimal autresFrais;
     private final String moisAcademiquesJson;
-    private final BigDecimal montantVerse;
-    private final String typePaiement;
-    private final String operateur;
-    private final String referencePaiement;
-    private final String nomBanque;
-    private final String numeroTransaction;
 
     public InscriptionCreeeEvent(String inscriptionId, UUID etudiantId, UUID classeId,
             String codeAnnee, BigDecimal fraisInscription, BigDecimal mensualite,
-            BigDecimal autresFrais, String moisAcademiquesJson,
-            BigDecimal montantVerse, String typePaiement,
-            String operateur, String referencePaiement,
-            String nomBanque, String numeroTransaction,
-            LocalDateTime occurredAt) {
+            BigDecimal autresFrais, String moisAcademiquesJson, LocalDateTime occurredAt) {
         super(inscriptionId, occurredAt);
         this.etudiantId = etudiantId;
         this.classeId = classeId;
@@ -34,12 +24,6 @@ public class InscriptionCreeeEvent extends InscriptionEvent {
         this.mensualite = mensualite;
         this.autresFrais = autresFrais;
         this.moisAcademiquesJson = moisAcademiquesJson;
-        this.montantVerse = montantVerse;
-        this.typePaiement = typePaiement;
-        this.operateur = operateur != null ? operateur : "";
-        this.referencePaiement = referencePaiement != null ? referencePaiement : "";
-        this.nomBanque = nomBanque != null ? nomBanque : "";
-        this.numeroTransaction = numeroTransaction != null ? numeroTransaction : "";
     }
 
     public UUID getEtudiantId() { return etudiantId; }
@@ -49,10 +33,4 @@ public class InscriptionCreeeEvent extends InscriptionEvent {
     public BigDecimal getMensualite() { return mensualite; }
     public BigDecimal getAutresFrais() { return autresFrais; }
     public String getMoisAcademiquesJson() { return moisAcademiquesJson; }
-    public BigDecimal getMontantVerse() { return montantVerse; }
-    public String getTypePaiement() { return typePaiement; }
-    public String getOperateur() { return operateur; }
-    public String getReferencePaiement() { return referencePaiement; }
-    public String getNomBanque() { return nomBanque; }
-    public String getNumeroTransaction() { return numeroTransaction; }
 }

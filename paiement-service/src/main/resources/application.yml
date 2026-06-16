@@ -67,6 +67,7 @@ kafka-consumer:
 
 kafka-topics:
   inscription-creee-topic: inscription-creee
+  inscription-annulee-topic: inscription-annulee
   paiement-confirme-topic: paiement-confirme
 
 paiement:
@@ -75,6 +76,18 @@ paiement:
 app:
   kafka:
     format: avro
+  keycloak:
+    public-url: ${APP_KEYCLOAK_PUBLIC_URL:http://localhost:8180}
+    realm: ${APP_KEYCLOAK_REALM:scolarite}
 
 server:
   port: 8093
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}

@@ -2,7 +2,7 @@ package com.ecole221.inscription.service.application;
 
 import com.ecole221.inscription.service.application.port.out.InscriptionRepository;
 import com.ecole221.inscription.service.application.usecase.ConfirmerInscriptionService;
-import com.ecole221.inscription.service.domain.exception.InscriptionException;
+import com.ecole221.inscription.service.domain.exception.InscriptionNotFoundException;
 import com.ecole221.inscription.service.domain.model.Inscription;
 import com.ecole221.inscription.service.domain.valueobject.StatutInscription;
 import org.junit.jupiter.api.Test;
@@ -26,9 +26,8 @@ class ConfirmerInscriptionServiceTest {
     @InjectMocks private ConfirmerInscriptionService service;
 
     private Inscription inscriptionPending() {
-        return Inscription.creer(UUID.randomUUID(), UUID.randomUUID(), "2024-2025",
-                new BigDecimal("50000"), new BigDecimal("25000"), new BigDecimal("10000"),
-                "[]", new BigDecimal("50000"), "COMPTANT", "", "", "", "");
+        return Inscription.creer(UUID.randomUUID(), false, UUID.randomUUID(), "2024-2025",
+                new BigDecimal("50000"), new BigDecimal("25000"), new BigDecimal("10000"), "[]");
     }
 
     @Test
@@ -50,6 +49,6 @@ class ConfirmerInscriptionServiceTest {
         when(repository.trouverParId(id)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.executer(id))
-                .isInstanceOf(InscriptionException.class);
+                .isInstanceOf(InscriptionNotFoundException.class);
     }
 }

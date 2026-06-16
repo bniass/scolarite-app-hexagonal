@@ -8,4 +8,5 @@ import java.util.UUID;
 public interface DossierPaiementRepository {
     DossierPaiement sauvegarder(DossierPaiement dossier);
     Optional<DossierPaiement> trouverParInscriptionId(UUID inscriptionId);
+    void supprimerParInscriptionId(UUID inscriptionId);
 }

@@ -1,0 +1,39 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'inscription-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8091']
+        labels:
+          service: 'inscription-service'
+
+  - job_name: 'paiement-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8093']
+        labels:
+          service: 'paiement-service'
+
+  - job_name: 'etudiant-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8092']
+        labels:
+          service: 'etudiant-service'
+
+  - job_name: 'school-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8094']
+        labels:
+          service: 'school-service'
+
+  - job_name: 'annee-academique-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        labels:
+          service: 'annee-academique-service'

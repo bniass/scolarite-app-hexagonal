@@ -1,6 +1,6 @@
 # Scolarite App — Hexagonal
 
-Plateforme de gestion scolaire construite en **microservices** avec une **architecture hexagonale** (Ports & Adapters / DDD), communication asynchrone via **Apache Kafka** et persistance **MySQL** par service.
+Plateforme de gestion scolaire construite en **microservices** avec une **architecture hexagonale** (Ports & Adapters / DDD), communication asynchrone via **Apache Kafka**, persistance **MySQL** par service, et tests de charge via **k6 + Grafana**.
 
 ---
 
@@ -11,13 +11,17 @@ Plateforme de gestion scolaire construite en **microservices** avec une **archit
 3. [Microservices](#3-microservices)
 4. [Communication inter-services](#4-communication-inter-services)
 5. [Saga & compensation](#5-saga--compensation)
-6. [Modèle de paiement](#6-modèle-de-paiement)
-7. [Modules partagés](#7-modules-partagés)
-8. [Infrastructure](#8-infrastructure)
-9. [Démarrage rapide](#9-démarrage-rapide)
-10. [Endpoints REST](#10-endpoints-rest)
-11. [Variables de configuration](#11-variables-de-configuration)
-12. [Sécurité — Keycloak + WSO2 API Gateway](#12-sécurité--keycloak--wso2-api-gateway)
+6. [Annulation d'inscription](#6-annulation-dinscription)
+7. [Modèle de paiement](#7-modèle-de-paiement)
+8. [Modules partagés](#8-modules-partagés)
+9. [Infrastructure](#9-infrastructure)
+10. [Démarrage rapide](#10-démarrage-rapide)
+11. [Endpoints REST](#11-endpoints-rest)
+12. [Variables de configuration](#12-variables-de-configuration)
+13. [Sécurité — Keycloak + WSO2 API Gateway](#13-sécurité--keycloak--wso2-api-gateway)
+14. [Tests de charge — k6](#14-tests-de-charge--k6)
+15. [Observabilité — Grafana + Prometheus + InfluxDB](#15-observabilité--grafana--prometheus--influxdb)
+16. [Décisions techniques](#16-décisions-techniques)
 
 ---
 
@@ -29,9 +33,14 @@ inscription → création étudiant → ouverture dossier paiement → versement
 
 Un étudiant s'inscrit pour une année académique dans une classe. Le système :
 - crée l'étudiant s'il est nouveau (via `etudiant-service`)
-- ouvre son dossier de paiement (via `paiement-service`)
-- distribue le montant initial sur les lignes de paiement dans l'ordre académique
+- ouvre son dossier de paiement (via `paiement-service`) à la réception de l'événement Kafka `inscription-creee`
+- confirme l'inscription à la réception du premier versement (`paiement-confirme`)
 - compense (rollback) en cas d'échec à n'importe quelle étape (Saga choreography)
+- permet l'annulation administrative d'une inscription avec suppression physique des données de paiement
+
+**Séparation des rôles :**
+- **Admin Scolaire** : crée les inscriptions (sans information de paiement)
+- **Comptable** : effectue les versements sur les dossiers
 
 ---
 
@@ -119,7 +128,7 @@ Gère les filières, classes et tarifs.
 | `ConsulterTarifActif` | Retourne le tarif actif d'une classe |
 | `ConsulterHistoriqueTarifs` | Liste l'historique des tarifs d'une classe |
 
-> `inscrption-service` appelle `school-service` en HTTP synchrone pour récupérer le tarif actif d'une classe lors d'une inscription.
+> `inscrption-service` appelle `school-service` en HTTP synchrone pour récupérer le tarif actif lors d'une inscription.
 
 ---
 
@@ -135,7 +144,7 @@ Gère le référentiel des étudiants.
 | `RechercherEtudiant` | Recherche par critères |
 | `SupprimerEtudiant` | Supprime un étudiant (appelé en compensation saga) |
 
-> `inscrption-service` appelle ce service en HTTP synchrone. En cas de rollback saga, l'étudiant créé lors de l'inscription est supprimé **uniquement s'il était nouveau** (flag `etudiantNouveau`).
+> En cas de rollback saga, l'étudiant créé lors de l'inscription est supprimé **uniquement s'il était nouveau** (flag `etudiantNouveau`).
 
 ---
 
@@ -146,23 +155,21 @@ Orchestre la création d'une inscription. Point d'entrée principal du flux mét
 **Use cases :**
 | Use case | Description |
 |----------|-------------|
-| `CreerInscription` | Crée l'inscription, résout l'étudiant, publie l'événement |
+| `CreerInscription` | Crée l'inscription, résout l'étudiant, publie `inscription-creee` |
 | `ConsulterInscription` | Retourne le détail d'une inscription |
-| `ConfirmerInscription` | Passe le statut à CONFIRMEE (consommé depuis Kafka) |
-| `AnnulerInscription` | Compense : supprime l'inscription + l'étudiant si nouveau |
+| `ConfirmerInscription` | Passe le statut à `CONFIRMEE` (déclenché par Kafka `paiement-confirme`) |
+| `AnnulerInscriptionAdmin` | Annulation administrative (soft delete) + publication `inscription-annulee` |
+| `AnnulerInscription` | Compensation saga : supprime physiquement l'inscription + l'étudiant si nouveau |
 | `SynchroniserAnneeAcademique` | Maintient la projection locale des années académiques |
 
 **Statuts d'une inscription :**
 ```
-EN_ATTENTE → CONFIRMEE
-           ↘ (supprimée physiquement si saga échoue)
+PENDING → CONFIRMEE   (premier versement reçu)
+        → ANNULEE     (annulation administrative — soft delete)
+        → (supprimée) (compensation saga — suppression physique)
 ```
 
-**Contraintes de validation du montant initial :**
-- `montant > 0`
-- `montant ≤ total annuel` (frais inscription + autres frais + mensualité × nb mois)
-
-**Flag `etudiantNouveau` :**  
+**Flag `etudiantNouveau` :**
 Stocké en base. Indique si l'étudiant a été créé lors de cette inscription. Seul un étudiant nouveau est supprimé lors de la compensation saga.
 
 ---
@@ -174,9 +181,16 @@ Gère les dossiers de paiement et les versements.
 **Use cases :**
 | Use case | Description |
 |----------|-------------|
-| `InitialiserDossier` | Crée le dossier, génère les lignes, distribue le versement initial |
+| `InitialiserDossier` | Crée le dossier et génère les lignes (déclenché par Kafka `inscription-creee`) |
 | `DistribuerVersement` | Distribue un montant sur les lignes non payées dans l'ordre |
 | `ConsulterDossier` | Retourne l'état complet du dossier |
+| `SupprimerDossier` | Supprime physiquement le dossier + lignes + versements (déclenché par Kafka `inscription-annulee`) |
+
+**Statuts d'un dossier :**
+```
+INITIALISE → ACTIF (premier versement reçu → publie paiement-confirme CONFIRME)
+           → CLOTURE (toutes les lignes payées)
+```
 
 **Structure d'un dossier :**
 ```
@@ -206,15 +220,12 @@ DossierPaiement
 | `AVANCE` | Partiellement payée |
 | `PAYE` | Intégralement payée |
 
-**Contraintes de versement :**
-- `montant > 0`
-- `montant ≤ total restant dû`
-
-**Historique des commentaires :**  
+**Historique des commentaires :**
 Chaque versement appende un commentaire horodaté sur la ligne :
 ```
 Octobre 2025 | 03/06/2026 : versé 80000 via MOBILE_MONEY [PAYÉ intégralement]
-Décembre 2025 | 03/06/2026 : versé 40000 via MOBILE_MONEY [avance — restant : 40000] | 03/06/2026 : versé 40000 via COMPTANT [PAYÉ intégralement]
+Décembre 2025 | 03/06/2026 : versé 40000 via MOBILE_MONEY [avance — restant : 40000]
+             | 03/06/2026 : versé 40000 via COMPTANT [PAYÉ intégralement]
 ```
 
 ---
@@ -225,24 +236,26 @@ Décembre 2025 | 03/06/2026 : versé 40000 via MOBILE_MONEY [avance — restant 
 
 | Appelant | Appelé | Endpoint | Objectif |
 |----------|--------|----------|----------|
-| `inscrption-service` | `school-service` | `GET /api/tarifs/classes/{classeId}/actif` | Récupère le tarif actif |
+| `inscrption-service` | `school-service` | `GET /api/classes/{classeId}/tarif-actif` | Récupère le tarif actif |
 | `inscrption-service` | `etudiant-service` | `POST /api/etudiants` | Crée un nouvel étudiant |
-| `inscrption-service` | `etudiant-service` | `DELETE /api/etudiants/{id}` | Supprime l'étudiant (compensation) |
+| `inscrption-service` | `etudiant-service` | `DELETE /api/etudiants/id/{id}` | Supprime l'étudiant (compensation) |
 
 ### Événements Kafka asynchrones
 
-| Topic | Producteur | Consommateur | Format | Déclencheur |
-|-------|-----------|--------------|--------|-------------|
-| `inscription-creee` | `inscrption-service` | `paiement-service` | Avro | Inscription créée |
-| `paiement-confirme` (statut=`CONFIRME`) | `paiement-service` | `inscrption-service` | Avro | Dossier initialisé avec succès |
-| `paiement-confirme` (statut=`ECHEC`) | `paiement-service` | `inscrption-service` | Avro | Échec initialisation dossier |
-| `creer-annee-request` | `annee-academique-service` | `inscrption-service` | Avro | Année académique publiée |
+| Topic | Producteur | Consommateur | Déclencheur |
+|-------|-----------|--------------|-------------|
+| `inscription-creee` | `inscrption-service` | `paiement-service` | Inscription créée |
+| `inscription-annulee` | `inscrption-service` | `paiement-service` | Annulation administrative |
+| `paiement-confirme` (CONFIRME) | `paiement-service` | `inscrption-service` | Premier versement reçu |
+| `paiement-confirme` (ECHEC) | `paiement-service` | `inscrption-service` | Échec initialisation dossier |
+| `creer-annee-request` | `annee-academique-service` | `inscrption-service` | Année académique publiée |
 
 ### Schémas Avro (`common-avro`)
 
 | Schéma | Champs principaux |
 |--------|-------------------|
 | `InscriptionCreeeAvroModel` | inscriptionId, etudiantId, classeId, codeAnnee, fraisInscription, mensualite, autresFrais, moisAcademiques |
+| `InscriptionAnnuleeAvroModel` | inscriptionId |
 | `PaiementConfirmeAvroModel` | inscriptionId, statut (`CONFIRME`/`ECHEC`), message |
 | `EtudiantCreeAvroModel` | etudiantId, matricule, nom, prenom, dateNaissance, email |
 | `EtudiantModifieAvroModel` | etudiantId, matricule, nom, prenom, dateNaissance |
@@ -262,17 +275,21 @@ Client
   ▼
 POST /api/inscriptions  (inscrption-service)
   │  ① créer étudiant si nouveau (HTTP → etudiant-service)
-  │  ② sauvegarder inscription EN_ATTENTE
-  │  ③ publier InscriptionCreee → Outbox → Kafka
+  │  ② sauvegarder inscription PENDING
+  │  ③ publier inscription-creee → Outbox → Kafka
   │
   ▼
 paiement-service (consomme inscription-creee)
-  │  ④ initialiser dossier + distribuer versement initial
-  │  ⑤ publier PaiementConfirme{statut=CONFIRME} → Outbox → Kafka
+  │  ④ initialiser dossier (statut INITIALISE)
+  │
+  ▼
+POST /api/dossiers/{inscriptionId}/versements/distribuer  (paiement-service)
+  │  ⑤ distribuer versement → dossier passe INITIALISE → ACTIF
+  │  ⑥ publier paiement-confirme{CONFIRME} → Outbox → Kafka
   │
   ▼
 inscrption-service (consomme paiement-confirme)
-  │  ⑥ passer inscription → CONFIRMEE
+  │  ⑦ passer inscription → CONFIRMEE
 ```
 
 ### Flux de compensation (échec en ④)
@@ -280,27 +297,31 @@ inscrption-service (consomme paiement-confirme)
 ```
 paiement-service
   │  ✗ échec initialisation dossier
-  │  publier PaiementConfirme{statut=ECHEC} → Outbox → Kafka
+  │  publier paiement-confirme{ECHEC} → Outbox → Kafka
   │
   ▼
 inscrption-service (consomme paiement-confirme ECHEC)
   │  supprimer inscription physiquement
-  │  si etudiantNouveau=true → DELETE /api/etudiants/{id} (HTTP)
+  │  si etudiantNouveau=true → DELETE /api/etudiants/id/{id} (HTTP)
 ```
 
 ### Outbox Pattern
 
-Chaque service publie ses événements via une table `outbox` en base de données, dans la **même transaction** que la modification métier. Un scheduler `@Scheduled` lit la table et publie sur Kafka, puis marque les événements comme envoyés.
+Chaque service publie ses événements via une table `outbox_event` en base de données, dans la **même transaction** que la modification métier. Un scheduler `@Scheduled(fixedDelay=5000)` lit la table et publie sur Kafka.
 
 ```
 Transaction DB:
-  INSERT inscription + INSERT outbox_event (atomique)
+  INSERT/UPDATE entité + INSERT outbox_event  (atomique)
 
-Scheduler (async):
-  SELECT outbox_event WHERE sent=false
-  → publish Kafka
-  → UPDATE outbox_event SET sent=true
+Scheduler (toutes les 5s):
+  SELECT outbox_event WHERE status IN (PENDING, FAILED)
+  → dispatch par eventType → publish Kafka
+  → UPDATE outbox_event SET status=PUBLISHED
 ```
+
+L'`OutboxPublisher` de `inscrption-service` dispatche selon le champ `eventType` :
+- `InscriptionCreeeEvent` → topic `inscription-creee`
+- `InscriptionAnnuleeEvent` → topic `inscription-annulee`
 
 ### Idempotence
 
@@ -314,7 +335,44 @@ if (dossierRepository.trouverParInscriptionId(inscriptionId).isPresent()) {
 
 ---
 
-## 6. Modèle de paiement
+## 6. Annulation d'inscription
+
+### Règles métier
+
+- Une inscription `CONFIRMEE` (au moins un versement) **ne peut pas** être annulée
+- Une inscription `PENDING` peut être annulée par l'admin (soft delete)
+- L'étudiant est **conservé** en base (historique)
+- Les données de paiement sont **supprimées physiquement** (dossier + lignes + versements + moyens)
+
+### Flux d'annulation
+
+```
+POST /api/inscriptions/{id}/annuler
+  │  Corps : { "motif": "..." }
+  │
+  ▼
+inscrption-service
+  │  ① vérifier statut ≠ CONFIRMEE et ≠ ANNULEE
+  │  ② inscription.statut = ANNULEE, annuleLe = now(), motifAnnulation = motif
+  │  ③ sauvegarder inscription
+  │  ④ publier inscription-annulee → Outbox → Kafka
+  │
+  ▼
+paiement-service (consomme inscription-annulee)
+  │  ⑤ deleteByInscriptionId → cascade JPA (lignes + versements + moyens)
+```
+
+### Endpoint
+
+```
+POST /api/inscriptions/{id}/annuler
+Body: { "motif": "Erreur de saisie" }
+Response: 204 No Content
+```
+
+---
+
+## 7. Modèle de paiement
 
 ### Un versement = un seul moyen de paiement
 
@@ -340,31 +398,38 @@ if (dossierRepository.trouverParInscriptionId(inscriptionId).isPresent()) {
 
 ### Distribution automatique
 
-`POST /{inscriptionId}/versements/distribuer` répartit le montant dans l'ordre :  
+`POST /api/dossiers/{inscriptionId}/versements/distribuer` répartit le montant dans l'ordre :
 `FRAIS_INSCRIPTION → AUTRES_FRAIS → MENSUALITE (ordre croissant)`
 
 Le surplus d'une ligne est reversé sur la suivante jusqu'à épuisement.
+
+### Règle du premier versement minimum
+
+Le montant minimum du premier versement est :
+```
+fraisInscription + autresFrais + mensualite
+```
 
 ### Modèle JPA
 
 ```
 dossier_paiement
-  └── ligne_paiement (1..N)
-        └── versement (0..N)
-              └── moyen_paiement (1..1, OneToOne)
+  └── ligne_paiement (1..N, cascade ALL + orphanRemoval)
+        └── versement (0..N, cascade ALL + orphanRemoval)
+              └── moyen_paiement (1..1, OneToOne, cascade ALL)
 ```
 
 ---
 
-## 7. Modules partagés
+## 8. Modules partagés
 
 ### `common-service`
-- `AggregateRoot<ID>` : classe de base pour les agrégats DDD (gestion des domain events)
+- `AggregateRoot<ID>` : classe de base pour les agrégats DDD (gestion des domain events via `addEvent` / `pullDomainEvents`)
 
 ### `common-avro`
 - Contient tous les schémas `.avsc` Avro
 - Génère les classes Java via le plugin `avro-maven-plugin`
-- Dépendance : tous les services qui produisent ou consomment des événements
+- **À installer en premier** avant de compiler les autres modules : `mvn install -pl common-avro`
 
 ### `kafka-service`
 - Configuration centralisée Kafka (producer / consumer)
@@ -373,7 +438,7 @@ dossier_paiement
 
 ---
 
-## 8. Infrastructure
+## 9. Infrastructure
 
 ### Démarrage de l'infrastructure (Docker Compose)
 
@@ -392,12 +457,23 @@ docker-compose up -d
 | `keycloak-scolarite` | 8180 | Identity Provider (SSO) |
 | `wso2am-scolarite` | 8280 / 8243 / 9443 | API Gateway |
 
-> Confluent Control Center accessible sur **http://localhost:9021**
-
-> **Important** : ajouter `keycloak` au fichier hosts de la machine hôte pour que les tokens JWT aient le bon issuer :
+> **Important** : ajouter `keycloak` au fichier hosts de la machine hôte :
 > ```bash
 > sudo sh -c 'echo "127.0.0.1 keycloak" >> /etc/hosts'
 > ```
+
+### Stack de monitoring (k6/)
+
+```bash
+cd k6
+docker compose up -d
+```
+
+| Conteneur | Port local | Rôle |
+|-----------|-----------|------|
+| `k6-influxdb` | 8086 | Stockage métriques k6 |
+| `k6-prometheus` | 9090 | Scraping métriques JVM |
+| `k6-grafana` | 3001 | Dashboards |
 
 ### Bases de données MySQL
 
@@ -411,38 +487,38 @@ Chaque service possède sa propre base de données (isolation complète) :
 | `inscrption-service` | `inscription-service` |
 | `paiement-service` | `paiement-service` |
 
-Par défaut : `host=localhost:3306`, `username=root`, `password=root`  
-Configurable dans chaque `application.yml`.
+Par défaut : `host=localhost:3306`, `username=root`, `password=root`
 
 ---
 
-## 9. Démarrage rapide
+## 10. Démarrage rapide
 
 ### Prérequis
 
-- Java 21
-- Maven 3.9+
+- Java 21+
+- Maven 3.9+ (ou `./mvnw`)
 - Docker & Docker Compose
-- MySQL accessible sur le port 3306
+- MySQL sur le port 3306
+- k6 (`brew install k6` sur macOS)
 
 ### Étapes
 
 ```bash
-# 1. Démarrer l'infrastructure Kafka
+# 1. Démarrer l'infrastructure Kafka + Keycloak + WSO2
 docker-compose up -d
 
-# 2. Créer les bases de données MySQL
-# (une base par service, voir tableau ci-dessus)
+# 2. Démarrer la stack de monitoring
+cd k6 && docker compose up -d && cd ..
 
-# 3. Compiler tous les modules (common-avro en premier)
-./mvnw clean install -pl common-service,common-avro,kafka-service
+# 3. Compiler les modules communs (common-avro en premier)
+./mvnw install -pl common-service,common-avro,kafka-service
 
-# 4. Démarrer les services (dans n'importe quel ordre)
+# 4. Démarrer les services
 ./mvnw spring-boot:run -pl annee-academique-service   # :8080
-./mvnw spring-boot:run -pl school-service
-./mvnw spring-boot:run -pl etudiant-service
-./mvnw spring-boot:run -pl inscrption-service
-./mvnw spring-boot:run -pl paiement-service
+./mvnw spring-boot:run -pl school-service              # :8094
+./mvnw spring-boot:run -pl etudiant-service            # :8092
+./mvnw spring-boot:run -pl inscrption-service          # :8091
+./mvnw spring-boot:run -pl paiement-service            # :8093
 ```
 
 ### Ordre recommandé pour un test complet
@@ -450,13 +526,15 @@ docker-compose up -d
 1. Créer une filière et une classe (`school-service`)
 2. Créer un tarif et l'affecter à la classe (`school-service`)
 3. Créer une année académique et ouvrir les inscriptions (`annee-academique-service`)
-4. Créer une inscription avec versement initial (`inscrption-service`)
-5. Consulter le dossier de paiement (`paiement-service`)
-6. Effectuer des versements complémentaires (`paiement-service`)
+4. Créer une inscription (`inscrption-service`) — **sans information de paiement**
+5. Attendre que le dossier soit initialisé (Kafka async ~1-2s)
+6. Effectuer le premier versement (`paiement-service`)
+7. Vérifier que l'inscription passe en `CONFIRMEE`
+8. Effectuer des versements complémentaires si nécessaire
 
 ---
 
-## 10. Endpoints REST
+## 11. Endpoints REST
 
 ### `annee-academique-service` — :8080
 
@@ -478,9 +556,9 @@ docker-compose up -d
 | `GET` | `/api/filieres` | Lister les filières |
 | `POST` | `/api/classes` | Créer une classe |
 | `GET` | `/api/classes` | Lister les classes |
+| `GET` | `/api/classes/{classeId}/tarif-actif` | Tarif actif d'une classe |
 | `POST` | `/api/tarifs` | Créer un tarif |
 | `POST` | `/api/tarifs/{tarifId}/affecter/{classeId}` | Affecter un tarif |
-| `GET` | `/api/tarifs/classes/{classeId}/actif` | Tarif actif d'une classe |
 | `GET` | `/api/tarifs/classes/{classeId}/historique` | Historique des tarifs |
 
 ### `etudiant-service` — :8092
@@ -490,7 +568,7 @@ docker-compose up -d
 | `POST` | `/api/etudiants` | Créer un étudiant |
 | `PUT` | `/api/etudiants/{id}` | Modifier |
 | `GET` | `/api/etudiants` | Rechercher |
-| `DELETE` | `/api/etudiants/{id}` | Supprimer |
+| `DELETE` | `/api/etudiants/id/{id}` | Supprimer |
 
 ### `inscrption-service` — :8091
 
@@ -498,11 +576,11 @@ docker-compose up -d
 |---------|----------|-------------|
 | `POST` | `/api/inscriptions` | Créer une inscription |
 | `GET` | `/api/inscriptions/{id}` | Consulter une inscription |
+| `POST` | `/api/inscriptions/{id}/annuler` | Annuler administrativement |
 
-**Corps de création :**
+**Corps de création — nouvel étudiant :**
 ```json
 {
-  "etudiantId": null,
   "nouvelEtudiant": {
     "nom": "Fall",
     "prenom": "Mamadou",
@@ -510,22 +588,29 @@ docker-compose up -d
     "email": "mamadoufall@ecole.sn"
   },
   "classeId": "uuid-classe",
-  "codeAnnee": "2025-2026",
-  "montant": 260000,
-  "typePaiement": "MOBILE_MONEY",
-  "operateur": "Orange Money",
-  "referencePaiement": "ref-xyz"
+  "codeAnnee": "2025-2026"
 }
 ```
 
-> `etudiantId` et `nouvelEtudiant` sont mutuellement exclusifs. Passer `etudiantId` pour un étudiant existant.
+**Corps de création — étudiant existant :**
+```json
+{
+  "etudiantId": "uuid-etudiant",
+  "classeId": "uuid-classe",
+  "codeAnnee": "2025-2026"
+}
+```
+
+**Corps d'annulation :**
+```json
+{ "motif": "Erreur de saisie" }
+```
 
 ### `paiement-service` — :8093
 
 | Méthode | Endpoint | Description |
 |---------|----------|-------------|
 | `GET` | `/api/dossiers/{inscriptionId}` | Consulter le dossier |
-| `GET` | `/api/dossiers/{inscriptionId}/prochaine-ligne` | Prochaine ligne à payer |
 | `POST` | `/api/dossiers/{inscriptionId}/versements/distribuer` | Effectuer un versement |
 
 **Corps de versement :**
@@ -549,9 +634,9 @@ docker-compose up -d
 
 ---
 
-## 11. Variables de configuration
+## 12. Variables de configuration
 
-Les variables communes à tous les services (à adapter dans chaque `application.yml`) :
+Variables communes à tous les services :
 
 ```yaml
 spring:
@@ -559,6 +644,12 @@ spring:
     url: jdbc:mysql://localhost:3306/<nom-base>
     username: root
     password: root
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://keycloak:8180/realms/scolarite/protocol/openid-connect/certs
+          issuer-uri: http://keycloak:8180/realms/scolarite
 
 kafka-config:
   bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
@@ -576,21 +667,38 @@ kafka-consumer:
   auto-offset-reset: earliest
   auto-commit: false
   concurrency: 3
+
+kafka-topics:
+  inscription-creee-topic: inscription-creee
+  inscription-annulee-topic: inscription-annulee
+  paiement-confirme-topic: paiement-confirme
+
+app:
+  keycloak:
+    public-url: ${APP_KEYCLOAK_PUBLIC_URL:http://localhost:8180}  # URL navigateur pour Swagger
+    realm: ${APP_KEYCLOAK_REALM:scolarite}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
 ```
 
 ---
 
----
-
-## 12. Sécurité — Keycloak + WSO2 API Gateway
+## 13. Sécurité — Keycloak + WSO2 API Gateway
 
 ### Architecture
 
 ```
 Client (mobile / web / Swagger)
         │
-        │ 1. POST /token → Keycloak (via hostname keycloak:8180)
-        │    ← access_token JWT (iss=http://keycloak:8180/realms/scolarite)
+        │ 1. POST /token → Keycloak (http://localhost:8180)
+        │    ← access_token JWT signé RS256
         │
         │ 2. GET|POST /api/... → WSO2 Gateway (8243 HTTPS / 8280 HTTP)
         │    Authorization: Bearer <token>
@@ -603,152 +711,82 @@ Client (mobile / web / Swagger)
          │ forward + Authorization: Bearer (enable_outbound_auth_header=true)
     ┌────┴────────────────────────────────────┐
     ▼         ▼           ▼                  ▼
-inscrption  school    etudiant           paiement   annee-academique
-:8091       :8094      :8092              :8093          :8080
+inscrption  school    etudiant           paiement
+:8091       :8094      :8092              :8093
   (valident le JWT avec la clé publique Keycloak via JWKS)
 ```
 
-**Keycloak est l'autorité d'authentification.** WSO2 joue le rôle de gateway (routage, rate limiting, sécurité périmètre) et délègue la validation des tokens à Keycloak via JWKS (Self Validate JWT).
-
----
-
-### Prérequis — fichier hosts
-
-Ajouter `keycloak` à `/etc/hosts` sur la machine hôte pour que les tokens aient `iss=http://keycloak:8180/...` (requis par WSO2 et Spring Boot) :
-
-```bash
-sudo sh -c 'echo "127.0.0.1 keycloak" >> /etc/hosts'
-```
-
----
-
 ### Configuration Keycloak
-
-#### 1. Démarrer Keycloak
 
 ```bash
 docker-compose up -d keycloak-scolarite
+# Admin : http://localhost:8180 — admin/admin
 ```
 
-Keycloak Admin : **http://localhost:8180** — `admin / admin`
+**Realm :** `scolarite`
 
-#### 2. Créer le realm `scolarite`
-
-Admin Console → **Create Realm** → name: `scolarite`
-
-#### 3. Créer les rôles realm
-
-Realm Settings → **Roles** → Add :
-
+**Rôles :**
 | Rôle | Usage |
 |------|-------|
 | `super` | Accès total (POST, PUT, DELETE, GET) |
 | `admin` | Gestion courante (POST, PUT, GET selon service) |
 | `user` | Lecture seule (GET) |
 
-#### 4. Créer les utilisateurs
-
-**Users → Add User** pour chaque utilisateur, puis onglet **Credentials** (mot de passe `admin`, Temporary OFF) et onglet **Role Mappings** :
-
+**Utilisateurs :**
 | Utilisateur | Rôles |
 |-------------|-------|
 | `baye` | `super`, `admin`, `user` |
 | `mouha` | `admin`, `user` |
 | `barham` | `user` |
 
-#### 5. Créer le client `wso2-dcr`
+**Client `client-frontend` :**
+- Standard flow ON, Direct access grants ON
+- Web Origins : `http://localhost:8080` (et ports des autres services) pour autoriser Swagger OAuth2
 
-**Clients → Create Client** :
+**Client `wso2-dcr` :**
+- Client authentication ON, Service accounts roles ON
+- Service account roles : `create-client`, `manage-clients`, `view-clients` (realm-management)
 
-| Champ | Valeur |
-|-------|--------|
-| Client ID | `wso2-dcr` |
-| Client authentication | ON (confidential) |
-| Service accounts roles | ON |
-| Standard flow | OFF |
+### Swagger — Authentification OAuth2
 
-Onglet **Service account roles** → Assign role → Filter by clients → `realm-management` → ajouter `create-client`, `manage-clients`, `view-clients`.
+Chaque service expose Swagger UI avec un formulaire de connexion OAuth2 :
 
-Onglet **Credentials** → noter le `Client secret`.
+```
+http://localhost:8091/swagger-ui/index.html  (inscrption-service)
+http://localhost:8093/swagger-ui/index.html  (paiement-service)
+...
+```
 
-Onglet **Client Scopes** → Add client scope → `openid` (Optional).
+Cliquer **Authorize** → saisir `client_id=client-frontend`, `username`, `password`.
 
----
+Pour obtenir un token manuellement :
+```bash
+curl -s -X POST http://localhost:8180/realms/scolarite/protocol/openid-connect/token \
+  -d 'grant_type=password&client_id=client-frontend&username=baye&password=<pass>' \
+  | jq -r .access_token
+```
 
 ### Configuration WSO2
 
-#### Démarrage
-
 ```bash
 docker-compose up -d wso2am
+# Publisher  : https://localhost:9443/publisher  — admin/admin
+# DevPortal  : https://localhost:9443/devportal
+# Admin      : https://localhost:9443/admin
 ```
 
-> L'image `wso2am:4.7.0` doit être construite localement :
-> ```bash
-> git clone --depth 1 https://github.com/wso2/docker-apim.git /tmp/docker-apim
-> cd /tmp/docker-apim/dockerfiles/ubuntu/apim
-> docker build -t wso2am:4.7.0 .
-> ```
-
-Attendre ~2 min. Vérifier :
-```bash
-curl -k -o /dev/null -s -w "%{http_code}" https://localhost:9443/carbon/admin/login.jsp
-# → 200
-```
-
-**Portails WSO2 :**
-
-| Portail | URL | Identifiants |
-|---------|-----|--------------|
-| Publisher | https://localhost:9443/publisher | admin / admin |
-| Developer Portal | https://localhost:9443/devportal | admin / admin |
-| Admin Console | https://localhost:9443/admin | admin / admin |
-
-#### Patch `deployment.toml` — transmettre le token au backend
-
-Sans ce patch, WSO2 strip le header `Authorization` avant de forwarder vers Spring Boot :
-
+**Patch obligatoire** (transmettre le token au backend) :
 ```bash
 docker exec wso2am-scolarite bash -c "echo -e '\n[apim.oauth_config]\nenable_outbound_auth_header = true' >> /home/wso2carbon/wso2am-4.7.0/repository/conf/deployment.toml"
 docker restart wso2am-scolarite
 ```
 
-#### Configurer Keycloak comme Key Manager
+**Key Manager Keycloak dans WSO2 :**
+- Well-known URL : `http://keycloak:8180/realms/scolarite/.well-known/openid-configuration`
+- Self Validate JWT : ✅
+- Client ID/Secret : ceux du client `wso2-dcr`
 
-**Admin Console → Key Managers → Add Key Manager** :
-
-| Champ | Valeur |
-|-------|--------|
-| Type | KeyCloak |
-| Well-known URL | `http://keycloak:8180/realms/scolarite/.well-known/openid-configuration` |
-| → cliquer **Import** | (auto-remplit les endpoints) |
-| Issuer | `http://keycloak:8180/realms/scolarite` |
-| Client ID | `wso2-dcr` |
-| Client Secret | `<secret copié depuis Keycloak>` |
-| Self Validate JWT | ✅ activé |
-
-Sauvegarder.
-
-#### Publier les APIs
-
-**Étape 1 — Specs OpenAPI**
-
-Les fichiers OpenAPI sont déjà présents à la racine du projet :
-
-```
-annee-api-wso2.json
-inscription-api-wso2.json
-etudiant-api-wso2.json
-paiement-api-wso2.json
-school-api-wso2.json
-```
-
-**Étape 2 — Importer dans Publisher** :
-
-1. **https://localhost:9443/publisher** → Create API → Import OpenAPI
-2. Uploader le fichier JSON
-3. Endpoint backend :
-
+**Endpoints backend à configurer dans WSO2 :**
 | Service | URL backend |
 |---------|------------|
 | `annee-academique-service` | `http://host.docker.internal:8080` |
@@ -759,80 +797,7 @@ school-api-wso2.json
 
 > Sur Linux : remplacer `host.docker.internal` par `172.17.0.1`
 
-4. Business Plans → `Unlimited`
-5. **Deploy** → **Publish**
-
-**Étape 3 — Créer une application et générer les clés** :
-
-1. **https://localhost:9443/devportal** → Applications → New Application (`ScolariteApp`)
-2. Subscriptions → s'abonner à chaque API
-3. **Production Keys** → onglet **KEYCLOAK** → Generate Keys
-4. Noter le `Consumer Key` et `Consumer Secret`
-
----
-
-### Obtenir un token et appeler une API
-
-#### 1. Obtenir un token depuis Keycloak
-
-```bash
-curl -s -X POST http://keycloak:8180/realms/scolarite/protocol/openid-connect/token \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=password" \
-  -d "username=baye" \
-  -d "password=admin" \
-  -d "client_id=<CONSUMER_KEY>" \
-  -d "client_secret=<CONSUMER_SECRET>"
-```
-
-Réponse :
-```json
-{
-  "access_token": "eyJ...",
-  "expires_in": 300,
-  "token_type": "Bearer"
-}
-```
-
-#### 2. Appeler une API via WSO2 Gateway
-
-```bash
-TOKEN="eyJ..."
-
-# Exemple : lister les années académiques
-curl -k -X GET "https://localhost:8243/anneeA-academique-service-api/v1/api/academic-years" \
-  -H "Authorization: Bearer $TOKEN"
-
-# Exemple : créer une inscription
-curl -k -X POST "https://localhost:8243/inscription-service-api/v1/api/inscriptions" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{ ... }'
-```
-
----
-
-### Validation JWT côté Spring Boot
-
-Chaque service valide le JWT avec la **clé publique Keycloak** (JWKS) :
-
-```yaml
-# application.yml de chaque service
-spring:
-  main:
-    allow-bean-definition-overriding: true
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://keycloak:8180/realms/scolarite/protocol/openid-connect/certs
-          issuer-uri: http://keycloak:8180/realms/scolarite
-```
-
-Les rôles sont extraits depuis `realm_access.roles` du token JWT via un `JwtAuthenticationConverter` personnalisé dans chaque `SecurityConfig`.
-
 **Matrice des droits par service :**
-
 | Service | POST/PUT | DELETE | GET |
 |---------|----------|--------|-----|
 | `annee-academique-service` | `super` | — | `admin`, `super` |
@@ -843,29 +808,131 @@ Les rôles sont extraits depuis `realm_access.roles` du token JWT via un `JwtAut
 
 ---
 
-### Résumé du flux de sécurité
+## 14. Tests de charge — k6
+
+### Prérequis
+
+```bash
+brew install k6  # macOS
+cd k6 && docker compose up -d  # InfluxDB + Prometheus + Grafana
+```
+
+### Tests disponibles
+
+| Fichier | Objectif | Durée |
+|---------|----------|-------|
+| `inscription-test.js` | Test nominal — 6 scénarios (nouveau/ancien × 3 moyens) | ~1m30 |
+| `stress-test.js` | Montée en charge 90→500 VUs jusqu'au point de rupture | ~16m |
+| `soak-test.js` | Charge constante 90 VUs — détection fuites mémoire | ~18m |
+
+### Paramètres obligatoires
+
+| Paramètre | Description | Exemple |
+|-----------|-------------|---------|
+| `MONTANT` | Montant du versement initial | `150000` |
+| `CLASSE_ID` | UUID de la classe à inscrire | `uuid-v4` |
+| `CODE_ANNEE` | Code de l'année académique | `2025-2026` (défaut) |
+| `USERNAME` / `PASSWORD` | Identifiants Keycloak | `baye` / `passer` (défaut) |
+
+### Lancement
+
+```bash
+cd k6
+
+# Test nominal
+k6 run --config config.json inscription-test.js \
+  -e MONTANT=150000 -e CLASSE_ID=<uuid>
+
+# Stress test
+k6 run --config config.json stress-test.js \
+  -e MONTANT=150000 -e CLASSE_ID=<uuid>
+
+# Soak test (15 min)
+k6 run --config config.json soak-test.js \
+  -e MONTANT=150000 -e CLASSE_ID=<uuid>
+```
+
+### Thresholds (test nominal)
+
+| Scénario | Threshold | Valeurs observées |
+|----------|-----------|-------------------|
+| `nouveau_*` | p(95) < 800ms | ~35-45ms |
+| `ancien_*` | p(95) < 1000ms | ~110-150ms |
+| `http_req_failed{endpoint:metier}` | rate < 1% | 0% |
+
+> Les requêtes de polling Kafka (404 attendus pendant l'attente asynchrone) sont taguées `endpoint:polling` et **exclues** des thresholds.
+
+### Architecture des scénarios
 
 ```
-1. Client → POST http://keycloak:8180/realms/scolarite/protocol/openid-connect/token
-            (username, password, client_id, client_secret)
-            ← access_token JWT signé RS256, iss=http://keycloak:8180/realms/scolarite
+setup()
+  ├── vérifier année en InscriptionsOuvertes
+  ├── vérifier classe avec tarif actif
+  └── créer 3 pools de 20 étudiants (ancien_comptant, ancien_mobile_money, ancien_banque)
 
-2. Client → https://localhost:8243/<api-context>/v1/...
-            Authorization: Bearer <access_token>
+run() par VU
+  ├── inscrire (POST /api/inscriptions)          → tagué endpoint:metier
+  ├── polling dossier (GET /api/dossiers/{id})   → tagué endpoint:polling (404 OK)
+  └── verser (POST /api/dossiers/{id}/versements/distribuer) → tagué endpoint:metier
 
-3. WSO2 Gateway → vérifie signature via JWKS Keycloak (Self Validate JWT)
-                → si valide, forward la requête avec Authorization: Bearer intact
-
-4. Spring Boot → vérifie à nouveau le JWT via JWKS Keycloak
-              → extrait les rôles depuis realm_access.roles
-              → autorise ou rejette selon SecurityConfig
-
-5. Spring Boot → traitement métier → réponse JSON
+teardown()
+  └── supprimer les 60 étudiants créés en setup
 ```
 
 ---
 
-## Décisions techniques notables
+## 15. Observabilité — Grafana + Prometheus + InfluxDB
+
+### Accès
+
+| Interface | URL | Usage |
+|-----------|-----|-------|
+| Grafana | http://localhost:3001 | Dashboards |
+| Prometheus | http://localhost:9090 | Métriques JVM brutes |
+| InfluxDB | http://localhost:8086 | Métriques k6 brutes |
+| Confluent Control Center | http://localhost:9021 | Monitoring Kafka |
+
+### Dashboards Grafana à importer
+
+| Dashboard | ID | Datasource | Contenu |
+|-----------|----|------------|---------|
+| k6 Load Testing Results | `2587` | InfluxDB | VUs, req/s, p95, erreurs |
+| JVM Micrometer | `4701` | Prometheus | Heap, GC, threads, connexions DB |
+
+### Métriques JVM exposées
+
+Chaque service Spring Boot expose `/actuator/prometheus` (sans authentification) avec :
+- `jvm_memory_used_bytes` — utilisation heap/non-heap
+- `jvm_gc_pause_seconds` — pauses GC
+- `jvm_threads_live_threads` — threads actifs
+- `hikaricp_connections_active` — connexions DB pool
+- `http_server_requests_seconds` — latences REST par endpoint
+
+### Prometheus — vérification
+
+```bash
+# Targets UP
+curl -s http://localhost:9090/api/v1/targets | jq '.data.activeTargets[].health'
+
+# Métriques disponibles
+curl -s "http://localhost:9090/api/v1/query?query=jvm_memory_used_bytes{application=\"inscription-service\"}"
+```
+
+### Nettoyage données k6 entre runs
+
+```sql
+-- inscrption-service DB
+DELETE FROM outbox_event WHERE status IN ('PENDING', 'FAILED');
+```
+
+```bash
+# Vider les métriques InfluxDB entre runs (optionnel)
+curl -X POST "http://localhost:8086/query?db=k6" --data-urlencode "q=DROP SERIES FROM /.*/"
+```
+
+---
+
+## 16. Décisions techniques
 
 | Décision | Justification |
 |----------|---------------|
@@ -873,7 +940,13 @@ Les rôles sont extraits depuis `realm_access.roles` du token JWT via un `JwtAut
 | Saga choreography | Pas de coordinateur central, couplage minimal entre services |
 | Outbox Pattern | Garantie de publication des événements même en cas de crash (atomicité DB + Kafka) |
 | Avro + Schema Registry | Contrat de message versionné et évolutif entre services |
+| Séparation Admin / Comptable | Inscription sans paiement — le Comptable effectue les versements séparément |
 | `etudiantNouveau` flag | Distingue les étudiants créés lors de l'inscription (rollbackables) des existants |
+| Annulation soft delete | L'historique est conservé ; seules les données de paiement sont supprimées physiquement |
+| `inscription-annulee` saga | Kafka choreography pour la suppression async du dossier paiement |
 | Un seul moyen de paiement par versement | Simplicité du modèle, traçabilité claire, évite les conflits Hibernate |
 | Distribution automatique des versements | Le client ne manipule pas les identifiants internes des lignes |
-| Commentaire horodaté par versement | Historique immuable des paiements directement sur chaque ligne |
+| `DossierInitialiseEvent` au premier versement | Évite la confirmation immédiate de l'inscription sans versement réel |
+| Tag `endpoint:metier` / `endpoint:polling` | Sépare les métriques métier des 404 de polling Kafka dans k6 |
+| `RUN_ID = Date.now()` dans k6 | Évite les collisions d'email entre runs successifs |
+| Bearer auth Swagger configurable | URL Keycloak injectée via `app.keycloak.public-url` pour compatibilité hors Docker |

@@ -26,4 +26,10 @@ public class DossierPaiementRepositoryAdapter implements DossierPaiementReposito
     public Optional<DossierPaiement> trouverParInscriptionId(UUID inscriptionId) {
         return jpaRepository.findByInscriptionId(inscriptionId).map(mapper::toDomain);
     }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void supprimerParInscriptionId(UUID inscriptionId) {
+        jpaRepository.deleteByInscriptionId(inscriptionId);
+    }
 }

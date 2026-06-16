@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface DossierPaiementJpaRepository extends JpaRepository<DossierPaiementJpaEntity, UUID> {
     Optional<DossierPaiementJpaEntity> findByInscriptionId(UUID inscriptionId);
+    void deleteByInscriptionId(UUID inscriptionId);
 }

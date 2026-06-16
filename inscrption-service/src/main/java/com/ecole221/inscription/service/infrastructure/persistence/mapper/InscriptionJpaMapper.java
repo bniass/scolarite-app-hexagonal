@@ -20,6 +20,8 @@ public class InscriptionJpaMapper {
         e.setStatut(domain.getStatut());
         e.setEtudiantNouveau(domain.isEtudiantNouveau());
         e.setCreeLe(domain.getCreeLe());
+        e.setAnnuleLe(domain.getAnnuleLe());
+        e.setMotifAnnulation(domain.getMotifAnnulation());
         return e;
     }
 
@@ -27,7 +29,8 @@ public class InscriptionJpaMapper {
         return Inscription.reconstituer(
                 e.getId(), e.getEtudiantId(), e.isEtudiantNouveau(), e.getClasseId(), e.getCodeAnnee(),
                 e.getFraisInscription(), e.getMensualite(), e.getAutresFrais(),
-                e.getMoisAcademiquesJson(), e.getStatut(), e.getCreeLe()
+                e.getMoisAcademiquesJson(), e.getStatut(), e.getCreeLe(),
+                e.getAnnuleLe(), e.getMotifAnnulation()
         );
     }
 }

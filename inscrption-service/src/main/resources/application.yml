@@ -64,6 +64,7 @@ kafka-consumer:
 kafka-topics:
   anneeacademique-topic-request-name: creer-annee-request
   inscription-creee-topic: inscription-creee
+  inscription-annulee-topic: inscription-annulee
   paiement-confirme-topic: paiement-confirme
 
 etudiant-service:
@@ -79,6 +80,11 @@ inscription:
 app:
   kafka:
     format: json   # ou avro
+  keycloak:
+    # URL publique accessible depuis le navigateur (pas le réseau Docker interne)
+    # Override via variable d'env Docker Compose : APP_KEYCLOAK_PUBLIC-URL=http://<host>:8180
+    public-url: ${APP_KEYCLOAK_PUBLIC_URL:http://localhost:8180}
+    realm: ${APP_KEYCLOAK_REALM:scolarite}
 
 server:
   port: 8091
@@ -89,3 +95,12 @@ logging:
   level:
     root: INFO
     com.ecole221: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}

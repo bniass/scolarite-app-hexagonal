@@ -1,7 +1,7 @@
 package com.ecole221.inscription.service.application.port.out;
 
-import com.ecole221.inscription.service.domain.event.InscriptionCreeeEvent;
+import com.ecole221.common.event.DomainEvent;
 
 public interface InscriptionOutboxPort {
-    void sauvegarder(InscriptionCreeeEvent event);
+    void sauvegarder(DomainEvent<?> event);
 }

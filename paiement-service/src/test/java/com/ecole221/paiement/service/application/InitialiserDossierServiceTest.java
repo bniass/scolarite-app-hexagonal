@@ -2,14 +2,11 @@ package com.ecole221.paiement.service.application;
 
 import com.ecole221.paiement.service.application.command.InitialiserDossierCommand;
 import com.ecole221.paiement.service.application.port.out.DossierPaiementRepository;
-import com.ecole221.paiement.service.application.port.out.PaiementOutboxPort;
 import com.ecole221.paiement.service.application.usecase.InitialiserDossierService;
-import com.ecole221.paiement.service.domain.exception.PaiementDomainException;
 import com.ecole221.paiement.service.domain.model.DossierPaiement;
 import com.ecole221.paiement.service.domain.model.MoisAcademique;
 import com.ecole221.paiement.service.domain.valueobject.StatutDossier;
 import com.ecole221.paiement.service.domain.valueobject.StatutLigne;
-import com.ecole221.paiement.service.domain.valueobject.TypeLigne;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,15 +25,7 @@ import static org.mockito.Mockito.*;
 class InitialiserDossierServiceTest {
 
     @Mock private DossierPaiementRepository repository;
-    @Mock private PaiementOutboxPort outboxPort;
     @InjectMocks private InitialiserDossierService service;
-
-    // fraisInscription=50000, autresFrais=10000, mensualite=25000
-    // Minimum = 85000 | Total = 285000
-    private static final BigDecimal FRAIS        = new BigDecimal("50000");
-    private static final BigDecimal MENSUALITE   = new BigDecimal("25000");
-    private static final BigDecimal AUTRES_FRAIS = new BigDecimal("10000");
-    private static final BigDecimal MINIMUM      = new BigDecimal("85000");
 
     private static final List<MoisAcademique> MOIS = List.of(
             new MoisAcademique(9, 2024), new MoisAcademique(10, 2024),
@@ -46,11 +35,14 @@ class InitialiserDossierServiceTest {
             new MoisAcademique(5, 2025)
     );
 
-    private InitialiserDossierCommand command(BigDecimal montant) {
+    private InitialiserDossierCommand command() {
         return new InitialiserDossierCommand(
                 UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                "2024-2025", FRAIS, MENSUALITE, AUTRES_FRAIS, MOIS,
-                montant, "COMPTANT", "", "", "", ""
+                "2024-2025",
+                new BigDecimal("50000"),
+                new BigDecimal("25000"),
+                new BigDecimal("10000"),
+                MOIS
         );
     }
 
@@ -58,101 +50,48 @@ class InitialiserDossierServiceTest {
     void executer_sauvegarde_le_dossier() {
         when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        service.executer(command(MINIMUM));
+        service.executer(command());
 
         verify(repository).sauvegarder(any(DossierPaiement.class));
     }
 
     @Test
-    void executer_publie_event_outbox() {
+    void executer_ne_publie_pas_event_confirmation_a_linit() {
+        // L'inscription n'est confirmée qu'après le premier versement, pas à l'initialisation du dossier
         when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        service.executer(command(MINIMUM));
+        DossierPaiement result = service.executer(command());
 
-        verify(outboxPort).sauvegarder(any());
+        assertThat(result.pullDomainEvents()).isEmpty();
     }
 
     @Test
-    void executer_versement_minimum_couvre_frais_autres_et_mois1() {
+    void executer_dossier_est_INITIALISE() {
         when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        DossierPaiement result = service.executer(command(MINIMUM));
+        DossierPaiement result = service.executer(command());
 
-        assertThat(result.getLignes().stream()
-                .filter(l -> l.getType() == TypeLigne.FRAIS_INSCRIPTION)
-                .findFirst().orElseThrow().getStatut()).isEqualTo(StatutLigne.PAYE);
-        assertThat(result.getLignes().stream()
-                .filter(l -> l.getType() == TypeLigne.AUTRES_FRAIS)
-                .findFirst().orElseThrow().getStatut()).isEqualTo(StatutLigne.PAYE);
-        assertThat(result.getStatut()).isEqualTo(StatutDossier.ACTIF);
+        assertThat(result.getStatut()).isEqualTo(StatutDossier.INITIALISE);
     }
 
     @Test
-    void executer_versement_inferieur_au_minimum_leve_exception() {
-        // 80000 < 85000 minimum
-        assertThatThrownBy(() -> service.executer(command(new BigDecimal("80000"))))
-                .isInstanceOf(PaiementDomainException.class)
-                .hasMessageContaining("minimum");
-    }
-
-    @Test
-    void executer_versement_depasse_total_leve_exception() {
-        // Total = 285000, verser 300000 → interdit
-        assertThatThrownBy(() -> service.executer(command(new BigDecimal("300000"))))
-                .isInstanceOf(PaiementDomainException.class)
-                .hasMessageContaining("dépasse");
-    }
-
-    @Test
-    void executer_versement_avec_surplus_cascade_sur_mensualites() {
+    void executer_toutes_les_lignes_sont_APAYER() {
         when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        // 85000 + 3*25000 = 160000 → frais + autres + 4 mois
-        DossierPaiement result = service.executer(command(new BigDecimal("160000")));
+        DossierPaiement result = service.executer(command());
 
-        long nbMoisPayees = result.getLignes().stream()
-                .filter(l -> l.getType() == TypeLigne.MENSUALITE && l.estPayee())
-                .count();
-        assertThat(nbMoisPayees).isEqualTo(4);
+        assertThat(result.getLignes())
+                .isNotEmpty()
+                .allMatch(l -> l.getStatut() == StatutLigne.APAYER);
     }
 
     @Test
-    void executer_versement_avec_avance_partielle_sur_mois() {
+    void executer_genere_11_lignes() {
+        // 1 frais inscription + 1 autres frais + 9 mensualités
         when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        // 85000 + 10000 = 95000 → frais + autres + mois1 + 10000 sur mois2
-        DossierPaiement result = service.executer(command(new BigDecimal("95000")));
+        DossierPaiement result = service.executer(command());
 
-        var mois2 = result.getLignes().stream()
-                .filter(l -> l.getType() == TypeLigne.MENSUALITE && l.getOrdreReglement() == 2)
-                .findFirst().orElseThrow();
-        assertThat(mois2.getStatut()).isEqualTo(StatutLigne.APAYER);
-        assertThat(mois2.getMontantRestant()).isEqualByComparingTo("15000");
-    }
-
-    @Test
-    void executer_mobile_money_accepte() {
-        when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
-
-        InitialiserDossierCommand cmd = new InitialiserDossierCommand(
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                "2024-2025", FRAIS, MENSUALITE, AUTRES_FRAIS, MOIS,
-                MINIMUM, "MOBILE_MONEY", "Orange", "OM-123456", "", ""
-        );
-
-        assertThatCode(() -> service.executer(cmd)).doesNotThrowAnyException();
-    }
-
-    @Test
-    void executer_banque_accepte() {
-        when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
-
-        InitialiserDossierCommand cmd = new InitialiserDossierCommand(
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
-                "2024-2025", FRAIS, MENSUALITE, AUTRES_FRAIS, MOIS,
-                MINIMUM, "BANQUE", "", "", "SGBS", "VIR-001"
-        );
-
-        assertThatCode(() -> service.executer(cmd)).doesNotThrowAnyException();
+        assertThat(result.getLignes()).hasSize(11);
     }
 }

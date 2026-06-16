@@ -1,0 +1,8 @@
+{
+  "namespace": "com.ecole221.common.avro",
+  "type": "record",
+  "name": "InscriptionAnnuleeAvroModel",
+  "fields": [
+    {"name": "inscriptionId", "type": "string"}
+  ]
+}

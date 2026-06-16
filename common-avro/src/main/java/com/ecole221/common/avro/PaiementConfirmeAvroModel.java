@@ -6,45 +6,102 @@
 package com.ecole221.common.avro;
 
 import org.apache.avro.specific.SpecificData;
+import org.apache.avro.util.Utf8;
 import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class PaiementConfirmeAvroModel extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -6876543210987654321L;
+  private static final long serialVersionUID = 1706504388345094265L;
+
 
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"PaiementConfirmeAvroModel\",\"namespace\":\"com.ecole221.common.avro\",\"fields\":[{\"name\":\"inscriptionId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"statut\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"message\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
-  private static final BinaryMessageEncoder<PaiementConfirmeAvroModel> ENCODER = new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
-  private static final BinaryMessageDecoder<PaiementConfirmeAvroModel> DECODER = new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
 
-  public static BinaryMessageEncoder<PaiementConfirmeAvroModel> getEncoder() { return ENCODER; }
-  public static BinaryMessageDecoder<PaiementConfirmeAvroModel> getDecoder() { return DECODER; }
+  private static final BinaryMessageEncoder<PaiementConfirmeAvroModel> ENCODER =
+      new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
+
+  private static final BinaryMessageDecoder<PaiementConfirmeAvroModel> DECODER =
+      new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
+
+  /**
+   * Return the BinaryMessageEncoder instance used by this class.
+   * @return the message encoder used by this class
+   */
+  public static BinaryMessageEncoder<PaiementConfirmeAvroModel> getEncoder() {
+    return ENCODER;
+  }
+
+  /**
+   * Return the BinaryMessageDecoder instance used by this class.
+   * @return the message decoder used by this class
+   */
+  public static BinaryMessageDecoder<PaiementConfirmeAvroModel> getDecoder() {
+    return DECODER;
+  }
+
+  /**
+   * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
+   * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
+   * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
+   */
   public static BinaryMessageDecoder<PaiementConfirmeAvroModel> createDecoder(SchemaStore resolver) {
     return new BinaryMessageDecoder<>(MODEL$, SCHEMA$, resolver);
   }
 
-  public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException { return ENCODER.encode(this); }
-  public static PaiementConfirmeAvroModel fromByteBuffer(java.nio.ByteBuffer b) throws java.io.IOException { return DECODER.decode(b); }
+  /**
+   * Serializes this PaiementConfirmeAvroModel to a ByteBuffer.
+   * @return a buffer holding the serialized data for this instance
+   * @throws java.io.IOException if this instance could not be serialized
+   */
+  public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException {
+    return ENCODER.encode(this);
+  }
+
+  /**
+   * Deserializes a PaiementConfirmeAvroModel from a ByteBuffer.
+   * @param b a byte buffer holding serialized data for an instance of this class
+   * @return a PaiementConfirmeAvroModel instance decoded from the given buffer
+   * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
+   */
+  public static PaiementConfirmeAvroModel fromByteBuffer(
+      java.nio.ByteBuffer b) throws java.io.IOException {
+    return DECODER.decode(b);
+  }
 
   private java.lang.String inscriptionId;
   private java.lang.String statut;
   private java.lang.String message;
 
+  /**
+   * Default constructor.  Note that this does not initialize fields
+   * to their default values from the schema.  If that is desired then
+   * one should use <code>newBuilder()</code>.
+   */
   public PaiementConfirmeAvroModel() {}
 
+  /**
+   * All-args constructor.
+   * @param inscriptionId The new value for inscriptionId
+   * @param statut The new value for statut
+   * @param message The new value for message
+   */
   public PaiementConfirmeAvroModel(java.lang.String inscriptionId, java.lang.String statut, java.lang.String message) {
     this.inscriptionId = inscriptionId;
     this.statut = statut;
     this.message = message;
   }
 
-  @Override public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
-  @Override public org.apache.avro.Schema getSchema() { return SCHEMA$; }
+  @Override
+  public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
 
+  @Override
+  public org.apache.avro.Schema getSchema() { return SCHEMA$; }
+
+  // Used by DatumWriter.  Applications should not call.
   @Override
   public java.lang.Object get(int field$) {
     switch (field$) {
@@ -55,6 +112,7 @@ public class PaiementConfirmeAvroModel extends org.apache.avro.specific.Specific
     }
   }
 
+  // Used by DatumReader.  Applications should not call.
   @Override
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
@@ -66,61 +124,266 @@ public class PaiementConfirmeAvroModel extends org.apache.avro.specific.Specific
     }
   }
 
-  public java.lang.String getInscriptionId() { return inscriptionId; }
-  public void setInscriptionId(java.lang.String value) { this.inscriptionId = value; }
-  public java.lang.String getStatut() { return statut; }
-  public void setStatut(java.lang.String value) { this.statut = value; }
-  public java.lang.String getMessage() { return message; }
-  public void setMessage(java.lang.String value) { this.message = value; }
-
-  public static PaiementConfirmeAvroModel.Builder newBuilder() {
-    return new PaiementConfirmeAvroModel.Builder();
-  }
-  public static PaiementConfirmeAvroModel.Builder newBuilder(PaiementConfirmeAvroModel.Builder other) {
-    return other == null ? new PaiementConfirmeAvroModel.Builder() : new PaiementConfirmeAvroModel.Builder(other);
-  }
-  public static PaiementConfirmeAvroModel.Builder newBuilder(PaiementConfirmeAvroModel other) {
-    return other == null ? new PaiementConfirmeAvroModel.Builder() : new PaiementConfirmeAvroModel.Builder(other);
+  /**
+   * Gets the value of the 'inscriptionId' field.
+   * @return The value of the 'inscriptionId' field.
+   */
+  public java.lang.String getInscriptionId() {
+    return inscriptionId;
   }
 
+
+  /**
+   * Sets the value of the 'inscriptionId' field.
+   * @param value the value to set.
+   */
+  public void setInscriptionId(java.lang.String value) {
+    this.inscriptionId = value;
+  }
+
+  /**
+   * Gets the value of the 'statut' field.
+   * @return The value of the 'statut' field.
+   */
+  public java.lang.String getStatut() {
+    return statut;
+  }
+
+
+  /**
+   * Sets the value of the 'statut' field.
+   * @param value the value to set.
+   */
+  public void setStatut(java.lang.String value) {
+    this.statut = value;
+  }
+
+  /**
+   * Gets the value of the 'message' field.
+   * @return The value of the 'message' field.
+   */
+  public java.lang.String getMessage() {
+    return message;
+  }
+
+
+  /**
+   * Sets the value of the 'message' field.
+   * @param value the value to set.
+   */
+  public void setMessage(java.lang.String value) {
+    this.message = value;
+  }
+
+  /**
+   * Creates a new PaiementConfirmeAvroModel RecordBuilder.
+   * @return A new PaiementConfirmeAvroModel RecordBuilder
+   */
+  public static com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder newBuilder() {
+    return new com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder();
+  }
+
+  /**
+   * Creates a new PaiementConfirmeAvroModel RecordBuilder by copying an existing Builder.
+   * @param other The existing builder to copy.
+   * @return A new PaiementConfirmeAvroModel RecordBuilder
+   */
+  public static com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder newBuilder(com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder other) {
+    if (other == null) {
+      return new com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder();
+    } else {
+      return new com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder(other);
+    }
+  }
+
+  /**
+   * Creates a new PaiementConfirmeAvroModel RecordBuilder by copying an existing PaiementConfirmeAvroModel instance.
+   * @param other The existing instance to copy.
+   * @return A new PaiementConfirmeAvroModel RecordBuilder
+   */
+  public static com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder newBuilder(com.ecole221.common.avro.PaiementConfirmeAvroModel other) {
+    if (other == null) {
+      return new com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder();
+    } else {
+      return new com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder(other);
+    }
+  }
+
+  /**
+   * RecordBuilder for PaiementConfirmeAvroModel instances.
+   */
   @org.apache.avro.specific.AvroGenerated
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<PaiementConfirmeAvroModel>
-      implements org.apache.avro.data.RecordBuilder<PaiementConfirmeAvroModel> {
+    implements org.apache.avro.data.RecordBuilder<PaiementConfirmeAvroModel> {
 
     private java.lang.String inscriptionId;
     private java.lang.String statut;
     private java.lang.String message;
 
-    private Builder() { super(SCHEMA$, MODEL$); }
-
-    private Builder(PaiementConfirmeAvroModel.Builder other) {
-      super(other);
-      if (isValidValue(fields()[0], other.inscriptionId)) { this.inscriptionId = data().deepCopy(fields()[0].schema(), other.inscriptionId); fieldSetFlags()[0] = other.fieldSetFlags()[0]; }
-      if (isValidValue(fields()[1], other.statut)) { this.statut = data().deepCopy(fields()[1].schema(), other.statut); fieldSetFlags()[1] = other.fieldSetFlags()[1]; }
-      if (isValidValue(fields()[2], other.message)) { this.message = data().deepCopy(fields()[2].schema(), other.message); fieldSetFlags()[2] = other.fieldSetFlags()[2]; }
-    }
-
-    private Builder(PaiementConfirmeAvroModel other) {
+    /** Creates a new Builder */
+    private Builder() {
       super(SCHEMA$, MODEL$);
-      if (isValidValue(fields()[0], other.inscriptionId)) { this.inscriptionId = data().deepCopy(fields()[0].schema(), other.inscriptionId); fieldSetFlags()[0] = true; }
-      if (isValidValue(fields()[1], other.statut)) { this.statut = data().deepCopy(fields()[1].schema(), other.statut); fieldSetFlags()[1] = true; }
-      if (isValidValue(fields()[2], other.message)) { this.message = data().deepCopy(fields()[2].schema(), other.message); fieldSetFlags()[2] = true; }
     }
 
-    public java.lang.String getInscriptionId() { return inscriptionId; }
-    public Builder setInscriptionId(java.lang.String value) { validate(fields()[0], value); this.inscriptionId = value; fieldSetFlags()[0] = true; return this; }
-    public boolean hasInscriptionId() { return fieldSetFlags()[0]; }
-    public Builder clearInscriptionId() { inscriptionId = null; fieldSetFlags()[0] = false; return this; }
+    /**
+     * Creates a Builder by copying an existing Builder.
+     * @param other The existing Builder to copy.
+     */
+    private Builder(com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder other) {
+      super(other);
+      if (isValidValue(fields()[0], other.inscriptionId)) {
+        this.inscriptionId = data().deepCopy(fields()[0].schema(), other.inscriptionId);
+        fieldSetFlags()[0] = other.fieldSetFlags()[0];
+      }
+      if (isValidValue(fields()[1], other.statut)) {
+        this.statut = data().deepCopy(fields()[1].schema(), other.statut);
+        fieldSetFlags()[1] = other.fieldSetFlags()[1];
+      }
+      if (isValidValue(fields()[2], other.message)) {
+        this.message = data().deepCopy(fields()[2].schema(), other.message);
+        fieldSetFlags()[2] = other.fieldSetFlags()[2];
+      }
+    }
 
-    public java.lang.String getStatut() { return statut; }
-    public Builder setStatut(java.lang.String value) { validate(fields()[1], value); this.statut = value; fieldSetFlags()[1] = true; return this; }
-    public boolean hasStatut() { return fieldSetFlags()[1]; }
-    public Builder clearStatut() { statut = null; fieldSetFlags()[1] = false; return this; }
+    /**
+     * Creates a Builder by copying an existing PaiementConfirmeAvroModel instance
+     * @param other The existing instance to copy.
+     */
+    private Builder(com.ecole221.common.avro.PaiementConfirmeAvroModel other) {
+      super(SCHEMA$, MODEL$);
+      if (isValidValue(fields()[0], other.inscriptionId)) {
+        this.inscriptionId = data().deepCopy(fields()[0].schema(), other.inscriptionId);
+        fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.statut)) {
+        this.statut = data().deepCopy(fields()[1].schema(), other.statut);
+        fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.message)) {
+        this.message = data().deepCopy(fields()[2].schema(), other.message);
+        fieldSetFlags()[2] = true;
+      }
+    }
 
-    public java.lang.String getMessage() { return message; }
-    public Builder setMessage(java.lang.String value) { validate(fields()[2], value); this.message = value; fieldSetFlags()[2] = true; return this; }
-    public boolean hasMessage() { return fieldSetFlags()[2]; }
-    public Builder clearMessage() { message = null; fieldSetFlags()[2] = false; return this; }
+    /**
+      * Gets the value of the 'inscriptionId' field.
+      * @return The value.
+      */
+    public java.lang.String getInscriptionId() {
+      return inscriptionId;
+    }
+
+
+    /**
+      * Sets the value of the 'inscriptionId' field.
+      * @param value The value of 'inscriptionId'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder setInscriptionId(java.lang.String value) {
+      validate(fields()[0], value);
+      this.inscriptionId = value;
+      fieldSetFlags()[0] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'inscriptionId' field has been set.
+      * @return True if the 'inscriptionId' field has been set, false otherwise.
+      */
+    public boolean hasInscriptionId() {
+      return fieldSetFlags()[0];
+    }
+
+
+    /**
+      * Clears the value of the 'inscriptionId' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder clearInscriptionId() {
+      inscriptionId = null;
+      fieldSetFlags()[0] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'statut' field.
+      * @return The value.
+      */
+    public java.lang.String getStatut() {
+      return statut;
+    }
+
+
+    /**
+      * Sets the value of the 'statut' field.
+      * @param value The value of 'statut'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder setStatut(java.lang.String value) {
+      validate(fields()[1], value);
+      this.statut = value;
+      fieldSetFlags()[1] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'statut' field has been set.
+      * @return True if the 'statut' field has been set, false otherwise.
+      */
+    public boolean hasStatut() {
+      return fieldSetFlags()[1];
+    }
+
+
+    /**
+      * Clears the value of the 'statut' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder clearStatut() {
+      statut = null;
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'message' field.
+      * @return The value.
+      */
+    public java.lang.String getMessage() {
+      return message;
+    }
+
+
+    /**
+      * Sets the value of the 'message' field.
+      * @param value The value of 'message'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder setMessage(java.lang.String value) {
+      validate(fields()[2], value);
+      this.message = value;
+      fieldSetFlags()[2] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'message' field has been set.
+      * @return True if the 'message' field has been set, false otherwise.
+      */
+    public boolean hasMessage() {
+      return fieldSetFlags()[2];
+    }
+
+
+    /**
+      * Clears the value of the 'message' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.PaiementConfirmeAvroModel.Builder clearMessage() {
+      message = null;
+      fieldSetFlags()[2] = false;
+      return this;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -141,41 +404,63 @@ public class PaiementConfirmeAvroModel extends org.apache.avro.specific.Specific
 
   @SuppressWarnings("unchecked")
   private static final org.apache.avro.io.DatumWriter<PaiementConfirmeAvroModel>
-    WRITER$ = (org.apache.avro.io.DatumWriter<PaiementConfirmeAvroModel>) MODEL$.createDatumWriter(SCHEMA$);
+    WRITER$ = (org.apache.avro.io.DatumWriter<PaiementConfirmeAvroModel>)MODEL$.createDatumWriter(SCHEMA$);
 
-  @Override public void writeExternal(java.io.ObjectOutput out) throws java.io.IOException {
+  @Override public void writeExternal(java.io.ObjectOutput out)
+    throws java.io.IOException {
     WRITER$.write(this, SpecificData.getEncoder(out));
   }
 
   @SuppressWarnings("unchecked")
   private static final org.apache.avro.io.DatumReader<PaiementConfirmeAvroModel>
-    READER$ = (org.apache.avro.io.DatumReader<PaiementConfirmeAvroModel>) MODEL$.createDatumReader(SCHEMA$);
+    READER$ = (org.apache.avro.io.DatumReader<PaiementConfirmeAvroModel>)MODEL$.createDatumReader(SCHEMA$);
 
-  @Override public void readExternal(java.io.ObjectInput in) throws java.io.IOException {
+  @Override public void readExternal(java.io.ObjectInput in)
+    throws java.io.IOException {
     READER$.read(this, SpecificData.getDecoder(in));
   }
 
   @Override protected boolean hasCustomCoders() { return true; }
 
-  @Override public void customEncode(org.apache.avro.io.Encoder out) throws java.io.IOException {
+  @Override public void customEncode(org.apache.avro.io.Encoder out)
+    throws java.io.IOException
+  {
     out.writeString(this.inscriptionId);
+
     out.writeString(this.statut);
-    out.writeString(this.message != null ? this.message : "");
+
+    out.writeString(this.message);
+
   }
 
-  @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in) throws java.io.IOException {
+  @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in)
+    throws java.io.IOException
+  {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
       this.inscriptionId = in.readString();
+
       this.statut = in.readString();
+
       this.message = in.readString();
+
     } else {
       for (int i = 0; i < 3; i++) {
         switch (fieldOrder[i].pos()) {
-        case 0: this.inscriptionId = in.readString(); break;
-        case 1: this.statut = in.readString(); break;
-        case 2: this.message = in.readString(); break;
-        default: throw new java.io.IOException("Corrupt ResolvingDecoder.");
+        case 0:
+          this.inscriptionId = in.readString();
+          break;
+
+        case 1:
+          this.statut = in.readString();
+          break;
+
+        case 2:
+          this.message = in.readString();
+          break;
+
+        default:
+          throw new java.io.IOException("Corrupt ResolvingDecoder.");
         }
       }
     }
@@ -192,11 +477,32 @@ public class PaiementConfirmeAvroModel extends org.apache.avro.specific.Specific
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof PaiementConfirmeAvroModel)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof PaiementConfirmeAvroModel)) {
+      return false;
+    }
     PaiementConfirmeAvroModel other = (PaiementConfirmeAvroModel) o;
-    return java.util.Objects.equals(this.inscriptionId, other.inscriptionId)
-        && java.util.Objects.equals(this.statut, other.statut)
-        && java.util.Objects.equals(this.message, other.message);
+    if (!java.util.Objects.equals(this.inscriptionId, other.inscriptionId)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.statut, other.statut)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.message, other.message)) {
+      return false;
+    }
+    return true;
   }
 }
+
+
+
+
+
+
+
+
+
+

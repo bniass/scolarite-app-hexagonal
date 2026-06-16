@@ -36,8 +36,8 @@ class CreerInscriptionServiceTest {
 
     @InjectMocks private CreerInscriptionService service;
 
-    private static final UUID ETUDIANT_ID = UUID.randomUUID();
-    private static final UUID CLASSE_ID   = UUID.randomUUID();
+    private static final UUID ETUDIANT_ID  = UUID.randomUUID();
+    private static final UUID CLASSE_ID    = UUID.randomUUID();
     private static final String CODE_ANNEE = "2024-2025";
 
     private AnneeAcademiqueProjection projectionOuverte;
@@ -54,20 +54,16 @@ class CreerInscriptionServiceTest {
                 new BigDecimal("50000"), new BigDecimal("25000"), new BigDecimal("10000"));
     }
 
-    /** Commande étudiant existant */
     private CreerInscriptionCommand commandEtudiantExistant() {
         return new CreerInscriptionCommand(
                 ETUDIANT_ID, null, null, null, null,
-                CLASSE_ID, CODE_ANNEE,
-                new BigDecimal("50000"), "COMPTANT", "", "", "", "");
+                CLASSE_ID, CODE_ANNEE);
     }
 
-    /** Commande nouvel étudiant */
     private CreerInscriptionCommand commandNouvelEtudiant() {
         return new CreerInscriptionCommand(
                 null, "Diallo", "Mamadou", LocalDate.of(2000, 5, 15), "mamadou@ecole.sn",
-                CLASSE_ID, CODE_ANNEE,
-                new BigDecimal("50000"), "COMPTANT", "", "", "", "");
+                CLASSE_ID, CODE_ANNEE);
     }
 
     // ── Étudiant existant ─────────────────────────────────────────────────────
@@ -98,6 +94,17 @@ class CreerInscriptionServiceTest {
         verify(schoolServicePort).getTarifActif(CLASSE_ID);
     }
 
+    @Test
+    void executer_inscription_sans_paiement_publie_event_outbox() {
+        when(anneeProjectionRepo.findByCodeAnnee(CODE_ANNEE)).thenReturn(Optional.of(projectionOuverte));
+        when(schoolServicePort.getTarifActif(CLASSE_ID)).thenReturn(tarif);
+        when(inscriptionRepository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.executer(commandEtudiantExistant());
+
+        verify(outboxPort).sauvegarder(any());
+    }
+
     // ── Nouvel étudiant ───────────────────────────────────────────────────────
 
     @Test
@@ -114,18 +121,6 @@ class CreerInscriptionServiceTest {
                 "Diallo", "Mamadou", LocalDate.of(2000, 5, 15), "mamadou@ecole.sn", CODE_ANNEE);
         assertThat(result.getEtudiantId()).isEqualTo(nouvelId);
         assertThat(result.getStatut()).isEqualTo(StatutInscription.PENDING);
-    }
-
-    @Test
-    void executer_nouvel_etudiant_publie_event_outbox() {
-        when(anneeProjectionRepo.findByCodeAnnee(CODE_ANNEE)).thenReturn(Optional.of(projectionOuverte));
-        when(schoolServicePort.getTarifActif(CLASSE_ID)).thenReturn(tarif);
-        when(etudiantServicePort.creerEtudiant(any(), any(), any(), any(), any())).thenReturn(UUID.randomUUID());
-        when(inscriptionRepository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
-
-        service.executer(commandNouvelEtudiant());
-
-        verify(outboxPort).sauvegarder(any());
     }
 
     // ── Cas d'erreur ──────────────────────────────────────────────────────────

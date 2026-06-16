@@ -43,3 +43,17 @@ server:
       min-spare: 40
     accept-count: 400
     connection-timeout: 5s
+
+app:
+  keycloak:
+    public-url: ${APP_KEYCLOAK_PUBLIC_URL:http://localhost:8180}
+    realm: ${APP_KEYCLOAK_REALM:scolarite}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,health,info,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}

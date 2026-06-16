@@ -1,28 +1,39 @@
 package com.ecole221.inscription.service.infrastructure.web.config;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.annotations.security.OAuthFlow;
-import io.swagger.v3.oas.annotations.security.OAuthFlows;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@OpenAPIDefinition(
-        info = @Info(title = "Inscrption Service API", version = "v1"),
-        security = @SecurityRequirement(name = "keycloak")
-)
-@SecurityScheme(
-        name = "keycloak",
-        type = SecuritySchemeType.OAUTH2,
-        flows = @OAuthFlows(
-                password = @OAuthFlow(
-                        authorizationUrl = "http://keycloak:8180/realms/scolarite/protocol/openid-connect/auth",
-                        tokenUrl = "http://keycloak:8180/realms/scolarite/protocol/openid-connect/token"
-                )
-        )
-)
 public class OpenApiConfig {
+
+    @Value("${app.keycloak.public-url}")
+    private String keycloakPublicUrl;
+
+    @Value("${app.keycloak.realm}")
+    private String realm;
+
+    @Bean
+    public OpenAPI openAPI() {
+        String tokenUrl = keycloakPublicUrl + "/realms/" + realm + "/protocol/openid-connect/token";
+
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Inscription Service API")
+                        .version("v1"))
+                .addSecurityItem(new SecurityRequirement().addList("oauth2"))
+                .components(new Components()
+                        .addSecuritySchemes("oauth2", new SecurityScheme()
+                                .type(SecurityScheme.Type.OAUTH2)
+                                .flows(new OAuthFlows()
+                                        .password(new OAuthFlow()
+                                                .tokenUrl(tokenUrl)))));
+    }
 }

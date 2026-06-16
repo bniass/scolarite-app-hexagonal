@@ -14,11 +14,5 @@ public record InitialiserDossierCommand(
         BigDecimal fraisInscription,
         BigDecimal mensualite,
         BigDecimal autresFrais,
-        List<MoisAcademique> moisAcademiques,
-        BigDecimal montantVerse,
-        String typePaiement,
-        String operateur,
-        String referencePaiement,
-        String nomBanque,
-        String numeroTransaction
+        List<MoisAcademique> moisAcademiques
 ) {}

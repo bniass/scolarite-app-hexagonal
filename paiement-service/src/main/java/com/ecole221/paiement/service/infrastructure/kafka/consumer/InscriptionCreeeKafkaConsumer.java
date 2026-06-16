@@ -65,13 +65,7 @@ public class InscriptionCreeeKafkaConsumer implements KafkaConsumer<InscriptionC
                 new BigDecimal(model.getFraisInscription()),
                 new BigDecimal(model.getMensualite()),
                 new BigDecimal(model.getAutresFrais()),
-                mois,
-                new BigDecimal(model.getMontantVerse()),
-                model.getTypePaiement(),
-                model.getOperateur(),
-                model.getReferencePaiement(),
-                model.getNomBanque(),
-                model.getNumeroTransaction()
+                mois
         );
 
         initialiserDossierUseCase.executer(command);

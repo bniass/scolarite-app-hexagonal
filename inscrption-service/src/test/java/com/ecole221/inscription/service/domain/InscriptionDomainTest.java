@@ -22,9 +22,8 @@ class InscriptionDomainTest {
     private static final String MOIS_JSON  = "[{\"mois\":9,\"annee\":2024}]";
 
     private Inscription creer() {
-        return Inscription.creer(ETUDIANT_ID, CLASSE_ID, CODE_ANNEE,
-                FRAIS, MENS, AUTRES, MOIS_JSON,
-                new BigDecimal("75000"), "COMPTANT", "", "", "", "");
+        return Inscription.creer(ETUDIANT_ID, false, CLASSE_ID, CODE_ANNEE,
+                FRAIS, MENS, AUTRES, MOIS_JSON);
     }
 
     // ── Création ──────────────────────────────────────────────────────────────
@@ -49,8 +48,8 @@ class InscriptionDomainTest {
         assertThat(event.getEtudiantId()).isEqualTo(ETUDIANT_ID);
         assertThat(event.getClasseId()).isEqualTo(CLASSE_ID);
         assertThat(event.getFraisInscription()).isEqualByComparingTo(FRAIS);
-        assertThat(event.getMontantVerse()).isEqualByComparingTo("75000");
-        assertThat(event.getTypePaiement()).isEqualTo("COMPTANT");
+        assertThat(event.getMensualite()).isEqualByComparingTo(MENS);
+        assertThat(event.getAutresFrais()).isEqualByComparingTo(AUTRES);
     }
 
     @Test

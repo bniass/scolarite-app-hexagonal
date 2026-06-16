@@ -28,12 +28,21 @@ class AnnulerInscriptionServiceTest {
     @Mock private EtudiantServicePort etudiantServicePort;
     @InjectMocks private AnnulerInscriptionService service;
 
-    private Inscription inscriptionPending() {
+    private Inscription inscriptionPendingAncien() {
         return Inscription.reconstituer(
-                UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(),
+                UUID.randomUUID(), UUID.randomUUID(), false, UUID.randomUUID(),
                 "2024-2025",
                 new BigDecimal("50000"), new BigDecimal("25000"), new BigDecimal("10000"),
-                "[]", StatutInscription.PENDING, LocalDateTime.now()
+                "[]", StatutInscription.PENDING, LocalDateTime.now(), null, null
+        );
+    }
+
+    private Inscription inscriptionPendingNouveau() {
+        return Inscription.reconstituer(
+                UUID.randomUUID(), UUID.randomUUID(), true, UUID.randomUUID(),
+                "2024-2025",
+                new BigDecimal("50000"), new BigDecimal("25000"), new BigDecimal("10000"),
+                "[]", StatutInscription.PENDING, LocalDateTime.now(), null, null
         );
     }
 
@@ -46,33 +55,32 @@ class AnnulerInscriptionServiceTest {
     }
 
     @Test
-    void executer_passe_statut_a_ECHOUEE() {
-        Inscription inscription = inscriptionPending();
+    void executer_supprime_inscription() {
+        Inscription inscription = inscriptionPendingAncien();
         when(repository.trouverParId(inscription.getId())).thenReturn(Optional.of(inscription));
-        when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.executer(inscription.getId(), "paiement échoué");
 
-        assertThat(inscription.getStatut()).isEqualTo(StatutInscription.ECHOUEE);
+        verify(repository).supprimer(inscription.getId());
     }
 
     @Test
-    void executer_appelle_sauvegarder() {
-        Inscription inscription = inscriptionPending();
+    void executer_ne_supprime_pas_etudiant_si_etudiant_ancien() {
+        // etudiantNouveau=false → compensation étudiant pas nécessaire
+        Inscription inscription = inscriptionPendingAncien();
         when(repository.trouverParId(inscription.getId())).thenReturn(Optional.of(inscription));
-        when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.executer(inscription.getId(), "motif");
 
-        verify(repository).sauvegarder(inscription);
+        verifyNoInteractions(etudiantServicePort);
     }
 
     @Test
-    void executer_supprime_etudiant_compensation_saga() {
-        Inscription inscription = inscriptionPending();
+    void executer_supprime_etudiant_si_nouvel_etudiant() {
+        // etudiantNouveau=true → étudiant créé lors de cette inscription, on compense
+        Inscription inscription = inscriptionPendingNouveau();
         UUID etudiantId = inscription.getEtudiantId();
         when(repository.trouverParId(inscription.getId())).thenReturn(Optional.of(inscription));
-        when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
 
         service.executer(inscription.getId(), "motif");
 
@@ -80,16 +88,14 @@ class AnnulerInscriptionServiceTest {
     }
 
     @Test
-    void executer_ne_leve_pas_exception_si_suppression_etudiant_echoue() {
-        Inscription inscription = inscriptionPending();
+    void executer_compensation_etudiant_silencieuse_si_service_down() {
+        // La suppression échoue → pas d'exception propagée, inscription déjà supprimée
+        Inscription inscription = inscriptionPendingNouveau();
         when(repository.trouverParId(inscription.getId())).thenReturn(Optional.of(inscription));
-        when(repository.sauvegarder(any())).thenAnswer(inv -> inv.getArgument(0));
         doThrow(new RuntimeException("etudiant-service down"))
                 .when(etudiantServicePort).supprimerEtudiant(any());
 
-        // La compensation doit être silencieuse — pas d'exception propagée
         assertThatCode(() -> service.executer(inscription.getId(), "motif"))
                 .doesNotThrowAnyException();
-        assertThat(inscription.getStatut()).isEqualTo(StatutInscription.ECHOUEE);
     }
 }

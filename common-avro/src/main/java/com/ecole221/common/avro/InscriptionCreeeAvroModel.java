@@ -6,29 +6,71 @@
 package com.ecole221.common.avro;
 
 import org.apache.avro.specific.SpecificData;
+import org.apache.avro.util.Utf8;
 import org.apache.avro.message.BinaryMessageEncoder;
 import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class InscriptionCreeeAvroModel extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -1234567890123456781L;
+  private static final long serialVersionUID = 9123282726335559256L;
 
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"InscriptionCreeeAvroModel\",\"namespace\":\"com.ecole221.common.avro\",\"fields\":[{\"name\":\"inscriptionId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"etudiantId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"classeId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"codeAnnee\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"fraisInscription\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"mensualite\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"autresFrais\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"moisAcademiques\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"[]\"},{\"name\":\"montantVerse\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"0\"},{\"name\":\"typePaiement\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"COMPTANT\"},{\"name\":\"operateur\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"\"},{\"name\":\"referencePaiement\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"\"},{\"name\":\"nomBanque\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"\"},{\"name\":\"numeroTransaction\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"\"}]}");
+
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"InscriptionCreeeAvroModel\",\"namespace\":\"com.ecole221.common.avro\",\"fields\":[{\"name\":\"inscriptionId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"etudiantId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"classeId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"codeAnnee\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"fraisInscription\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"mensualite\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"autresFrais\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"moisAcademiques\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"[]\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static final SpecificData MODEL$ = new SpecificData();
-  private static final BinaryMessageEncoder<InscriptionCreeeAvroModel> ENCODER = new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
-  private static final BinaryMessageDecoder<InscriptionCreeeAvroModel> DECODER = new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
 
-  public static BinaryMessageEncoder<InscriptionCreeeAvroModel> getEncoder() { return ENCODER; }
-  public static BinaryMessageDecoder<InscriptionCreeeAvroModel> getDecoder() { return DECODER; }
+  private static final BinaryMessageEncoder<InscriptionCreeeAvroModel> ENCODER =
+      new BinaryMessageEncoder<>(MODEL$, SCHEMA$);
+
+  private static final BinaryMessageDecoder<InscriptionCreeeAvroModel> DECODER =
+      new BinaryMessageDecoder<>(MODEL$, SCHEMA$);
+
+  /**
+   * Return the BinaryMessageEncoder instance used by this class.
+   * @return the message encoder used by this class
+   */
+  public static BinaryMessageEncoder<InscriptionCreeeAvroModel> getEncoder() {
+    return ENCODER;
+  }
+
+  /**
+   * Return the BinaryMessageDecoder instance used by this class.
+   * @return the message decoder used by this class
+   */
+  public static BinaryMessageDecoder<InscriptionCreeeAvroModel> getDecoder() {
+    return DECODER;
+  }
+
+  /**
+   * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
+   * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
+   * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
+   */
   public static BinaryMessageDecoder<InscriptionCreeeAvroModel> createDecoder(SchemaStore resolver) {
     return new BinaryMessageDecoder<>(MODEL$, SCHEMA$, resolver);
   }
 
-  public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException { return ENCODER.encode(this); }
-  public static InscriptionCreeeAvroModel fromByteBuffer(java.nio.ByteBuffer b) throws java.io.IOException { return DECODER.decode(b); }
+  /**
+   * Serializes this InscriptionCreeeAvroModel to a ByteBuffer.
+   * @return a buffer holding the serialized data for this instance
+   * @throws java.io.IOException if this instance could not be serialized
+   */
+  public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException {
+    return ENCODER.encode(this);
+  }
+
+  /**
+   * Deserializes a InscriptionCreeeAvroModel from a ByteBuffer.
+   * @param b a byte buffer holding serialized data for an instance of this class
+   * @return a InscriptionCreeeAvroModel instance decoded from the given buffer
+   * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
+   */
+  public static InscriptionCreeeAvroModel fromByteBuffer(
+      java.nio.ByteBuffer b) throws java.io.IOException {
+    return DECODER.decode(b);
+  }
 
   private java.lang.String inscriptionId;
   private java.lang.String etudiantId;
@@ -38,20 +80,26 @@ public class InscriptionCreeeAvroModel extends org.apache.avro.specific.Specific
   private java.lang.String mensualite;
   private java.lang.String autresFrais;
   private java.lang.String moisAcademiques;
-  private java.lang.String montantVerse;
-  private java.lang.String typePaiement;
-  private java.lang.String operateur;
-  private java.lang.String referencePaiement;
-  private java.lang.String nomBanque;
-  private java.lang.String numeroTransaction;
 
+  /**
+   * Default constructor.  Note that this does not initialize fields
+   * to their default values from the schema.  If that is desired then
+   * one should use <code>newBuilder()</code>.
+   */
   public InscriptionCreeeAvroModel() {}
 
-  public InscriptionCreeeAvroModel(java.lang.String inscriptionId, java.lang.String etudiantId,
-      java.lang.String classeId, java.lang.String codeAnnee, java.lang.String fraisInscription,
-      java.lang.String mensualite, java.lang.String autresFrais, java.lang.String moisAcademiques,
-      java.lang.String montantVerse, java.lang.String typePaiement, java.lang.String operateur,
-      java.lang.String referencePaiement, java.lang.String nomBanque, java.lang.String numeroTransaction) {
+  /**
+   * All-args constructor.
+   * @param inscriptionId The new value for inscriptionId
+   * @param etudiantId The new value for etudiantId
+   * @param classeId The new value for classeId
+   * @param codeAnnee The new value for codeAnnee
+   * @param fraisInscription The new value for fraisInscription
+   * @param mensualite The new value for mensualite
+   * @param autresFrais The new value for autresFrais
+   * @param moisAcademiques The new value for moisAcademiques
+   */
+  public InscriptionCreeeAvroModel(java.lang.String inscriptionId, java.lang.String etudiantId, java.lang.String classeId, java.lang.String codeAnnee, java.lang.String fraisInscription, java.lang.String mensualite, java.lang.String autresFrais, java.lang.String moisAcademiques) {
     this.inscriptionId = inscriptionId;
     this.etudiantId = etudiantId;
     this.classeId = classeId;
@@ -60,17 +108,15 @@ public class InscriptionCreeeAvroModel extends org.apache.avro.specific.Specific
     this.mensualite = mensualite;
     this.autresFrais = autresFrais;
     this.moisAcademiques = moisAcademiques;
-    this.montantVerse = montantVerse;
-    this.typePaiement = typePaiement;
-    this.operateur = operateur;
-    this.referencePaiement = referencePaiement;
-    this.nomBanque = nomBanque;
-    this.numeroTransaction = numeroTransaction;
   }
 
-  @Override public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
-  @Override public org.apache.avro.Schema getSchema() { return SCHEMA$; }
+  @Override
+  public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
 
+  @Override
+  public org.apache.avro.Schema getSchema() { return SCHEMA$; }
+
+  // Used by DatumWriter.  Applications should not call.
   @Override
   public java.lang.Object get(int field$) {
     switch (field$) {
@@ -82,16 +128,11 @@ public class InscriptionCreeeAvroModel extends org.apache.avro.specific.Specific
     case 5: return mensualite;
     case 6: return autresFrais;
     case 7: return moisAcademiques;
-    case 8: return montantVerse;
-    case 9: return typePaiement;
-    case 10: return operateur;
-    case 11: return referencePaiement;
-    case 12: return nomBanque;
-    case 13: return numeroTransaction;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
+  // Used by DatumReader.  Applications should not call.
   @Override
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
@@ -104,58 +145,186 @@ public class InscriptionCreeeAvroModel extends org.apache.avro.specific.Specific
     case 5: mensualite = value$ != null ? value$.toString() : null; break;
     case 6: autresFrais = value$ != null ? value$.toString() : null; break;
     case 7: moisAcademiques = value$ != null ? value$.toString() : null; break;
-    case 8: montantVerse = value$ != null ? value$.toString() : null; break;
-    case 9: typePaiement = value$ != null ? value$.toString() : null; break;
-    case 10: operateur = value$ != null ? value$.toString() : null; break;
-    case 11: referencePaiement = value$ != null ? value$.toString() : null; break;
-    case 12: nomBanque = value$ != null ? value$.toString() : null; break;
-    case 13: numeroTransaction = value$ != null ? value$.toString() : null; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
 
-  public java.lang.String getInscriptionId() { return inscriptionId; }
-  public void setInscriptionId(java.lang.String value) { this.inscriptionId = value; }
-  public java.lang.String getEtudiantId() { return etudiantId; }
-  public void setEtudiantId(java.lang.String value) { this.etudiantId = value; }
-  public java.lang.String getClasseId() { return classeId; }
-  public void setClasseId(java.lang.String value) { this.classeId = value; }
-  public java.lang.String getCodeAnnee() { return codeAnnee; }
-  public void setCodeAnnee(java.lang.String value) { this.codeAnnee = value; }
-  public java.lang.String getFraisInscription() { return fraisInscription; }
-  public void setFraisInscription(java.lang.String value) { this.fraisInscription = value; }
-  public java.lang.String getMensualite() { return mensualite; }
-  public void setMensualite(java.lang.String value) { this.mensualite = value; }
-  public java.lang.String getAutresFrais() { return autresFrais; }
-  public void setAutresFrais(java.lang.String value) { this.autresFrais = value; }
-  public java.lang.String getMoisAcademiques() { return moisAcademiques; }
-  public void setMoisAcademiques(java.lang.String value) { this.moisAcademiques = value; }
-  public java.lang.String getMontantVerse() { return montantVerse; }
-  public void setMontantVerse(java.lang.String value) { this.montantVerse = value; }
-  public java.lang.String getTypePaiement() { return typePaiement; }
-  public void setTypePaiement(java.lang.String value) { this.typePaiement = value; }
-  public java.lang.String getOperateur() { return operateur; }
-  public void setOperateur(java.lang.String value) { this.operateur = value; }
-  public java.lang.String getReferencePaiement() { return referencePaiement; }
-  public void setReferencePaiement(java.lang.String value) { this.referencePaiement = value; }
-  public java.lang.String getNomBanque() { return nomBanque; }
-  public void setNomBanque(java.lang.String value) { this.nomBanque = value; }
-  public java.lang.String getNumeroTransaction() { return numeroTransaction; }
-  public void setNumeroTransaction(java.lang.String value) { this.numeroTransaction = value; }
-
-  public static InscriptionCreeeAvroModel.Builder newBuilder() {
-    return new InscriptionCreeeAvroModel.Builder();
-  }
-  public static InscriptionCreeeAvroModel.Builder newBuilder(InscriptionCreeeAvroModel.Builder other) {
-    return other == null ? new InscriptionCreeeAvroModel.Builder() : new InscriptionCreeeAvroModel.Builder(other);
-  }
-  public static InscriptionCreeeAvroModel.Builder newBuilder(InscriptionCreeeAvroModel other) {
-    return other == null ? new InscriptionCreeeAvroModel.Builder() : new InscriptionCreeeAvroModel.Builder(other);
+  /**
+   * Gets the value of the 'inscriptionId' field.
+   * @return The value of the 'inscriptionId' field.
+   */
+  public java.lang.String getInscriptionId() {
+    return inscriptionId;
   }
 
+
+  /**
+   * Sets the value of the 'inscriptionId' field.
+   * @param value the value to set.
+   */
+  public void setInscriptionId(java.lang.String value) {
+    this.inscriptionId = value;
+  }
+
+  /**
+   * Gets the value of the 'etudiantId' field.
+   * @return The value of the 'etudiantId' field.
+   */
+  public java.lang.String getEtudiantId() {
+    return etudiantId;
+  }
+
+
+  /**
+   * Sets the value of the 'etudiantId' field.
+   * @param value the value to set.
+   */
+  public void setEtudiantId(java.lang.String value) {
+    this.etudiantId = value;
+  }
+
+  /**
+   * Gets the value of the 'classeId' field.
+   * @return The value of the 'classeId' field.
+   */
+  public java.lang.String getClasseId() {
+    return classeId;
+  }
+
+
+  /**
+   * Sets the value of the 'classeId' field.
+   * @param value the value to set.
+   */
+  public void setClasseId(java.lang.String value) {
+    this.classeId = value;
+  }
+
+  /**
+   * Gets the value of the 'codeAnnee' field.
+   * @return The value of the 'codeAnnee' field.
+   */
+  public java.lang.String getCodeAnnee() {
+    return codeAnnee;
+  }
+
+
+  /**
+   * Sets the value of the 'codeAnnee' field.
+   * @param value the value to set.
+   */
+  public void setCodeAnnee(java.lang.String value) {
+    this.codeAnnee = value;
+  }
+
+  /**
+   * Gets the value of the 'fraisInscription' field.
+   * @return The value of the 'fraisInscription' field.
+   */
+  public java.lang.String getFraisInscription() {
+    return fraisInscription;
+  }
+
+
+  /**
+   * Sets the value of the 'fraisInscription' field.
+   * @param value the value to set.
+   */
+  public void setFraisInscription(java.lang.String value) {
+    this.fraisInscription = value;
+  }
+
+  /**
+   * Gets the value of the 'mensualite' field.
+   * @return The value of the 'mensualite' field.
+   */
+  public java.lang.String getMensualite() {
+    return mensualite;
+  }
+
+
+  /**
+   * Sets the value of the 'mensualite' field.
+   * @param value the value to set.
+   */
+  public void setMensualite(java.lang.String value) {
+    this.mensualite = value;
+  }
+
+  /**
+   * Gets the value of the 'autresFrais' field.
+   * @return The value of the 'autresFrais' field.
+   */
+  public java.lang.String getAutresFrais() {
+    return autresFrais;
+  }
+
+
+  /**
+   * Sets the value of the 'autresFrais' field.
+   * @param value the value to set.
+   */
+  public void setAutresFrais(java.lang.String value) {
+    this.autresFrais = value;
+  }
+
+  /**
+   * Gets the value of the 'moisAcademiques' field.
+   * @return The value of the 'moisAcademiques' field.
+   */
+  public java.lang.String getMoisAcademiques() {
+    return moisAcademiques;
+  }
+
+
+  /**
+   * Sets the value of the 'moisAcademiques' field.
+   * @param value the value to set.
+   */
+  public void setMoisAcademiques(java.lang.String value) {
+    this.moisAcademiques = value;
+  }
+
+  /**
+   * Creates a new InscriptionCreeeAvroModel RecordBuilder.
+   * @return A new InscriptionCreeeAvroModel RecordBuilder
+   */
+  public static com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder newBuilder() {
+    return new com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder();
+  }
+
+  /**
+   * Creates a new InscriptionCreeeAvroModel RecordBuilder by copying an existing Builder.
+   * @param other The existing builder to copy.
+   * @return A new InscriptionCreeeAvroModel RecordBuilder
+   */
+  public static com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder newBuilder(com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder other) {
+    if (other == null) {
+      return new com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder();
+    } else {
+      return new com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder(other);
+    }
+  }
+
+  /**
+   * Creates a new InscriptionCreeeAvroModel RecordBuilder by copying an existing InscriptionCreeeAvroModel instance.
+   * @param other The existing instance to copy.
+   * @return A new InscriptionCreeeAvroModel RecordBuilder
+   */
+  public static com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder newBuilder(com.ecole221.common.avro.InscriptionCreeeAvroModel other) {
+    if (other == null) {
+      return new com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder();
+    } else {
+      return new com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder(other);
+    }
+  }
+
+  /**
+   * RecordBuilder for InscriptionCreeeAvroModel instances.
+   */
   @org.apache.avro.specific.AvroGenerated
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<InscriptionCreeeAvroModel>
-      implements org.apache.avro.data.RecordBuilder<InscriptionCreeeAvroModel> {
+    implements org.apache.avro.data.RecordBuilder<InscriptionCreeeAvroModel> {
 
     private java.lang.String inscriptionId;
     private java.lang.String etudiantId;
@@ -165,120 +334,411 @@ public class InscriptionCreeeAvroModel extends org.apache.avro.specific.Specific
     private java.lang.String mensualite;
     private java.lang.String autresFrais;
     private java.lang.String moisAcademiques;
-    private java.lang.String montantVerse;
-    private java.lang.String typePaiement;
-    private java.lang.String operateur;
-    private java.lang.String referencePaiement;
-    private java.lang.String nomBanque;
-    private java.lang.String numeroTransaction;
 
-    private Builder() { super(SCHEMA$, MODEL$); }
-
-    private Builder(InscriptionCreeeAvroModel.Builder other) {
-      super(other);
-      if (isValidValue(fields()[0], other.inscriptionId)) { this.inscriptionId = data().deepCopy(fields()[0].schema(), other.inscriptionId); fieldSetFlags()[0] = other.fieldSetFlags()[0]; }
-      if (isValidValue(fields()[1], other.etudiantId)) { this.etudiantId = data().deepCopy(fields()[1].schema(), other.etudiantId); fieldSetFlags()[1] = other.fieldSetFlags()[1]; }
-      if (isValidValue(fields()[2], other.classeId)) { this.classeId = data().deepCopy(fields()[2].schema(), other.classeId); fieldSetFlags()[2] = other.fieldSetFlags()[2]; }
-      if (isValidValue(fields()[3], other.codeAnnee)) { this.codeAnnee = data().deepCopy(fields()[3].schema(), other.codeAnnee); fieldSetFlags()[3] = other.fieldSetFlags()[3]; }
-      if (isValidValue(fields()[4], other.fraisInscription)) { this.fraisInscription = data().deepCopy(fields()[4].schema(), other.fraisInscription); fieldSetFlags()[4] = other.fieldSetFlags()[4]; }
-      if (isValidValue(fields()[5], other.mensualite)) { this.mensualite = data().deepCopy(fields()[5].schema(), other.mensualite); fieldSetFlags()[5] = other.fieldSetFlags()[5]; }
-      if (isValidValue(fields()[6], other.autresFrais)) { this.autresFrais = data().deepCopy(fields()[6].schema(), other.autresFrais); fieldSetFlags()[6] = other.fieldSetFlags()[6]; }
-      if (isValidValue(fields()[7], other.moisAcademiques)) { this.moisAcademiques = data().deepCopy(fields()[7].schema(), other.moisAcademiques); fieldSetFlags()[7] = other.fieldSetFlags()[7]; }
-      if (isValidValue(fields()[8], other.montantVerse)) { this.montantVerse = data().deepCopy(fields()[8].schema(), other.montantVerse); fieldSetFlags()[8] = other.fieldSetFlags()[8]; }
-      if (isValidValue(fields()[9], other.typePaiement)) { this.typePaiement = data().deepCopy(fields()[9].schema(), other.typePaiement); fieldSetFlags()[9] = other.fieldSetFlags()[9]; }
-      if (isValidValue(fields()[10], other.operateur)) { this.operateur = data().deepCopy(fields()[10].schema(), other.operateur); fieldSetFlags()[10] = other.fieldSetFlags()[10]; }
-      if (isValidValue(fields()[11], other.referencePaiement)) { this.referencePaiement = data().deepCopy(fields()[11].schema(), other.referencePaiement); fieldSetFlags()[11] = other.fieldSetFlags()[11]; }
-      if (isValidValue(fields()[12], other.nomBanque)) { this.nomBanque = data().deepCopy(fields()[12].schema(), other.nomBanque); fieldSetFlags()[12] = other.fieldSetFlags()[12]; }
-      if (isValidValue(fields()[13], other.numeroTransaction)) { this.numeroTransaction = data().deepCopy(fields()[13].schema(), other.numeroTransaction); fieldSetFlags()[13] = other.fieldSetFlags()[13]; }
-    }
-
-    private Builder(InscriptionCreeeAvroModel other) {
+    /** Creates a new Builder */
+    private Builder() {
       super(SCHEMA$, MODEL$);
-      if (isValidValue(fields()[0], other.inscriptionId)) { this.inscriptionId = data().deepCopy(fields()[0].schema(), other.inscriptionId); fieldSetFlags()[0] = true; }
-      if (isValidValue(fields()[1], other.etudiantId)) { this.etudiantId = data().deepCopy(fields()[1].schema(), other.etudiantId); fieldSetFlags()[1] = true; }
-      if (isValidValue(fields()[2], other.classeId)) { this.classeId = data().deepCopy(fields()[2].schema(), other.classeId); fieldSetFlags()[2] = true; }
-      if (isValidValue(fields()[3], other.codeAnnee)) { this.codeAnnee = data().deepCopy(fields()[3].schema(), other.codeAnnee); fieldSetFlags()[3] = true; }
-      if (isValidValue(fields()[4], other.fraisInscription)) { this.fraisInscription = data().deepCopy(fields()[4].schema(), other.fraisInscription); fieldSetFlags()[4] = true; }
-      if (isValidValue(fields()[5], other.mensualite)) { this.mensualite = data().deepCopy(fields()[5].schema(), other.mensualite); fieldSetFlags()[5] = true; }
-      if (isValidValue(fields()[6], other.autresFrais)) { this.autresFrais = data().deepCopy(fields()[6].schema(), other.autresFrais); fieldSetFlags()[6] = true; }
-      if (isValidValue(fields()[7], other.moisAcademiques)) { this.moisAcademiques = data().deepCopy(fields()[7].schema(), other.moisAcademiques); fieldSetFlags()[7] = true; }
-      if (isValidValue(fields()[8], other.montantVerse)) { this.montantVerse = data().deepCopy(fields()[8].schema(), other.montantVerse); fieldSetFlags()[8] = true; }
-      if (isValidValue(fields()[9], other.typePaiement)) { this.typePaiement = data().deepCopy(fields()[9].schema(), other.typePaiement); fieldSetFlags()[9] = true; }
-      if (isValidValue(fields()[10], other.operateur)) { this.operateur = data().deepCopy(fields()[10].schema(), other.operateur); fieldSetFlags()[10] = true; }
-      if (isValidValue(fields()[11], other.referencePaiement)) { this.referencePaiement = data().deepCopy(fields()[11].schema(), other.referencePaiement); fieldSetFlags()[11] = true; }
-      if (isValidValue(fields()[12], other.nomBanque)) { this.nomBanque = data().deepCopy(fields()[12].schema(), other.nomBanque); fieldSetFlags()[12] = true; }
-      if (isValidValue(fields()[13], other.numeroTransaction)) { this.numeroTransaction = data().deepCopy(fields()[13].schema(), other.numeroTransaction); fieldSetFlags()[13] = true; }
     }
 
-    public java.lang.String getInscriptionId() { return inscriptionId; }
-    public Builder setInscriptionId(java.lang.String value) { validate(fields()[0], value); this.inscriptionId = value; fieldSetFlags()[0] = true; return this; }
-    public boolean hasInscriptionId() { return fieldSetFlags()[0]; }
-    public Builder clearInscriptionId() { inscriptionId = null; fieldSetFlags()[0] = false; return this; }
+    /**
+     * Creates a Builder by copying an existing Builder.
+     * @param other The existing Builder to copy.
+     */
+    private Builder(com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder other) {
+      super(other);
+      if (isValidValue(fields()[0], other.inscriptionId)) {
+        this.inscriptionId = data().deepCopy(fields()[0].schema(), other.inscriptionId);
+        fieldSetFlags()[0] = other.fieldSetFlags()[0];
+      }
+      if (isValidValue(fields()[1], other.etudiantId)) {
+        this.etudiantId = data().deepCopy(fields()[1].schema(), other.etudiantId);
+        fieldSetFlags()[1] = other.fieldSetFlags()[1];
+      }
+      if (isValidValue(fields()[2], other.classeId)) {
+        this.classeId = data().deepCopy(fields()[2].schema(), other.classeId);
+        fieldSetFlags()[2] = other.fieldSetFlags()[2];
+      }
+      if (isValidValue(fields()[3], other.codeAnnee)) {
+        this.codeAnnee = data().deepCopy(fields()[3].schema(), other.codeAnnee);
+        fieldSetFlags()[3] = other.fieldSetFlags()[3];
+      }
+      if (isValidValue(fields()[4], other.fraisInscription)) {
+        this.fraisInscription = data().deepCopy(fields()[4].schema(), other.fraisInscription);
+        fieldSetFlags()[4] = other.fieldSetFlags()[4];
+      }
+      if (isValidValue(fields()[5], other.mensualite)) {
+        this.mensualite = data().deepCopy(fields()[5].schema(), other.mensualite);
+        fieldSetFlags()[5] = other.fieldSetFlags()[5];
+      }
+      if (isValidValue(fields()[6], other.autresFrais)) {
+        this.autresFrais = data().deepCopy(fields()[6].schema(), other.autresFrais);
+        fieldSetFlags()[6] = other.fieldSetFlags()[6];
+      }
+      if (isValidValue(fields()[7], other.moisAcademiques)) {
+        this.moisAcademiques = data().deepCopy(fields()[7].schema(), other.moisAcademiques);
+        fieldSetFlags()[7] = other.fieldSetFlags()[7];
+      }
+    }
 
-    public java.lang.String getEtudiantId() { return etudiantId; }
-    public Builder setEtudiantId(java.lang.String value) { validate(fields()[1], value); this.etudiantId = value; fieldSetFlags()[1] = true; return this; }
-    public boolean hasEtudiantId() { return fieldSetFlags()[1]; }
-    public Builder clearEtudiantId() { etudiantId = null; fieldSetFlags()[1] = false; return this; }
+    /**
+     * Creates a Builder by copying an existing InscriptionCreeeAvroModel instance
+     * @param other The existing instance to copy.
+     */
+    private Builder(com.ecole221.common.avro.InscriptionCreeeAvroModel other) {
+      super(SCHEMA$, MODEL$);
+      if (isValidValue(fields()[0], other.inscriptionId)) {
+        this.inscriptionId = data().deepCopy(fields()[0].schema(), other.inscriptionId);
+        fieldSetFlags()[0] = true;
+      }
+      if (isValidValue(fields()[1], other.etudiantId)) {
+        this.etudiantId = data().deepCopy(fields()[1].schema(), other.etudiantId);
+        fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.classeId)) {
+        this.classeId = data().deepCopy(fields()[2].schema(), other.classeId);
+        fieldSetFlags()[2] = true;
+      }
+      if (isValidValue(fields()[3], other.codeAnnee)) {
+        this.codeAnnee = data().deepCopy(fields()[3].schema(), other.codeAnnee);
+        fieldSetFlags()[3] = true;
+      }
+      if (isValidValue(fields()[4], other.fraisInscription)) {
+        this.fraisInscription = data().deepCopy(fields()[4].schema(), other.fraisInscription);
+        fieldSetFlags()[4] = true;
+      }
+      if (isValidValue(fields()[5], other.mensualite)) {
+        this.mensualite = data().deepCopy(fields()[5].schema(), other.mensualite);
+        fieldSetFlags()[5] = true;
+      }
+      if (isValidValue(fields()[6], other.autresFrais)) {
+        this.autresFrais = data().deepCopy(fields()[6].schema(), other.autresFrais);
+        fieldSetFlags()[6] = true;
+      }
+      if (isValidValue(fields()[7], other.moisAcademiques)) {
+        this.moisAcademiques = data().deepCopy(fields()[7].schema(), other.moisAcademiques);
+        fieldSetFlags()[7] = true;
+      }
+    }
 
-    public java.lang.String getClasseId() { return classeId; }
-    public Builder setClasseId(java.lang.String value) { validate(fields()[2], value); this.classeId = value; fieldSetFlags()[2] = true; return this; }
-    public boolean hasClasseId() { return fieldSetFlags()[2]; }
-    public Builder clearClasseId() { classeId = null; fieldSetFlags()[2] = false; return this; }
+    /**
+      * Gets the value of the 'inscriptionId' field.
+      * @return The value.
+      */
+    public java.lang.String getInscriptionId() {
+      return inscriptionId;
+    }
 
-    public java.lang.String getCodeAnnee() { return codeAnnee; }
-    public Builder setCodeAnnee(java.lang.String value) { validate(fields()[3], value); this.codeAnnee = value; fieldSetFlags()[3] = true; return this; }
-    public boolean hasCodeAnnee() { return fieldSetFlags()[3]; }
-    public Builder clearCodeAnnee() { codeAnnee = null; fieldSetFlags()[3] = false; return this; }
 
-    public java.lang.String getFraisInscription() { return fraisInscription; }
-    public Builder setFraisInscription(java.lang.String value) { validate(fields()[4], value); this.fraisInscription = value; fieldSetFlags()[4] = true; return this; }
-    public boolean hasFraisInscription() { return fieldSetFlags()[4]; }
-    public Builder clearFraisInscription() { fraisInscription = null; fieldSetFlags()[4] = false; return this; }
+    /**
+      * Sets the value of the 'inscriptionId' field.
+      * @param value The value of 'inscriptionId'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder setInscriptionId(java.lang.String value) {
+      validate(fields()[0], value);
+      this.inscriptionId = value;
+      fieldSetFlags()[0] = true;
+      return this;
+    }
 
-    public java.lang.String getMensualite() { return mensualite; }
-    public Builder setMensualite(java.lang.String value) { validate(fields()[5], value); this.mensualite = value; fieldSetFlags()[5] = true; return this; }
-    public boolean hasMensualite() { return fieldSetFlags()[5]; }
-    public Builder clearMensualite() { mensualite = null; fieldSetFlags()[5] = false; return this; }
+    /**
+      * Checks whether the 'inscriptionId' field has been set.
+      * @return True if the 'inscriptionId' field has been set, false otherwise.
+      */
+    public boolean hasInscriptionId() {
+      return fieldSetFlags()[0];
+    }
 
-    public java.lang.String getAutresFrais() { return autresFrais; }
-    public Builder setAutresFrais(java.lang.String value) { validate(fields()[6], value); this.autresFrais = value; fieldSetFlags()[6] = true; return this; }
-    public boolean hasAutresFrais() { return fieldSetFlags()[6]; }
-    public Builder clearAutresFrais() { autresFrais = null; fieldSetFlags()[6] = false; return this; }
 
-    public java.lang.String getMoisAcademiques() { return moisAcademiques; }
-    public Builder setMoisAcademiques(java.lang.String value) { validate(fields()[7], value); this.moisAcademiques = value; fieldSetFlags()[7] = true; return this; }
-    public boolean hasMoisAcademiques() { return fieldSetFlags()[7]; }
-    public Builder clearMoisAcademiques() { moisAcademiques = null; fieldSetFlags()[7] = false; return this; }
+    /**
+      * Clears the value of the 'inscriptionId' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder clearInscriptionId() {
+      inscriptionId = null;
+      fieldSetFlags()[0] = false;
+      return this;
+    }
 
-    public java.lang.String getMontantVerse() { return montantVerse; }
-    public Builder setMontantVerse(java.lang.String value) { validate(fields()[8], value); this.montantVerse = value; fieldSetFlags()[8] = true; return this; }
-    public boolean hasMontantVerse() { return fieldSetFlags()[8]; }
-    public Builder clearMontantVerse() { montantVerse = null; fieldSetFlags()[8] = false; return this; }
+    /**
+      * Gets the value of the 'etudiantId' field.
+      * @return The value.
+      */
+    public java.lang.String getEtudiantId() {
+      return etudiantId;
+    }
 
-    public java.lang.String getTypePaiement() { return typePaiement; }
-    public Builder setTypePaiement(java.lang.String value) { validate(fields()[9], value); this.typePaiement = value; fieldSetFlags()[9] = true; return this; }
-    public boolean hasTypePaiement() { return fieldSetFlags()[9]; }
-    public Builder clearTypePaiement() { typePaiement = null; fieldSetFlags()[9] = false; return this; }
 
-    public java.lang.String getOperateur() { return operateur; }
-    public Builder setOperateur(java.lang.String value) { validate(fields()[10], value); this.operateur = value; fieldSetFlags()[10] = true; return this; }
-    public boolean hasOperateur() { return fieldSetFlags()[10]; }
-    public Builder clearOperateur() { operateur = null; fieldSetFlags()[10] = false; return this; }
+    /**
+      * Sets the value of the 'etudiantId' field.
+      * @param value The value of 'etudiantId'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder setEtudiantId(java.lang.String value) {
+      validate(fields()[1], value);
+      this.etudiantId = value;
+      fieldSetFlags()[1] = true;
+      return this;
+    }
 
-    public java.lang.String getReferencePaiement() { return referencePaiement; }
-    public Builder setReferencePaiement(java.lang.String value) { validate(fields()[11], value); this.referencePaiement = value; fieldSetFlags()[11] = true; return this; }
-    public boolean hasReferencePaiement() { return fieldSetFlags()[11]; }
-    public Builder clearReferencePaiement() { referencePaiement = null; fieldSetFlags()[11] = false; return this; }
+    /**
+      * Checks whether the 'etudiantId' field has been set.
+      * @return True if the 'etudiantId' field has been set, false otherwise.
+      */
+    public boolean hasEtudiantId() {
+      return fieldSetFlags()[1];
+    }
 
-    public java.lang.String getNomBanque() { return nomBanque; }
-    public Builder setNomBanque(java.lang.String value) { validate(fields()[12], value); this.nomBanque = value; fieldSetFlags()[12] = true; return this; }
-    public boolean hasNomBanque() { return fieldSetFlags()[12]; }
-    public Builder clearNomBanque() { nomBanque = null; fieldSetFlags()[12] = false; return this; }
 
-    public java.lang.String getNumeroTransaction() { return numeroTransaction; }
-    public Builder setNumeroTransaction(java.lang.String value) { validate(fields()[13], value); this.numeroTransaction = value; fieldSetFlags()[13] = true; return this; }
-    public boolean hasNumeroTransaction() { return fieldSetFlags()[13]; }
-    public Builder clearNumeroTransaction() { numeroTransaction = null; fieldSetFlags()[13] = false; return this; }
+    /**
+      * Clears the value of the 'etudiantId' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder clearEtudiantId() {
+      etudiantId = null;
+      fieldSetFlags()[1] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'classeId' field.
+      * @return The value.
+      */
+    public java.lang.String getClasseId() {
+      return classeId;
+    }
+
+
+    /**
+      * Sets the value of the 'classeId' field.
+      * @param value The value of 'classeId'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder setClasseId(java.lang.String value) {
+      validate(fields()[2], value);
+      this.classeId = value;
+      fieldSetFlags()[2] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'classeId' field has been set.
+      * @return True if the 'classeId' field has been set, false otherwise.
+      */
+    public boolean hasClasseId() {
+      return fieldSetFlags()[2];
+    }
+
+
+    /**
+      * Clears the value of the 'classeId' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder clearClasseId() {
+      classeId = null;
+      fieldSetFlags()[2] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'codeAnnee' field.
+      * @return The value.
+      */
+    public java.lang.String getCodeAnnee() {
+      return codeAnnee;
+    }
+
+
+    /**
+      * Sets the value of the 'codeAnnee' field.
+      * @param value The value of 'codeAnnee'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder setCodeAnnee(java.lang.String value) {
+      validate(fields()[3], value);
+      this.codeAnnee = value;
+      fieldSetFlags()[3] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'codeAnnee' field has been set.
+      * @return True if the 'codeAnnee' field has been set, false otherwise.
+      */
+    public boolean hasCodeAnnee() {
+      return fieldSetFlags()[3];
+    }
+
+
+    /**
+      * Clears the value of the 'codeAnnee' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder clearCodeAnnee() {
+      codeAnnee = null;
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'fraisInscription' field.
+      * @return The value.
+      */
+    public java.lang.String getFraisInscription() {
+      return fraisInscription;
+    }
+
+
+    /**
+      * Sets the value of the 'fraisInscription' field.
+      * @param value The value of 'fraisInscription'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder setFraisInscription(java.lang.String value) {
+      validate(fields()[4], value);
+      this.fraisInscription = value;
+      fieldSetFlags()[4] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'fraisInscription' field has been set.
+      * @return True if the 'fraisInscription' field has been set, false otherwise.
+      */
+    public boolean hasFraisInscription() {
+      return fieldSetFlags()[4];
+    }
+
+
+    /**
+      * Clears the value of the 'fraisInscription' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder clearFraisInscription() {
+      fraisInscription = null;
+      fieldSetFlags()[4] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'mensualite' field.
+      * @return The value.
+      */
+    public java.lang.String getMensualite() {
+      return mensualite;
+    }
+
+
+    /**
+      * Sets the value of the 'mensualite' field.
+      * @param value The value of 'mensualite'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder setMensualite(java.lang.String value) {
+      validate(fields()[5], value);
+      this.mensualite = value;
+      fieldSetFlags()[5] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'mensualite' field has been set.
+      * @return True if the 'mensualite' field has been set, false otherwise.
+      */
+    public boolean hasMensualite() {
+      return fieldSetFlags()[5];
+    }
+
+
+    /**
+      * Clears the value of the 'mensualite' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder clearMensualite() {
+      mensualite = null;
+      fieldSetFlags()[5] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'autresFrais' field.
+      * @return The value.
+      */
+    public java.lang.String getAutresFrais() {
+      return autresFrais;
+    }
+
+
+    /**
+      * Sets the value of the 'autresFrais' field.
+      * @param value The value of 'autresFrais'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder setAutresFrais(java.lang.String value) {
+      validate(fields()[6], value);
+      this.autresFrais = value;
+      fieldSetFlags()[6] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'autresFrais' field has been set.
+      * @return True if the 'autresFrais' field has been set, false otherwise.
+      */
+    public boolean hasAutresFrais() {
+      return fieldSetFlags()[6];
+    }
+
+
+    /**
+      * Clears the value of the 'autresFrais' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder clearAutresFrais() {
+      autresFrais = null;
+      fieldSetFlags()[6] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'moisAcademiques' field.
+      * @return The value.
+      */
+    public java.lang.String getMoisAcademiques() {
+      return moisAcademiques;
+    }
+
+
+    /**
+      * Sets the value of the 'moisAcademiques' field.
+      * @param value The value of 'moisAcademiques'.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder setMoisAcademiques(java.lang.String value) {
+      validate(fields()[7], value);
+      this.moisAcademiques = value;
+      fieldSetFlags()[7] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'moisAcademiques' field has been set.
+      * @return True if the 'moisAcademiques' field has been set, false otherwise.
+      */
+    public boolean hasMoisAcademiques() {
+      return fieldSetFlags()[7];
+    }
+
+
+    /**
+      * Clears the value of the 'moisAcademiques' field.
+      * @return This builder.
+      */
+    public com.ecole221.common.avro.InscriptionCreeeAvroModel.Builder clearMoisAcademiques() {
+      moisAcademiques = null;
+      fieldSetFlags()[7] = false;
+      return this;
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -293,12 +753,6 @@ public class InscriptionCreeeAvroModel extends org.apache.avro.specific.Specific
         record.mensualite = fieldSetFlags()[5] ? this.mensualite : (java.lang.String) defaultValue(fields()[5]);
         record.autresFrais = fieldSetFlags()[6] ? this.autresFrais : (java.lang.String) defaultValue(fields()[6]);
         record.moisAcademiques = fieldSetFlags()[7] ? this.moisAcademiques : (java.lang.String) defaultValue(fields()[7]);
-        record.montantVerse = fieldSetFlags()[8] ? this.montantVerse : (java.lang.String) defaultValue(fields()[8]);
-        record.typePaiement = fieldSetFlags()[9] ? this.typePaiement : (java.lang.String) defaultValue(fields()[9]);
-        record.operateur = fieldSetFlags()[10] ? this.operateur : (java.lang.String) defaultValue(fields()[10]);
-        record.referencePaiement = fieldSetFlags()[11] ? this.referencePaiement : (java.lang.String) defaultValue(fields()[11]);
-        record.nomBanque = fieldSetFlags()[12] ? this.nomBanque : (java.lang.String) defaultValue(fields()[12]);
-        record.numeroTransaction = fieldSetFlags()[13] ? this.numeroTransaction : (java.lang.String) defaultValue(fields()[13]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -310,74 +764,103 @@ public class InscriptionCreeeAvroModel extends org.apache.avro.specific.Specific
 
   @SuppressWarnings("unchecked")
   private static final org.apache.avro.io.DatumWriter<InscriptionCreeeAvroModel>
-    WRITER$ = (org.apache.avro.io.DatumWriter<InscriptionCreeeAvroModel>) MODEL$.createDatumWriter(SCHEMA$);
+    WRITER$ = (org.apache.avro.io.DatumWriter<InscriptionCreeeAvroModel>)MODEL$.createDatumWriter(SCHEMA$);
 
-  @Override public void writeExternal(java.io.ObjectOutput out) throws java.io.IOException {
+  @Override public void writeExternal(java.io.ObjectOutput out)
+    throws java.io.IOException {
     WRITER$.write(this, SpecificData.getEncoder(out));
   }
 
   @SuppressWarnings("unchecked")
   private static final org.apache.avro.io.DatumReader<InscriptionCreeeAvroModel>
-    READER$ = (org.apache.avro.io.DatumReader<InscriptionCreeeAvroModel>) MODEL$.createDatumReader(SCHEMA$);
+    READER$ = (org.apache.avro.io.DatumReader<InscriptionCreeeAvroModel>)MODEL$.createDatumReader(SCHEMA$);
 
-  @Override public void readExternal(java.io.ObjectInput in) throws java.io.IOException {
+  @Override public void readExternal(java.io.ObjectInput in)
+    throws java.io.IOException {
     READER$.read(this, SpecificData.getDecoder(in));
   }
 
   @Override protected boolean hasCustomCoders() { return true; }
 
-  @Override public void customEncode(org.apache.avro.io.Encoder out) throws java.io.IOException {
+  @Override public void customEncode(org.apache.avro.io.Encoder out)
+    throws java.io.IOException
+  {
     out.writeString(this.inscriptionId);
+
     out.writeString(this.etudiantId);
+
     out.writeString(this.classeId);
+
     out.writeString(this.codeAnnee);
+
     out.writeString(this.fraisInscription);
+
     out.writeString(this.mensualite);
+
     out.writeString(this.autresFrais);
-    out.writeString(this.moisAcademiques != null ? this.moisAcademiques : "[]");
-    out.writeString(this.montantVerse != null ? this.montantVerse : "0");
-    out.writeString(this.typePaiement != null ? this.typePaiement : "COMPTANT");
-    out.writeString(this.operateur != null ? this.operateur : "");
-    out.writeString(this.referencePaiement != null ? this.referencePaiement : "");
-    out.writeString(this.nomBanque != null ? this.nomBanque : "");
-    out.writeString(this.numeroTransaction != null ? this.numeroTransaction : "");
+
+    out.writeString(this.moisAcademiques);
+
   }
 
-  @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in) throws java.io.IOException {
+  @Override public void customDecode(org.apache.avro.io.ResolvingDecoder in)
+    throws java.io.IOException
+  {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
       this.inscriptionId = in.readString();
+
       this.etudiantId = in.readString();
+
       this.classeId = in.readString();
+
       this.codeAnnee = in.readString();
+
       this.fraisInscription = in.readString();
+
       this.mensualite = in.readString();
+
       this.autresFrais = in.readString();
+
       this.moisAcademiques = in.readString();
-      this.montantVerse = in.readString();
-      this.typePaiement = in.readString();
-      this.operateur = in.readString();
-      this.referencePaiement = in.readString();
-      this.nomBanque = in.readString();
-      this.numeroTransaction = in.readString();
+
     } else {
-      for (int i = 0; i < 14; i++) {
+      for (int i = 0; i < 8; i++) {
         switch (fieldOrder[i].pos()) {
-        case 0: this.inscriptionId = in.readString(); break;
-        case 1: this.etudiantId = in.readString(); break;
-        case 2: this.classeId = in.readString(); break;
-        case 3: this.codeAnnee = in.readString(); break;
-        case 4: this.fraisInscription = in.readString(); break;
-        case 5: this.mensualite = in.readString(); break;
-        case 6: this.autresFrais = in.readString(); break;
-        case 7: this.moisAcademiques = in.readString(); break;
-        case 8: this.montantVerse = in.readString(); break;
-        case 9: this.typePaiement = in.readString(); break;
-        case 10: this.operateur = in.readString(); break;
-        case 11: this.referencePaiement = in.readString(); break;
-        case 12: this.nomBanque = in.readString(); break;
-        case 13: this.numeroTransaction = in.readString(); break;
-        default: throw new java.io.IOException("Corrupt ResolvingDecoder.");
+        case 0:
+          this.inscriptionId = in.readString();
+          break;
+
+        case 1:
+          this.etudiantId = in.readString();
+          break;
+
+        case 2:
+          this.classeId = in.readString();
+          break;
+
+        case 3:
+          this.codeAnnee = in.readString();
+          break;
+
+        case 4:
+          this.fraisInscription = in.readString();
+          break;
+
+        case 5:
+          this.mensualite = in.readString();
+          break;
+
+        case 6:
+          this.autresFrais = in.readString();
+          break;
+
+        case 7:
+          this.moisAcademiques = in.readString();
+          break;
+
+        default:
+          throw new java.io.IOException("Corrupt ResolvingDecoder.");
         }
       }
     }
@@ -399,16 +882,47 @@ public class InscriptionCreeeAvroModel extends org.apache.avro.specific.Specific
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof InscriptionCreeeAvroModel)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof InscriptionCreeeAvroModel)) {
+      return false;
+    }
     InscriptionCreeeAvroModel other = (InscriptionCreeeAvroModel) o;
-    return java.util.Objects.equals(this.inscriptionId, other.inscriptionId)
-        && java.util.Objects.equals(this.etudiantId, other.etudiantId)
-        && java.util.Objects.equals(this.classeId, other.classeId)
-        && java.util.Objects.equals(this.codeAnnee, other.codeAnnee)
-        && java.util.Objects.equals(this.fraisInscription, other.fraisInscription)
-        && java.util.Objects.equals(this.mensualite, other.mensualite)
-        && java.util.Objects.equals(this.autresFrais, other.autresFrais)
-        && java.util.Objects.equals(this.moisAcademiques, other.moisAcademiques);
+    if (!java.util.Objects.equals(this.inscriptionId, other.inscriptionId)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.etudiantId, other.etudiantId)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.classeId, other.classeId)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.codeAnnee, other.codeAnnee)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.fraisInscription, other.fraisInscription)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.mensualite, other.mensualite)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.autresFrais, other.autresFrais)) {
+      return false;
+    }
+    if (!java.util.Objects.equals(this.moisAcademiques, other.moisAcademiques)) {
+      return false;
+    }
+    return true;
   }
 }
+
+
+
+
+
+
+
+
+
+

@@ -2,6 +2,7 @@ Executer le test inscription
 
 k6 run --config k6/config.json \
   -e CLASSE_ID=40360716-4db2-4a0d-b95f-a876051515c7 \
+  -e MONTANT=150000 \
   k6/inscription-test.js
 
 nettoyer la base de donnees
