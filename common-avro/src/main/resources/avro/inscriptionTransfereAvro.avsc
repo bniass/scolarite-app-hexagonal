@@ -1,0 +1,15 @@
+{
+  "namespace": "com.ecole221.common.avro",
+  "type": "record",
+  "name": "InscriptionTransfereAvroModel",
+  "fields": [
+    {"name": "inscriptionId",    "type": "string"},
+    {"name": "etudiantId",       "type": "string"},
+    {"name": "nouvelleClasseId", "type": "string"},
+    {"name": "codeAnnee",        "type": "string"},
+    {"name": "fraisInscription", "type": "string"},
+    {"name": "mensualite",       "type": "string"},
+    {"name": "autresFrais",      "type": "string"},
+    {"name": "moisAcademiques",  "type": "string", "default": "[]"}
+  ]
+}

@@ -3,6 +3,7 @@ package com.ecole221.inscription.service.domain.model;
 import com.ecole221.common.entity.AggregateRoot;
 import com.ecole221.inscription.service.domain.event.InscriptionAnnuleeEvent;
 import com.ecole221.inscription.service.domain.event.InscriptionCreeeEvent;
+import com.ecole221.inscription.service.domain.event.InscriptionTransfereEvent;
 import com.ecole221.inscription.service.domain.exception.InscriptionException;
 import com.ecole221.inscription.service.domain.valueobject.StatutInscription;
 
@@ -101,6 +102,36 @@ public class Inscription extends AggregateRoot<UUID> {
         annuleLe = LocalDateTime.now();
         motifAnnulation = motif;
         addEvent(new InscriptionAnnuleeEvent(getId().toString(), annuleLe));
+    }
+
+    public void changerClasse(UUID nouvelleClasseId, BigDecimal nouveauxFraisInscription,
+            BigDecimal nouvelleMensualite, BigDecimal nouveauxAutresFrais,
+            String nouveauxMoisAcademiquesJson, String niveauNouvelleClasse, int delaiMaxMois) {
+
+        if (statut != StatutInscription.CONFIRMEE) {
+            throw new InscriptionException(
+                    "Le transfert de classe n'est possible que pour une inscription confirmée (statut actuel : " + statut + ")");
+        }
+        LocalDateTime limite = creeLe.plusMonths(delaiMaxMois);
+        if (LocalDateTime.now().isAfter(limite)) {
+            throw new InscriptionException(
+                    "Le délai de transfert de classe (" + delaiMaxMois + " mois) est dépassé");
+        }
+        if (niveauNouvelleClasse == null || (!niveauNouvelleClasse.equals("L1") && !niveauNouvelleClasse.equals("M1"))) {
+            throw new InscriptionException(
+                    "Le transfert n'est autorisé que vers une classe de niveau L1 ou M1 (niveau demandé : " + niveauNouvelleClasse + ")");
+        }
+
+        classeId = nouvelleClasseId;
+        fraisInscription = nouveauxFraisInscription;
+        mensualite = nouvelleMensualite;
+        autresFrais = nouveauxAutresFrais;
+        moisAcademiquesJson = nouveauxMoisAcademiquesJson;
+
+        addEvent(new InscriptionTransfereEvent(
+                getId().toString(), etudiantId, nouvelleClasseId, codeAnnee,
+                fraisInscription, mensualite, autresFrais, moisAcademiquesJson,
+                LocalDateTime.now()));
     }
 
     public UUID getEtudiantId() { return etudiantId; }

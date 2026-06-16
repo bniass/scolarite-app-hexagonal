@@ -39,6 +39,13 @@ public class MoyenPaiement {
         return m;
     }
 
+    public static MoyenPaiement transfert() {
+        MoyenPaiement m = new MoyenPaiement();
+        m.id = UUID.randomUUID();
+        m.type = TypeMoyen.TRANSFERT;
+        return m;
+    }
+
     /** Crée une copie avec un nouvel UUID — nécessaire quand le même moyen est distribué sur plusieurs versements. */
     public MoyenPaiement copier() {
         MoyenPaiement m = new MoyenPaiement();

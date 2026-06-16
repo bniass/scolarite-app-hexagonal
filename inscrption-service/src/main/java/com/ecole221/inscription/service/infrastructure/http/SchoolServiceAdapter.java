@@ -38,7 +38,8 @@ public class SchoolServiceAdapter implements SchoolServicePort {
                     UUID.fromString((String) response.get("tarifId")),
                     new BigDecimal(response.get("fraisInscription").toString()),
                     new BigDecimal(response.get("mensualite").toString()),
-                    new BigDecimal(response.get("autresFrais").toString())
+                    new BigDecimal(response.get("autresFrais").toString()),
+                    response.get("niveau") != null ? response.get("niveau").toString() : null
             );
         } catch (InscriptionException e) {
             throw e;

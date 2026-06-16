@@ -120,6 +120,42 @@ public class DossierPaiement extends AggregateRoot<UUID> {
         mettreAJourStatut();
     }
 
+    /**
+     * Redistribue le solde payé lors d'un transfert de classe.
+     * Pas de check de minimum (l'inscription est déjà confirmée).
+     * Pas d'émission de DossierInitialiseEvent (l'inscription reste CONFIRMEE).
+     */
+    public void appliquerTransfert(BigDecimal montantTransfert, LocalDate date) {
+        if (montantTransfert == null || montantTransfert.compareTo(BigDecimal.ZERO) <= 0) return;
+
+        BigDecimal aDistribuer = montantTransfert.min(getTotalRestant());
+
+        List<LignePaiement> lignesOrdered = lignes.stream()
+                .filter(l -> !l.estPayee())
+                .sorted(Comparator.comparingInt(l -> {
+                    if (l.getType() == TypeLigne.FRAIS_INSCRIPTION) return -2;
+                    if (l.getType() == TypeLigne.AUTRES_FRAIS) return -1;
+                    return l.getOrdreReglement();
+                }))
+                .toList();
+
+        BigDecimal restant = aDistribuer;
+        for (LignePaiement ligne : lignesOrdered) {
+            if (restant.compareTo(BigDecimal.ZERO) <= 0) break;
+            BigDecimal aAppliquer = restant.min(ligne.getMontantRestant());
+            ligne.appliquerVersement(Versement.creer(aAppliquer, date, MoyenPaiement.transfert()));
+            restant = restant.subtract(aAppliquer);
+        }
+
+        // Transition de statut sans événement Kafka — l'inscription est déjà CONFIRMEE
+        if (statut == StatutDossier.INITIALISE) {
+            statut = StatutDossier.ACTIF;
+        }
+        if (lignes.stream().allMatch(LignePaiement::estPayee)) {
+            statut = StatutDossier.CLOTURE;
+        }
+    }
+
     /** Montant total encore dû sur toutes les lignes. */
     public BigDecimal getTotalRestant() {
         return lignes.stream()

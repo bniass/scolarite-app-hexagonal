@@ -65,6 +65,7 @@ kafka-topics:
   anneeacademique-topic-request-name: creer-annee-request
   inscription-creee-topic: inscription-creee
   inscription-annulee-topic: inscription-annulee
+  inscription-transfere-topic: inscription-transfere
   paiement-confirme-topic: paiement-confirme
 
 etudiant-service:

@@ -1,11 +1,14 @@
 package com.ecole221.inscription.service.infrastructure.web.controller;
 
+import com.ecole221.inscription.service.application.command.ChangerClasseCommand;
 import com.ecole221.inscription.service.application.command.CreerInscriptionCommand;
 import com.ecole221.inscription.service.application.port.in.AnnulerInscriptionAdminUseCase;
+import com.ecole221.inscription.service.application.port.in.ChangerClasseUseCase;
 import com.ecole221.inscription.service.application.port.in.ConsulterInscriptionUseCase;
 import com.ecole221.inscription.service.application.port.in.CreerInscriptionUseCase;
 import com.ecole221.inscription.service.domain.model.Inscription;
 import com.ecole221.inscription.service.infrastructure.web.dto.AnnulerInscriptionRequest;
+import com.ecole221.inscription.service.infrastructure.web.dto.ChangerClasseRequest;
 import com.ecole221.inscription.service.infrastructure.web.dto.CreerInscriptionRequest;
 import com.ecole221.inscription.service.infrastructure.web.dto.InscriptionResponse;
 import jakarta.validation.Valid;
@@ -24,6 +27,7 @@ public class InscriptionController {
     private final CreerInscriptionUseCase creerUC;
     private final ConsulterInscriptionUseCase consulterUC;
     private final AnnulerInscriptionAdminUseCase annulerUC;
+    private final ChangerClasseUseCase changerClasseUC;
 
     @PostMapping
     public ResponseEntity<InscriptionResponse> creer(@Valid @RequestBody CreerInscriptionRequest request) {
@@ -58,5 +62,14 @@ public class InscriptionController {
             @Valid @RequestBody AnnulerInscriptionRequest request) {
         annulerUC.executer(id, request.motif());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/changer-classe")
+    public ResponseEntity<InscriptionResponse> changerClasse(
+            @PathVariable UUID id,
+            @Valid @RequestBody ChangerClasseRequest request) {
+        Inscription inscription = changerClasseUC.executer(
+                new ChangerClasseCommand(id, request.nouvelleClasseId()));
+        return ResponseEntity.ok(InscriptionResponse.from(inscription));
     }
 }

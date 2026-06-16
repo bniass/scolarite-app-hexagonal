@@ -3,6 +3,7 @@ package com.ecole221.inscription.service.infrastructure.persistence.outbox.publi
 import com.ecole221.common.avro.AvroSerializerUtil;
 import com.ecole221.common.avro.InscriptionAnnuleeAvroModel;
 import com.ecole221.common.avro.InscriptionCreeeAvroModel;
+import com.ecole221.common.avro.InscriptionTransfereAvroModel;
 import com.ecole221.kafka.service.producer.KafkaMessageHelper;
 import com.ecole221.inscription.service.infrastructure.persistence.outbox.entity.OutboxEventJpaEntity;
 import com.ecole221.inscription.service.infrastructure.persistence.outbox.entity.OutboxStatus;
@@ -22,16 +23,22 @@ public class OutboxPublisher {
     @Value("${kafka-topics.inscription-annulee-topic}")
     private String inscriptionAnnuleeTopique;
 
+    @Value("${kafka-topics.inscription-transfere-topic}")
+    private String inscriptionTransfereTopique;
+
     private final KafkaMessageHelper<String, InscriptionCreeeAvroModel> inscriptionCreeeHelper;
     private final KafkaMessageHelper<String, InscriptionAnnuleeAvroModel> inscriptionAnnuleeHelper;
+    private final KafkaMessageHelper<String, InscriptionTransfereAvroModel> inscriptionTransfereHelper;
     private final OutboxEventJpaRepository repository;
 
     public OutboxPublisher(OutboxEventJpaRepository repository,
             KafkaMessageHelper<String, InscriptionCreeeAvroModel> inscriptionCreeeHelper,
-            KafkaMessageHelper<String, InscriptionAnnuleeAvroModel> inscriptionAnnuleeHelper) {
+            KafkaMessageHelper<String, InscriptionAnnuleeAvroModel> inscriptionAnnuleeHelper,
+            KafkaMessageHelper<String, InscriptionTransfereAvroModel> inscriptionTransfereHelper) {
         this.repository = repository;
         this.inscriptionCreeeHelper = inscriptionCreeeHelper;
         this.inscriptionAnnuleeHelper = inscriptionAnnuleeHelper;
+        this.inscriptionTransfereHelper = inscriptionTransfereHelper;
     }
 
     @Scheduled(fixedDelay = 5000)
@@ -63,6 +70,11 @@ public class OutboxPublisher {
                 InscriptionAnnuleeAvroModel model =
                         AvroSerializerUtil.fromBytes(event.getPayload(), InscriptionAnnuleeAvroModel.class);
                 inscriptionAnnuleeHelper.send(inscriptionAnnuleeTopique, event.getAggregateId(), model);
+            }
+            case "InscriptionTransfereEvent" -> {
+                InscriptionTransfereAvroModel model =
+                        AvroSerializerUtil.fromBytes(event.getPayload(), InscriptionTransfereAvroModel.class);
+                inscriptionTransfereHelper.send(inscriptionTransfereTopique, event.getAggregateId(), model);
             }
             default -> throw new IllegalArgumentException(
                     "Type d'événement outbox non supporté : " + event.getEventType());

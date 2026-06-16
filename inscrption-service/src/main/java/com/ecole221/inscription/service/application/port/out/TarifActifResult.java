@@ -7,5 +7,11 @@ public record TarifActifResult(
         UUID tarifId,
         BigDecimal fraisInscription,
         BigDecimal mensualite,
-        BigDecimal autresFrais
-) {}
+        BigDecimal autresFrais,
+        String niveau
+) {
+    public TarifActifResult(UUID tarifId, BigDecimal fraisInscription,
+            BigDecimal mensualite, BigDecimal autresFrais) {
+        this(tarifId, fraisInscription, mensualite, autresFrais, null);
+    }
+}
